@@ -9,7 +9,11 @@
         </span>
 
         <ul class="dropdown-menu">
-          <li><span class="dropdown-item" v-for="(track, index) in getAudioQueue" :key="index">{{ track?.title }}</span></li>
+          <li>
+            <span class="dropdown-item" v-for="(track, index) in getAudioQueue" :key="index" @click="skipToSong(index)">
+              {{ track?.title }} {{ index === currentTrackIndex ? ' ♫' : '' }}
+            </span>
+          </li>
         </ul>
       </span>
 
@@ -151,6 +155,15 @@ export default {
       this.sound.stop();
       this.sound.play();
       this.playing = true;
+    },
+
+    skipToSong(index) {
+      this.playing = false;
+      this.stopTimer();
+      this.sound.stop();
+      this.sound = null;
+      this.currentTrackIndex = index;
+      this.playSongs();
     },
 
     startTimer() {
