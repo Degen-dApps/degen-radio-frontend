@@ -1,10 +1,10 @@
 <template>
 <div class="card m-3">
   <div class="card-body row d-flex justify-content-evenly">
-    <div class="col-md-6 text-center mb-2">
+    <div class="col-md-6 text-center mb-2 mt-2">
 
-      <span class="dropdown" v-if="currentTrack?.title">
-        <span class="dropdown-toggle me-2 cursor-pointer" data-bs-toggle="dropdown" aria-expanded="false">
+      <span class="dropup-center dropup align-text-top" v-if="currentTrack?.title">
+        <span class="dropdown-toggle me-4 cursor-pointer" data-bs-toggle="dropdown" aria-expanded="false">
           {{ currentTrack.title }}
         </span>
 
@@ -13,7 +13,7 @@
         </ul>
       </span>
 
-      <span v-if="currentTimeFormatted && durationFormatted">{{ currentTimeFormatted }} / {{ durationFormatted }}</span>
+      <span class="align-bottom" v-if="currentTimeFormatted && durationFormatted">{{ currentTimeFormatted }} / {{ durationFormatted }}</span>
     </div>
 
     <div class="col-md-6 row d-flex justify-content-evenly">
