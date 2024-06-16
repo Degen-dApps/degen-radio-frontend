@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 
-export const useExampleStore = defineStore({
-  id: 'example',
+export const useAudioStore = defineStore({
+  id: 'audio',
 
   state: () => {
     return {
@@ -9,15 +9,13 @@ export const useExampleStore = defineStore({
     }
   },
 
-  getters: {
-    getAudioQueue(state) {
-      return state.queue
-    }
-  },
-
   actions: {
     addToQueue(audio) {
       this.queue.push(audio)
-    }
+    },
+
+    clearQueue() {
+      this.queue = []
+    } 
   },
 })

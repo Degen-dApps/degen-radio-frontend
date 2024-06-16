@@ -16,7 +16,7 @@
   <div class="track-list">
     <h3>Track List</h3>
     <ul>
-      <li v-for="(track, index) in tracks" :key="index">
+      <li v-for="(track, index) in getAudioQueue" :key="index">
         {{ track }}
       </li>
     </ul>
@@ -25,21 +25,19 @@
 
 <script>
 import { Howl } from 'howler';
+import { useAudioStore } from '~/store/audio'
 
 export default {
   name: 'AudioPlayer',
   data() {
     return {
-      sound: null,
       currentTime: 0,
+      currentTrackIndex: 0,
       duration: 0,
       playing: false,
+      sound: null,
       timer: null,
-      tracks: [
-        "https://ipfs.filebase.io/ipfs/QmTRF3BfANSWVnAzwZmkEqho537Ugrgrh4VRaVFXyWhgmU/got-dat-degen.mp3",
-        'https://nftdegeniggy.myfilebase.com/ipfs/QmZ8keL488WqXV41K4V1D4zC7AEzpvhKnM2kp2C2NneTNk/degen-name-degen-fame-2.mp3'
-      ],
-      currentTrackIndex: 0,
+      userStartedListening: false
     }; 
   },
 
@@ -50,16 +48,18 @@ export default {
     
     durationFormatted() {
       return this.formatTime(this.duration);
+    },
+
+    getAudioQueue() {
+      return this.audioStore.queue
+    },
+
+    getAudioQueueLength() {
+      return this.audioStore.queue.length
     }
   },
 
   methods: {
-
-    addTrack(newTrack) {
-      if (newTrack) {
-        this.tracks.push(newTrack);
-      }
-    },
 
     formatTime(seconds) {
       const minutes = Math.floor(seconds / 60);
@@ -91,12 +91,12 @@ export default {
       this.stopTimer();
       this.currentTrackIndex++;
 
-      if (this.currentTrackIndex >= this.tracks.length) {
+      if (this.currentTrackIndex >= this.getAudioQueue.length) {
         this.currentTrackIndex = 0;
       }
 
       this.sound.stop();
-      this.loadTrack(this.tracks[this.currentTrackIndex]);
+      this.loadTrack(this.getAudioQueue[this.currentTrackIndex]);
     },
 
     pause() {
@@ -107,11 +107,19 @@ export default {
     },
 
     play() {
+      // user initiated play
+      this.userStartedListening = true;
+      this.playSongs();
+    },
+
+    playSongs() {
       this.playing = true;
-      if (this.tracks.length === 0) return;
+      if (this.getAudioQueue.length === 0) {
+        return;
+      };
 
       if (!this.sound) {
-        this.loadTrack(this.tracks[this.currentTrackIndex]);
+        this.loadTrack(this.getAudioQueue[this.currentTrackIndex]);
       } else {
         this.sound.play();
       }
@@ -123,11 +131,11 @@ export default {
       this.currentTrackIndex--;
 
       if (this.currentTrackIndex < 0) {
-        this.currentTrackIndex = this.tracks.length - 1;
+        this.currentTrackIndex = this.getAudioQueue.length - 1;
       }
 
       this.sound.stop();
-      this.loadTrack(this.tracks[this.currentTrackIndex]);
+      this.loadTrack(this.getAudioQueue[this.currentTrackIndex]);
     },
 
     restart() {
@@ -150,6 +158,31 @@ export default {
       this.timer = null;
     },
 
+  },
+
+  setup() {
+    const audioStore = useAudioStore()
+    return { audioStore }
+  },
+
+  watch: {
+    getAudioQueueLength(newVal, oldVal) {
+
+      if (newVal === 0) {
+        // user has cleared the queue, so stop playing
+        this.playing = false;
+        this.currentTrackIndex = 0;
+        this.stopTimer();
+        if (this.sound) {
+          this.sound.stop();
+        }
+      }
+
+      if (this.userStartedListening && oldVal === 0 && newVal > 0) {
+        // the queue was previously empty, but now has songs, so start playing
+        this.play()
+      }
+    }
   },
 
   beforeUnmount() {
