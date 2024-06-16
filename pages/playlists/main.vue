@@ -14,7 +14,8 @@
 
       <div class="mb-3">
         <label for="exampleFormControlInput1" class="form-label">Add new song to the queue</label>
-        <input v-model="newSong" type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter song URL" />
+        <input v-model="songUrl" type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter song URL" />
+        <input v-model="songTitle" type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter song name" />
       </div>
 
       <button @click="addSong" class="btn btn-primary me-2">Add Song</button>
@@ -32,14 +33,15 @@ export default {
 
   data() {
     return {
-      newSong: null
+      songTitle: null,
+      songUrl: null,
     }
   },
 
   mounted() {
     const tracks = [
-      "https://ipfs.filebase.io/ipfs/QmTRF3BfANSWVnAzwZmkEqho537Ugrgrh4VRaVFXyWhgmU/got-dat-degen.mp3",
-      'https://nftdegeniggy.myfilebase.com/ipfs/QmZ8keL488WqXV41K4V1D4zC7AEzpvhKnM2kp2C2NneTNk/degen-name-degen-fame-2.mp3'
+      {title: "Got Dat Degen", url: "https://ipfs.filebase.io/ipfs/QmTRF3BfANSWVnAzwZmkEqho537Ugrgrh4VRaVFXyWhgmU/got-dat-degen.mp3"},
+      {url: 'https://nftdegeniggy.myfilebase.com/ipfs/QmZ8keL488WqXV41K4V1D4zC7AEzpvhKnM2kp2C2NneTNk/degen-name-degen-fame-2.mp3'}
     ]
 
     this.audioStore.addToQueue(tracks[0])
@@ -48,8 +50,14 @@ export default {
 
   methods: {
     addSong() {
-      this.audioStore.addToQueue(String(this.newSong).trim())
-      this.newSong = null
+      const newSong = {
+        title: String(this.songTitle).trim(),
+        url: String(this.songUrl).trim()
+      }
+
+      this.audioStore.addToQueue(newSong)
+      this.songTitle = null
+      this.songUrl = null
     },
 
     clearQueue() {

@@ -17,7 +17,7 @@
     <h3>Track List</h3>
     <ul>
       <li v-for="(track, index) in getAudioQueue" :key="index">
-        {{ track }}
+        {{ track?.title }}
       </li>
     </ul>
   </div>
@@ -96,7 +96,7 @@ export default {
       }
 
       this.sound.stop();
-      this.loadTrack(this.getAudioQueue[this.currentTrackIndex]);
+      this.loadTrack(this.getAudioQueue[this.currentTrackIndex].url);
     },
 
     pause() {
@@ -119,7 +119,7 @@ export default {
       };
 
       if (!this.sound) {
-        this.loadTrack(this.getAudioQueue[this.currentTrackIndex]);
+        this.loadTrack(this.getAudioQueue[this.currentTrackIndex].url);
       } else {
         this.sound.play();
       }
@@ -135,7 +135,7 @@ export default {
       }
 
       this.sound.stop();
-      this.loadTrack(this.getAudioQueue[this.currentTrackIndex]);
+      this.loadTrack(this.getAudioQueue[this.currentTrackIndex].url);
     },
 
     restart() {
