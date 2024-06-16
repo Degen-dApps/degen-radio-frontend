@@ -1,26 +1,29 @@
 <template>
-  <!--
-    "https://ipfs.filebase.io/ipfs/QmTRF3BfANSWVnAzwZmkEqho537Ugrgrh4VRaVFXyWhgmU/got-dat-degen.mp3",
-    'https://nftdegeniggy.myfilebase.com/ipfs/QmZ8keL488WqXV41K4V1D4zC7AEzpvhKnM2kp2C2NneTNk/degen-name-degen-fame-2.mp3'
-  -->
+<div class="card m-3">
+  <div class="card-body row d-flex justify-content-evenly">
+    <div class="col-md-6 text-center mb-2">
 
-  <div class="row p-3">
-    <button v-if="!playing" class="col btn btn-primary me-2" @click="play">Play</button>
-    <button v-if="playing" class="col btn btn-primary me-2" @click="pause">Pause</button>
-    <button class="col btn btn-primary me-2" @click="restart">Restart</button>
-    <button class="col btn btn-primary me-2" @click="nextTrack">Next</button>
-    <button class="col btn btn-primary" @click="previousTrack">Previous</button>
-    <p class="col" v-if="currentTimeFormatted && durationFormatted">{{ currentTimeFormatted }} / {{ durationFormatted }}</p>
-  </div>
+      <span class="dropdown" v-if="currentTrack?.title">
+        <span class="dropdown-toggle me-2 cursor-pointer" data-bs-toggle="dropdown" aria-expanded="false">
+          {{ currentTrack.title }}
+        </span>
 
-  <div class="track-list">
-    <h3>Track List</h3>
-    <ul>
-      <li v-for="(track, index) in getAudioQueue" :key="index">
-        {{ track?.title }}
-      </li>
-    </ul>
+        <ul class="dropdown-menu">
+          <li><span class="dropdown-item" v-for="(track, index) in getAudioQueue" :key="index">{{ track?.title }}</span></li>
+        </ul>
+      </span>
+
+      <span v-if="currentTimeFormatted && durationFormatted">{{ currentTimeFormatted }} / {{ durationFormatted }}</span>
+    </div>
+
+    <div class="col-md-6 row d-flex justify-content-evenly">
+      <button class="col btn btn-primary me-2" @click="previousTrack"><i class="bi bi-rewind-fill"></i></button>
+      <button v-if="!playing" class="col btn btn-primary me-2" @click="play"><i class="bi bi-play-fill"></i></button>
+      <button v-if="playing" class="col btn btn-primary me-2" @click="pause"><i class="bi bi-pause-fill"></i></button>
+      <button class="col btn btn-primary" @click="nextTrack"><i class="bi bi-fast-forward-fill"></i></button>
+    </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -32,6 +35,7 @@ export default {
   data() {
     return {
       currentTime: 0,
+      currentTrack: null,
       currentTrackIndex: 0,
       duration: 0,
       playing: false,
@@ -96,7 +100,8 @@ export default {
       }
 
       this.sound.stop();
-      this.loadTrack(this.getAudioQueue[this.currentTrackIndex].url);
+      this.currentTrack = this.getAudioQueue[this.currentTrackIndex];
+      this.loadTrack(this.currentTrack.url);
     },
 
     pause() {
@@ -119,7 +124,8 @@ export default {
       };
 
       if (!this.sound) {
-        this.loadTrack(this.getAudioQueue[this.currentTrackIndex].url);
+        this.currentTrack = this.getAudioQueue[this.currentTrackIndex];
+        this.loadTrack(this.currentTrack.url);
       } else {
         this.sound.play();
       }
@@ -135,7 +141,8 @@ export default {
       }
 
       this.sound.stop();
-      this.loadTrack(this.getAudioQueue[this.currentTrackIndex].url);
+      this.currentTrack = this.getAudioQueue[this.currentTrackIndex];
+      this.loadTrack(this.currentTrack.url);
     },
 
     restart() {

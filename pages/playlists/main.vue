@@ -41,7 +41,7 @@ export default {
   mounted() {
     const tracks = [
       {title: "Got Dat Degen", url: "https://ipfs.filebase.io/ipfs/QmTRF3BfANSWVnAzwZmkEqho537Ugrgrh4VRaVFXyWhgmU/got-dat-degen.mp3"},
-      {url: 'https://nftdegeniggy.myfilebase.com/ipfs/QmZ8keL488WqXV41K4V1D4zC7AEzpvhKnM2kp2C2NneTNk/degen-name-degen-fame-2.mp3'}
+      {title: "Degen Name, Degen Fame", url: 'https://nftdegeniggy.myfilebase.com/ipfs/QmZ8keL488WqXV41K4V1D4zC7AEzpvhKnM2kp2C2NneTNk/degen-name-degen-fame-2.mp3'}
     ]
 
     this.audioStore.addToQueue(tracks[0])
