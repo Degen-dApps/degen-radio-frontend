@@ -14,13 +14,24 @@
 
       <div class="mb-3">
         <label for="exampleFormControlInput1" class="form-label">Add new song to the queue</label>
-        <input v-model="songUrl" type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter song URL" />
-        <input v-model="songTitle" type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter song name" />
+        <input
+          v-model="songUrl"
+          type="text"
+          class="form-control"
+          id="exampleFormControlInput1"
+          placeholder="Enter song URL"
+        />
+        <input
+          v-model="songTitle"
+          type="text"
+          class="form-control"
+          id="exampleFormControlInput1"
+          placeholder="Enter song name"
+        />
       </div>
 
       <button @click="addSong" class="btn btn-primary me-2">Add Song</button>
       <button @click="clearQueue" class="btn btn-danger">Clear queue</button>
-
     </div>
   </div>
 </template>
@@ -40,8 +51,14 @@ export default {
 
   mounted() {
     const tracks = [
-      {title: "Got Dat Degen", url: "https://ipfs.filebase.io/ipfs/QmTRF3BfANSWVnAzwZmkEqho537Ugrgrh4VRaVFXyWhgmU/got-dat-degen.mp3"},
-      {title: "Degen Name, Degen Fame", url: 'https://nftdegeniggy.myfilebase.com/ipfs/QmZ8keL488WqXV41K4V1D4zC7AEzpvhKnM2kp2C2NneTNk/degen-name-degen-fame-2.mp3'}
+      {
+        title: 'Got Dat Degen',
+        url: 'https://ipfs.filebase.io/ipfs/QmTRF3BfANSWVnAzwZmkEqho537Ugrgrh4VRaVFXyWhgmU/got-dat-degen.mp3',
+      },
+      {
+        title: 'Degen Name, Degen Fame',
+        url: 'https://nftdegeniggy.myfilebase.com/ipfs/QmZ8keL488WqXV41K4V1D4zC7AEzpvhKnM2kp2C2NneTNk/degen-name-degen-fame-2.mp3',
+      },
     ]
 
     this.audioStore.addToQueue(tracks[0])
@@ -52,7 +69,7 @@ export default {
     addSong() {
       const newSong = {
         title: String(this.songTitle).trim(),
-        url: String(this.songUrl).trim()
+        url: String(this.songUrl).trim(),
       }
 
       this.audioStore.addToQueue(newSong)
@@ -62,13 +79,13 @@ export default {
 
     clearQueue() {
       this.audioStore.clearQueue()
-    }
+    },
   },
 
   setup() {
     const audioStore = useAudioStore()
 
     return { audioStore }
-  }
+  },
 }
 </script>

@@ -17,6 +17,6 @@ export const useAudioStore = defineStore({
 
     clearQueue() {
       this.queue = []
-    } 
+    },
   },
 })

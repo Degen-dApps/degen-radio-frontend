@@ -83,12 +83,12 @@ export default defineNuxtPlugin(() => {
 })
 
 const chains = [
-  { 
-    chainId: 666666666, 
-    name: "Degen", 
-    currency: "DEGEN", 
-    rpc1: "https://rpc.degen.tips", 
-    rpc2: "https://rpc.degen.tips", 
-    blockExplorer: "https://explorer.degen.tips" 
+  {
+    chainId: 666666666,
+    name: 'Degen',
+    currency: 'DEGEN',
+    rpc1: 'https://rpc.degen.tips',
+    rpc2: 'https://rpc.degen.tips',
+    blockExplorer: 'https://explorer.degen.tips',
   },
 ]

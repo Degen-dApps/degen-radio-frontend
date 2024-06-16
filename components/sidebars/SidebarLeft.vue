@@ -51,6 +51,18 @@
 						</li>
 						-->
 
+            <!-- Create Playlist -->
+            <li class="nav-item p-1" @click="closeLeftSidebar">
+              <NuxtLink
+                class="nav-link"
+                :class="$route.path === '/playlists/create' ? 'active' : ''"
+                aria-current="page"
+                to="/playlists/create"
+              >
+                <i class="bi bi-music-note-list me-1"></i> Create Playlist
+              </NuxtLink>
+            </li>
+
             <!-- Profile -->
             <li v-if="isActivated" class="nav-item p-1" @click="closeLeftSidebar">
               <NuxtLink

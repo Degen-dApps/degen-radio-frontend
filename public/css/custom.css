@@ -448,6 +448,10 @@ a:hover {
   font-style: italic;
 }
 
+.scroll-500 {
+  margin-bottom: 200px;
+}
+
 .sidebar-card-body {
   padding-top: 0;
 }

@@ -98,6 +98,11 @@ export default defineNuxtConfig({
       punkMinterAddress: '0x1f8cf0bc042308677838fB50f264992A4e783610', // punk domain minter contract address
       punkNumberOfPrices: 5, // number of different prices (based on domain length), usually 1 (price()) or 5 (price1char() - price5char())
       punkTldAddress: '0x4087fb91A1fBdef05761C02714335D232a2Bf3a1', // punk domain TLD address
+      radio: {
+        metadataAddress: '0xF9896481b2937C3BdcDCf6eC645e059Eb96668Ae',
+        playlistFactoryAddress: '0xAb63D72412D17cD4fd052c58c4c512D245A3B41e',
+        playlistNftAddress: '0x2ecCADbCF2C6b3B8daAd5D125D66e58eE8C91415',
+      },
       randomPostsNumber: 1, // number of random post NFTs to show in the sidebar widget
       rpcCustom: 'https://rpc.degen.tips', // Custom RPC URL
       showFeatures: {
