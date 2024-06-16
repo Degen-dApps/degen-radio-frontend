@@ -251,6 +251,12 @@ a:hover {
   color: #ffffff;
 }
 
+.footer-sticky-player {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
 .force-circle {
   clip-path: circle();
 }

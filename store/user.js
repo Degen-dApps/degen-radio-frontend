@@ -80,63 +80,63 @@ export const useUserStore = defineStore({
   },
 
   actions: {
-    addToChatTokenBalanceWei(balance: ethers.BigNumber) {
+    addToChatTokenBalanceWei(balance) {
       this.chatTokenBalanceWei += balance.toBigInt()
     },
 
-    addToLpTokenBalanceWei(balance: ethers.BigNumber) {
+    addToLpTokenBalanceWei(balance) {
       this.lpTokenBalanceWei += balance.toBigInt()
     },
 
-    addToStakeTokenBalanceWei(balance: ethers.BigNumber) {
+    addToStakeTokenBalanceWei(balance) {
       this.stakeTokenBalanceWei += balance.toBigInt()
     },
 
-    setChatTokenBalanceWei(balance: ethers.BigNumber) {
+    setChatTokenBalanceWei(balance) {
       this.chatTokenBalanceWei = balance.toBigInt()
     },
 
-    setCurrentUserAddress(address: any) {
+    setCurrentUserAddress(address) {
       this.address = address
     },
 
-    setDefaultDomain(domain: any) {
+    setDefaultDomain(domain) {
       this.defaultDomain = domain
     },
 
-    setDid(did: any) {
+    setDid(did) {
       this.did = did
     },
 
-    setDidParent(didParent: any) {
+    setDidParent(didParent) {
       this.didParent = didParent
     },
 
-    setFollowers(followers: any) {
+    setFollowers(followers) {
       this.followers = followers
     },
 
-    setFollowing(following: any) {
+    setFollowing(following) {
       this.following = following
     },
 
-    setIsConnectedToOrbis(isConnected: any) {
+    setIsConnectedToOrbis(isConnected) {
       this.isConnectedToOrbis = isConnected
     },
 
-    setLastActivityTimestamp(timestamp: any) {
+    setLastActivityTimestamp(timestamp) {
       this.lastActivityTimestamp = timestamp
     },
 
-    setLpTokenBalanceWei(balance: ethers.BigNumber) {
+    setLpTokenBalanceWei(balance) {
       this.lpTokenBalanceWei = balance.toBigInt()
     },
 
-    setOrbisImage(image: any) {
+    setOrbisImage(image) {
       this.orbisImage = image
     },
 
-    setStakeTokenBalanceWei(balance: ethers.BigNumber) {
+    setStakeTokenBalanceWei(balance) {
       this.stakeTokenBalanceWei = balance.toBigInt()
     },
   },

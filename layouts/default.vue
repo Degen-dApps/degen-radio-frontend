@@ -33,6 +33,9 @@
       </div>
     </div>
 
+    <!-- Footer -->
+    <StickyFooterPlayer />
+
     <!-- Connect Wallet modal -->
     <VueDappModal :dark="siteStore.getColorMode === 'dark'" auto-connect auto-connect-browser-wallet-if-solo />
 
@@ -66,9 +69,10 @@ import ChatSettingsModal from '~/components/ChatSettingsModal.vue'
 import { getDomainHolder, getDomainName } from '~/utils/domainUtils'
 import { storeReferrer, storeUsername } from '~/utils/storageUtils'
 import VerifyAccountOwnership from '~/components/VerifyAccountOwnership.vue'
+import StickyFooterPlayer from '~/components/radio/StickyFooterPlayer.vue'
 import ReferralModal from '~/components/referrals/ReferralModal.vue'
 import ChangeUsernameModal from '~/components/names/ChangeUsernameModal.vue'
-import ChangeUserPostMintPriceModal from '~~/components/minted-posts/ChangeUserPostMintPriceModal.vue'
+import ChangeUserPostMintPriceModal from '~/components/minted-posts/ChangeUserPostMintPriceModal.vue'
 import FindUserModal from '~/components/search/FindUserModal.vue'
 import { BrowserWalletConnector, RdnsEnum } from '@vue-dapp/core'
 import { VueDappModal } from '@vue-dapp/modal'
@@ -97,6 +101,7 @@ export default {
     ReferralModal,
     SidebarLeft,
     SidebarRight,
+    StickyFooterPlayer,
     VerifyAccountOwnership,
     VueDappModal,
   },

@@ -18,15 +18,15 @@ export const useSidebarStore = defineStore({
   },
 
   actions: {
-    setLeftSidebar(status: boolean) {
+    setLeftSidebar(status) {
       this.leftSidebar = status
     },
 
-    setMainContent(status: boolean) {
+    setMainContent(status) {
       this.mainContent = status
     },
 
-    setRightSidebar(status: boolean) {
+    setRightSidebar(status) {
       this.rightSidebar = status
     },
   },

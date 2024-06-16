@@ -61,26 +61,26 @@ export const useSiteStore = defineStore({
   },
 
   actions: {
-    setColorMode(cm: string) {
+    setColorMode(cm) {
       this.colorMode = cm
       localStorage.setItem('colorMode', cm)
     },
 
-    setFileUploadEnabled(enabled: boolean) {
+    setFileUploadEnabled(enabled) {
       this.fileUploadEnabled = enabled
     },
 
-    setShowOnlyMasterPosts(somp: string) {
+    setShowOnlyMasterPosts(somp) {
       this.showOnlyMasterPosts = somp
       localStorage.setItem('showOnlyMasterPosts', somp)
     },
 
-    setSlippage(slippage: string) {
+    setSlippage(slippage) {
       this.slippage = slippage
       localStorage.setItem('swapSlippage', slippage)
     },
 
-    setSwapDeadline(swapDeadline: string) {
+    setSwapDeadline(swapDeadline) {
       this.swapDeadline = swapDeadline
       localStorage.setItem('swapDeadline', swapDeadline)
     },
