@@ -70,7 +70,7 @@ export default {
         }
       }
 
-      this.imageUrl = 'https://placeholder.pics/svg/300/8e85e6/ffffff/loading%20error'
+      this.imageUrl = 'https://placeholder.pics/svg/300/38B6FF/ffffff/loading%20error'
       this.loading = false
       return
     },

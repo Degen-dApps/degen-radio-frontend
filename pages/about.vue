@@ -10,10 +10,10 @@
         <i class="bi bi-arrow-left-circle cursor-pointer"></i>
       </p>
 
-      <h3 class="mb-3 mt-3">Put The Radio On The Blockchain</h3>
+      <h3 class="mb-3 mt-3">About Degen Radio</h3>
 
-      <p class="text-break mt-3">
-        <img src="https://ik.imagekit.io/iggy/put-radio-on-blockchain.png" alt="Warpcast logo" class="img-fluid" />
+      <p class="text-break text-center">
+        <img src="https://ik.imagekit.io/iggy/put-radio-on-blockchain.png" alt="Warpcast logo" class="mt-3 mb-3 img-fluid rounded" />
       </p>
 
       <p class="text-break mt-3">

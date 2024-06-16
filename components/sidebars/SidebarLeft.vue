@@ -32,12 +32,12 @@
           <ul class="nav nav-pills flex-column">
             <ul class="list-group">
               <NuxtLink
-                to="/"
+                to="/playlists/main"
                 class="list-group-item cursor-pointer hover-color bg-light border-0"
-                :class="$route.path === '/' ? 'active' : ''"
+                :class="$route.path === '/playlists/main' ? 'active' : ''"
                 @click="closeLeftSidebar"
               >
-                General discussion
+                Top Hits
               </NuxtLink>
             </ul>
 
