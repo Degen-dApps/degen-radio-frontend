@@ -5,7 +5,7 @@ export const useAudioStore = defineStore({
 
   state: () => {
     return {
-      queue: [], // audio objects, e.g. { title: '...', url: '...' }
+      queue: [], // audio objects, e.g. { name: '...', audioUrl: '...' }
     }
   },
 

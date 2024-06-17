@@ -77,12 +77,24 @@
         >
       </div>
 
-      <h5 class="mt-3">Enter the first track</h5>
+      <h5 class="mt-3">Enter the first track to playlist</h5>
+
+      <p>
+        <small>
+          You'll add others later, after the playlist is created.
+        </small>
+      </p>
 
       <!-- Track address -->
       <div class="mb-4">
         <label for="tAddress" class="form-label">Track (Music NFT) Address</label>
         <input type="text" class="form-control" id="tAddress" placeholder="0x..." v-model="tAddress" />
+      </div>
+
+      <!-- Track NFT ID -->
+      <div class="mb-4">
+        <label for="tNftId" class="form-label">Track NFT token ID (optional)</label>
+        <input type="text" class="form-control" id="tNftId" v-model="tNftId" />
       </div>
 
       <!-- Track blockchain -->
@@ -100,26 +112,19 @@
           <ul class="dropdown-menu">
             <li><span class="dropdown-item cursor-points" @click="selectChain(42161, 'Arbitrum')">Arbitrum</span></li>
             <li><span class="dropdown-item cursor-points" @click="selectChain(8453, 'Base')">Base</span></li>
-            <li>
-              <span class="dropdown-item cursor-points" @click="selectChain(666666666, 'Degen Chain')"
-                >Degen Chain</span
-              >
-            </li>
+            <li><span class="dropdown-item cursor-points" @click="selectChain(666666666, 'Degen Chain')">Degen Chain</span></li>
             <li><span class="dropdown-item cursor-points" @click="selectChain(1, 'Ethereum')">Ethereum</span></li>
             <li><span class="dropdown-item cursor-points" @click="selectChain(10, 'Optimism')">Optimism</span></li>
-            <li>
-              <span class="dropdown-item cursor-points" @click="selectChain(137, 'Polygon PoS Chain')"
-                >Polygon PoS Chain</span
-              >
-            </li>
+            <li><span class="dropdown-item cursor-points" @click="selectChain(137, 'Polygon PoS Chain')">Polygon PoS Chain</span></li>
           </ul>
         </div>
+        <small class="mb-4">
+          Note that the track data will be entered in the smart contract on Degen Chain, 
+          even if track itself is on another chain.
+        </small>
       </div>
 
-      <small class="mb-4"
-        >Note that the track data will be entered in the smart contract on Degen Chain, even if track itself is on
-        another chain.</small
-      >
+      <button @click="loadTrack" class="btn btn-success mt-3">Load Track</button>
 
       <!-- Buttons div -->
       <div class="d-flex justify-content-center mt-5 mb-5">
@@ -173,6 +178,7 @@ import Image from '~/components/Image.vue'
 import SwitchChainButton from '~/components/SwitchChainButton.vue'
 import WaitingToast from '~/components/WaitingToast'
 import FileUploadModal from '~/components/storage/FileUploadModal.vue'
+import { fetchMusicNftData } from '~/utils/audioUtils'
 
 export default {
   name: 'PlaylistCreate',
@@ -188,6 +194,7 @@ export default {
       tAddress: null,
       tChainId: 666666666,
       tChainName: 'Degen Chain',
+      tNftId: 1,
       waitingCreate: false,
       waitingData: false,
     }
@@ -242,6 +249,9 @@ export default {
     async createPlaylist() {
       // TODO: check if track NFT exists and returns metadata with audio URL or animation URL
       this.waitingCreate = true
+
+      // load track data
+      const trackLoaded = await this.loadTrack()
     },
 
     async fetchData() {
@@ -273,6 +283,25 @@ export default {
       this.pImage = imageUrl.replace('?.img', '')
     },
 
+    async loadTrack() {
+      const provider = this.$getProviderForChain(Number(this.tChainId))
+      const trackData = await fetchMusicNftData(window, provider, this.tAddress, this.tNftId, this.tChainId);
+      console.log(trackData)
+
+      if (trackData.success) {
+        return true
+      } else {
+        if (trackData?.message) {
+          console.error(trackData.message)
+          this.toast.error(trackData.message)
+          return false
+        }
+
+        this.toast.error('Failed to load track')
+        return false
+      }
+    },
+
     selectChain(chainId, chainName) {
       this.tChainId = chainId
       this.tChainName = chainName
@@ -281,8 +310,9 @@ export default {
 
   setup() {
     const { address, chainId, isActivated, signer } = useEthers()
+    const toast = useToast()
 
-    return { address, chainId, isActivated, signer }
+    return { address, chainId, isActivated, signer, toast }
   },
 }
 </script>

@@ -2,9 +2,9 @@
   <div class="card m-3">
     <div class="card-body row d-flex justify-content-evenly">
       <div class="col-md-6 text-center mb-2 mt-2">
-        <span class="dropup-center dropup align-text-top" v-if="currentTrack?.title">
+        <span class="dropup-center dropup align-text-top" v-if="currentTrack?.name">
           <span class="dropdown-toggle me-4 cursor-pointer h6" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ currentTrack.title }}
+            {{ currentTrack.name }}
           </span>
 
           <ul class="dropdown-menu">
@@ -14,7 +14,7 @@
               :key="index"
               @click="skipToSong(index)"
             >
-              {{ (index + 1) }}) {{ track?.title }} {{ index === currentTrackIndex ? ' ♫' : '' }}
+              {{ (index + 1) }}) {{ track?.name }} {{ index === currentTrackIndex ? ' ♫' : '' }}
             </li>
 
             <li><hr/></li>
@@ -60,6 +60,7 @@ import { useAudioStore } from '~/store/audio'
 
 export default {
   name: 'AudioPlayer',
+
   data() {
     return {
       currentTime: 0,
@@ -70,6 +71,12 @@ export default {
       sound: null,
       timer: null,
       userStartedListening: false,
+    }
+  },
+
+  mounted() {
+    if (this.getAudioQueue.length > 0) {
+      this.currentTrack = this.getAudioQueue[this.currentTrackIndex]
     }
   },
 
@@ -128,7 +135,7 @@ export default {
 
       this.sound.stop()
       this.currentTrack = this.getAudioQueue[this.currentTrackIndex]
-      this.loadTrack(this.currentTrack.url)
+      this.loadTrack(this.currentTrack.audioUrl)
     },
 
     pause() {
@@ -152,7 +159,7 @@ export default {
 
       if (!this.sound) {
         this.currentTrack = this.getAudioQueue[this.currentTrackIndex]
-        this.loadTrack(this.currentTrack.url)
+        this.loadTrack(this.currentTrack.audioUrl)
       } else {
         this.sound.play()
       }
@@ -169,7 +176,7 @@ export default {
 
       this.sound.stop()
       this.currentTrack = this.getAudioQueue[this.currentTrackIndex]
-      this.loadTrack(this.currentTrack.url)
+      this.loadTrack(this.currentTrack.audioUrl)
     },
 
     restart() {
@@ -183,7 +190,11 @@ export default {
     skipToSong(index) {
       this.playing = false
       this.stopTimer()
-      this.sound.stop()
+
+      if (this.sound) {
+        this.sound.stop()
+      }
+      
       this.sound = null
       this.currentTrackIndex = index
       this.playSongs()

@@ -52,12 +52,12 @@ export default {
   mounted() {
     const tracks = [
       {
-        title: 'Got Dat Degen',
-        url: 'https://ipfs.filebase.io/ipfs/QmTRF3BfANSWVnAzwZmkEqho537Ugrgrh4VRaVFXyWhgmU/got-dat-degen.mp3',
+        name: 'Got Dat Degen',
+        audioUrl: 'https://ipfs.filebase.io/ipfs/QmTRF3BfANSWVnAzwZmkEqho537Ugrgrh4VRaVFXyWhgmU/got-dat-degen.mp3',
       },
       {
-        title: 'Degen Name, Degen Fame',
-        url: 'https://nftdegeniggy.myfilebase.com/ipfs/QmZ8keL488WqXV41K4V1D4zC7AEzpvhKnM2kp2C2NneTNk/degen-name-degen-fame-2.mp3',
+        name: 'Degen Name, Degen Fame',
+        audioUrl: 'https://nftdegeniggy.myfilebase.com/ipfs/QmZ8keL488WqXV41K4V1D4zC7AEzpvhKnM2kp2C2NneTNk/degen-name-degen-fame-2.mp3',
       },
     ]
 
@@ -68,8 +68,8 @@ export default {
   methods: {
     addSong() {
       const newSong = {
-        title: String(this.songTitle).trim(),
-        url: String(this.songUrl).trim(),
+        name: String(this.songTitle).trim(),
+        audioUrl: String(this.songUrl).trim(),
       }
 
       this.audioStore.addToQueue(newSong)
