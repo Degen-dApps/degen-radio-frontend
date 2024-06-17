@@ -14,7 +14,7 @@
               :key="index"
               @click="skipToSong(index)"
             >
-              {{ (index + 1) }}) {{ track?.name }} {{ index === currentTrackIndex ? ' ♫' : '' }}
+              {{ (index + 1) }}) {{ track?.name }} {{ track?.name === currentTrack?.name ? ' ♫' : '' }}
             </li>
 
             <li><hr/></li>
@@ -88,6 +88,10 @@ export default {
       return this.audioStore.currentTrackIndex
     },
 
+    currentTrackName() {
+      return this.audioStore.queue[this.currentTrackIndex]?.name
+    },
+
     durationFormatted() {
       return this.formatTime(this.duration)
     },
@@ -98,6 +102,10 @@ export default {
 
     getAudioQueueLength() {
       return this.audioStore.queue.length
+    },
+
+    getPlayTrigger() {
+      return this.audioStore.playTrigger
     },
   },
 
@@ -210,6 +218,17 @@ export default {
       }, 1000)
     },
 
+    stop() {
+      this.playing = false
+      this.stopTimer()
+
+      if (this.sound) {
+        this.sound.stop()
+      }
+
+      this.sound = null
+    },
+
     stopTimer() {
       clearInterval(this.timer)
       this.timer = null
@@ -222,6 +241,10 @@ export default {
   },
 
   watch: {
+    getPlayTrigger() {
+      this.skipToSong(this.audioStore.currentTrackIndex)
+    },
+
     getAudioQueueLength(newVal, oldVal) {
       if (newVal === 0) {
         // user has cleared the queue, so stop playing

@@ -31,6 +31,7 @@
       </div>
 
       <button @click="addSong" class="btn btn-primary me-2">Add Song</button>
+      <button @click="playNow" class="btn btn-primary me-2">Play Now</button>
       <button @click="clearQueue" class="btn btn-danger">Clear queue</button>
     </div>
   </div>
@@ -79,6 +80,17 @@ export default {
 
     clearQueue() {
       this.audioStore.clearQueue()
+    },
+
+    playNow() {
+      const newSong = {
+        name: String(this.songTitle).trim(),
+        audioUrl: String(this.songUrl).trim(),
+      }
+
+      this.audioStore.playNow(newSong)
+      this.songTitle = null
+      this.songUrl = null
     },
   },
 

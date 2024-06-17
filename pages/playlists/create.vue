@@ -124,7 +124,7 @@
         </small>
       </div>
 
-      <button @click="loadTrack" class="btn btn-success mt-3">Load Track</button>
+      <button @click="loadTrack" class="btn btn-success mt-3">Add to queue</button>
 
       <!-- Buttons div -->
       <div class="d-flex justify-content-center mt-5 mb-5">
@@ -290,6 +290,7 @@ export default {
       console.log(trackData)
 
       if (trackData.success) {
+        this.audioStore.playNow(trackData.nftData)
         return true
       } else {
         if (trackData?.message) {
