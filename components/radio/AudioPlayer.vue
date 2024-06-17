@@ -8,15 +8,19 @@
           </span>
 
           <ul class="dropdown-menu">
-            <li>
-              <span
-                class="dropdown-item h6"
-                v-for="(track, index) in getAudioQueue"
-                :key="index"
-                @click="skipToSong(index)"
-              >
-                {{ track?.title }} {{ index === currentTrackIndex ? ' ♫' : '' }}
-              </span>
+            <li 
+              class="dropdown-item h6 cursor-pointer"
+              v-for="(track, index) in getAudioQueue"
+              :key="index"
+              @click="skipToSong(index)"
+            >
+              {{ (index + 1) }}) {{ track?.title }} {{ index === currentTrackIndex ? ' ♫' : '' }}
+            </li>
+
+            <li><hr/></li>
+
+            <li class="dropdown-item h6 cursor-pointer" @click="audioStore.shuffleQueue()">
+              <i class="bi bi-shuffle"></i> Shuffle
             </li>
           </ul>
         </span>
@@ -26,13 +30,25 @@
         </span>
       </div>
 
+      <!-- Button -->
       <div class="col-md-6 row d-flex justify-content-evenly">
+
         <button class="col btn btn-outline-primary me-2" @click="previousTrack">
           <i class="bi bi-rewind-fill"></i>
         </button>
-        <button v-if="!playing" class="col btn btn-primary me-2" @click="play"><i class="bi bi-play-fill"></i></button>
-        <button v-if="playing" class="col btn btn-primary me-2" @click="pause"><i class="bi bi-pause-fill"></i></button>
-        <button class="col btn btn-outline-primary" @click="nextTrack"><i class="bi bi-fast-forward-fill"></i></button>
+
+        <button v-if="!playing" class="col btn btn-primary me-2" @click="play">
+          <i class="bi bi-play-fill"></i>
+        </button>
+        
+        <button v-if="playing" class="col btn btn-primary me-2" @click="pause">
+          <i class="bi bi-pause-fill"></i>
+        </button>
+        
+        <button class="col btn btn-outline-primary" @click="nextTrack">
+          <i class="bi bi-fast-forward-fill"></i>
+        </button>
+
       </div>
     </div>
   </div>

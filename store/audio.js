@@ -18,5 +18,9 @@ export const useAudioStore = defineStore({
     clearQueue() {
       this.queue = []
     },
+
+    shuffleQueue() {
+      this.queue = this.queue.sort(() => Math.random() - 0.5)
+    }
   },
 })
