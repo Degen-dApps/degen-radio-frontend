@@ -178,6 +178,7 @@ import Image from '~/components/Image.vue'
 import SwitchChainButton from '~/components/SwitchChainButton.vue'
 import WaitingToast from '~/components/WaitingToast'
 import FileUploadModal from '~/components/storage/FileUploadModal.vue'
+import { useAudioStore } from '~/store/audio'
 import { fetchMusicNftData } from '~/utils/audioUtils'
 
 export default {
@@ -251,7 +252,7 @@ export default {
       this.waitingCreate = true
 
       // load track data
-      const trackLoaded = await this.loadTrack()
+      //const trackLoaded = await this.loadTrack()
     },
 
     async fetchData() {
@@ -285,7 +286,7 @@ export default {
 
     async loadTrack() {
       const provider = this.$getProviderForChain(Number(this.tChainId))
-      const trackData = await fetchMusicNftData(window, provider, this.tAddress, this.tNftId, this.tChainId);
+      const trackData = await fetchMusicNftData(window, provider, this.tAddress, this.tNftId, this.tChainId)
       console.log(trackData)
 
       if (trackData.success) {
@@ -309,10 +310,11 @@ export default {
   },
 
   setup() {
+    const audioStore = useAudioStore()
     const { address, chainId, isActivated, signer } = useEthers()
     const toast = useToast()
 
-    return { address, chainId, isActivated, signer, toast }
+    return { address, audioStore, chainId, isActivated, signer, toast }
   },
 }
 </script>

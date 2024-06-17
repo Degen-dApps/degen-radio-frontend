@@ -65,7 +65,6 @@ export default {
     return {
       currentTime: 0,
       currentTrack: null,
-      currentTrackIndex: 0,
       duration: 0,
       playing: false,
       sound: null,
@@ -83,6 +82,10 @@ export default {
   computed: {
     currentTimeFormatted() {
       return this.formatTime(this.currentTime)
+    },
+
+    currentTrackIndex() {
+      return this.audioStore.currentTrackIndex
     },
 
     durationFormatted() {
@@ -127,10 +130,10 @@ export default {
     nextTrack() {
       this.playing = false
       this.stopTimer()
-      this.currentTrackIndex++
+      this.audioStore.setCurrentTrackIndex(this.currentTrackIndex + 1)
 
       if (this.currentTrackIndex >= this.getAudioQueue.length) {
-        this.currentTrackIndex = 0
+        this.audioStore.setCurrentTrackIndex(0)
       }
 
       this.sound.stop()
@@ -168,10 +171,10 @@ export default {
     previousTrack() {
       this.playing = false
       this.stopTimer()
-      this.currentTrackIndex--
+      this.audioStore.setCurrentTrackIndex(this.currentTrackIndex - 1)
 
       if (this.currentTrackIndex < 0) {
-        this.currentTrackIndex = this.getAudioQueue.length - 1
+        this.audioStore.setCurrentTrackIndex(this.getAudioQueue.length - 1)
       }
 
       this.sound.stop()
@@ -196,7 +199,7 @@ export default {
       }
       
       this.sound = null
-      this.currentTrackIndex = index
+      this.audioStore.setCurrentTrackIndex(index)
       this.playSongs()
     },
 
@@ -223,7 +226,7 @@ export default {
       if (newVal === 0) {
         // user has cleared the queue, so stop playing
         this.playing = false
-        this.currentTrackIndex = 0
+        this.audioStore.setCurrentTrackIndex(0)
         this.stopTimer()
         if (this.sound) {
           this.sound.stop()

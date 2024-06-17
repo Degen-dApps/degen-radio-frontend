@@ -5,6 +5,7 @@ export const useAudioStore = defineStore({
 
   state: () => {
     return {
+      currentTrackIndex: 0,
       queue: [], // audio objects, e.g. { name: '...', audioUrl: '...' }
     }
   },
@@ -17,6 +18,10 @@ export const useAudioStore = defineStore({
 
     clearQueue() {
       this.queue = []
+    },
+
+    setCurrentTrackIndex(index) {
+      this.currentTrackIndex = index
     },
 
     shuffleQueue() {
