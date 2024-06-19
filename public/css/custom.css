@@ -257,6 +257,10 @@ a:hover {
   width: 100%;
 }
 
+.audio-player-card {
+  border: 1px solid #38B6FF;
+}
+
 .force-circle {
   clip-path: circle();
 }

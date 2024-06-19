@@ -7,7 +7,7 @@ export const useAudioStore = defineStore({
     return {
       currentTrackIndex: 0,
       playTrigger: 1, // increment to trigger play
-      queue: [], // audio objects, e.g. { name: '...', audioUrl: '...' }
+      queue: [], // audio objects, e.g. { name: '...', audioUrl: '...', format: '...' }
     }
   },
 

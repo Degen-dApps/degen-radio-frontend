@@ -133,10 +133,12 @@ export default {
 
     // connect to wallet if user was connected before
     if (!this.isActivated) {
-      if (localStorage.getItem('connected') == 'metamask') {
-        this.connectMetaMask()
-      } else if (localStorage.getItem('connected') == 'coinbase') {
-        this.connectCoinbase()
+      try {
+        if (localStorage.getItem('connected') == 'metamask') {
+          this.connectMetaMask()
+        }
+      } catch (error) {
+        console.log('Error connecting to wallet:', error)
       }
     }
 
@@ -150,7 +152,7 @@ export default {
 
     // check if referrer in the URL
     this.referrer = this.$route.query.ref
-    if (this.referrer) {
+    if (this.referrer && this.isActivated) {
       this.parseReferrer()
     }
   },
@@ -184,15 +186,6 @@ export default {
   methods: {
     getDomainHolder,
     getDomainName, // imported function from utils/domainUtils.js
-
-    async connectCoinbase() {
-      await this.connectTo('BrowserWallet', {
-        target: 'rdns',
-        rdns: RdnsEnum.coinbase,
-      })
-      localStorage.setItem('connected', 'coinbase') // store in local storage to autoconnect next time
-      document.getElementById('closeConnectModal').click()
-    },
 
     async connectMetaMask() {
       await this.connectTo('BrowserWallet', {

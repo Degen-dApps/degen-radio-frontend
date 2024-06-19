@@ -1,0 +1,44 @@
+{
+  "tokens": [
+    {
+      "chainId": 666666666,
+      "address": "0x0000000000000000000000000000000000000000",
+      "decimals": 18,
+      "name": "DEGEN",
+      "symbol": "DEGEN",
+      "swap": true
+    },
+    {
+      "chainId": 666666666,
+      "address": "0xEb54dACB4C2ccb64F8074eceEa33b5eBb38E5387",
+      "decimals": 18,
+      "name": "Wrapped DEGEN",
+      "symbol": "WDEGEN",
+      "swap": true
+    },
+    {
+      "chainId": 666666666,
+      "address": "0xeB1C32Ea4E392346795aED3607f37646E2a9c13F",
+      "decimals": 18,
+      "name": "All Time High",
+      "symbol": "ATH",
+      "swap": true
+    },
+    {
+      "chainId": 666666666,
+      "address": "0x373e256C754Bf82f09071141b92bEafb83c38c68",
+      "decimals": 18,
+      "name": "just an average degen",
+      "symbol": "JAAD",
+      "swap": true
+    },
+    {
+      "chainId": 666666666,
+      "address": "0x2B3006D34359F3C23429167a659b18cC9c6F8bcA",
+      "decimals": 18,
+      "name": "Degen Pepe",
+      "symbol": "DEPE",
+      "swap": true
+    }
+  ]
+}

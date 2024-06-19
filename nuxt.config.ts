@@ -50,7 +50,7 @@ export default defineNuxtConfig({
     public: {
       airdropApAddress: '', // chat token claim for APs
       airdropClaimDomainsAddress: '', // chat token claim for domain holders
-      blockExplorerBaseUrl: 'https://explorer.degen.tips',
+      blockExplorerBaseUrl: 'https://sepolia.etherscan.io',
       chatChannels: {
         // go to Orbis Dashboard (https://useorbis.com/dashboard), create a new Project and then create a new Context for each of the channels below
         general: 'kjzl6cwe1jw149zsapqlwdgyu1eu3a489jlhpmwsrcxbh7z3wh09lwgpclgay81', // general discussion channel
@@ -67,9 +67,9 @@ export default defineNuxtConfig({
       fileUploadTokenService: process.env.FILE_UPLOAD_SERVICE || 'netlify', // "netlify" or "vercel" (or leave empty for no file uploads)
       getPostsLimit: 30, // number of posts to fetch from Orbis in the getPosts() function
       governanceUrl: 'https://warpcast.com/~/channel/degen', // governance url (snapshot, Tally, etc.)
-      iggyPostAddress: '0x99Dbf11aCd46baFBCE82506FaeB4F13E6Ea1726A',
-      iggyPostMinterAddress: '0xabf9960132818049340253C3Ca0551F92Db856d7',
-      iggyPostStatsAddress: '0x0BF6333Fc85159663A30Ac89FD02c5031B97c5ee',
+      iggyPostAddress: '0x0BF6333Fc85159663A30Ac89FD02c5031B97c5ee',
+      iggyPostMinterAddress: '0xc486B08Ed47fFe5c1b4b1A2ff5c671EA0083D9bA',
+      iggyPostStatsAddress: '0x3Fa0EaC3058828Cc4BA97F51A33597C695bF6F9e',
       imagekitEndpoint: process.env.IMAGEKIT_ENDPOINT,
       imagekitPublicKey: process.env.IMAGEKIT_PUBLIC_KEY,
       ipfsGateway: 'https://ipfs.io/ipfs/',
@@ -95,16 +95,15 @@ export default defineNuxtConfig({
       projectDescription: 'Stream Music NFTs & Create Your Own Playlists!',
       projectTwitter: 'https://twitter.com/iggysocial',
       projectUrl: 'https://degenradio.lol', // without trailing slash!
-      punkMinterAddress: '0x1f8cf0bc042308677838fB50f264992A4e783610', // punk domain minter contract address
-      punkNumberOfPrices: 5, // number of different prices (based on domain length), usually 1 (price()) or 5 (price1char() - price5char())
-      punkTldAddress: '0x4087fb91A1fBdef05761C02714335D232a2Bf3a1', // punk domain TLD address
+      punkMinterAddress: '', // punk domain minter contract address
+      punkNumberOfPrices: 1, // number of different prices (based on domain length), usually 1 (price()) or 5 (price1char() - price5char())
+      punkTldAddress: '0x1DD820F4f48eBC2B8e7F666F34fbC5820808074e', // punk domain TLD address
       radio: {
-        metadataAddress: '0xF9896481b2937C3BdcDCf6eC645e059Eb96668Ae',
-        playlistFactoryAddress: '0xAb63D72412D17cD4fd052c58c4c512D245A3B41e',
-        playlistNftAddress: '0x2ecCADbCF2C6b3B8daAd5D125D66e58eE8C91415',
+        metadataAddress: '0xc6D85C4786bc678aB59a3B4960D73EB3266Cfa7E',
+        playlistFactoryAddress: '0x3047F44d0A8383EDd59A583092d7E6DB7ade85e0',
+        playlistNftAddress: '0xbb6fca36B0d0107773a410103e9f1f459C3eb95e',
       },
       randomPostsNumber: 1, // number of random post NFTs to show in the sidebar widget
-      rpcCustom: 'https://rpc.degen.tips', // Custom RPC URL
       showFeatures: {
         // show/hide features in sidebars (if you have too many "true", make the sidebar scrollable --> sidebarLeftSticky: false)
         airdrop: true,
@@ -118,15 +117,15 @@ export default defineNuxtConfig({
       sidebarLeftSticky: false, // make the left sidebar sticky (always visible)
       stakingContractAddress: '', // this is also the stake/gov token address
       stakeTokenSymbol: 'TBD', // stake token symbol (governance token symbol)
-      supportedChainId: 666666666,
+      supportedChainId: 11155111,
       swapPriceImpactMaxBps: 1000, // max price impact in bips (1 bps = 0.01%, 1000bps = 10%) for the swap function
       swapRouterAddress: '', // iggy swap router contract address
       tenorApiKey: process.env.TENOR_KEY || '',
       thirdwebClientId: process.env.THIRDWEB_CLIENT_ID || '',
-      tldName: '.degen',
+      tldName: '.sepolia',
       tokenAddress: null, // leave null if it's a native token of the chain
       tokenDecimals: 18,
-      tokenSymbol: 'DEGEN',
+      tokenSymbol: 'ETH',
     },
   },
   vite: {

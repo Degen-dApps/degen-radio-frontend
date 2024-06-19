@@ -14,14 +14,9 @@ export default defineNuxtPlugin(() => {
   }
 
   function getFallbackProvider(networkId) {
-    let mainRpc = config.rpcCustom
     let chain = chains.find(chain => chain.chainId == networkId)
 
-    if (!mainRpc) {
-      mainRpc = chain.rpc1
-    }
-
-    let urls = [mainRpc]
+    let urls = [chain.rpc1]
 
     if (urls) {
       const providers = urls.map(url => new ethers.providers.JsonRpcProvider(url))
@@ -142,5 +137,13 @@ const chains = [
     rpc1: 'https://polygon-rpc.com',
     rpc2: 'https://rpc.ankr.com/polygon',
     blockExplorer: 'https://polygonscan.com',
+  },
+  {
+    chainId: 11155111,
+    name: 'Sepolia',
+    currency: 'ETH',
+    rpc1: 'https://rpc.sepolia.org',
+    rpc2: 'https://1rpc.io/sepolia',
+    blockExplorer: 'https://sepolia.etherscan.io',
   },
 ]

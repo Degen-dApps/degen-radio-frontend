@@ -1,5 +1,5 @@
 <template>
-  <div class="card m-3">
+  <div class="card m-3 audio-player-card">
     <div class="card-body row d-flex justify-content-evenly">
       <div class="col-md-6 text-center mb-2 mt-2">
         <span class="dropup-center dropup align-text-top" v-if="currentTrack?.name">
@@ -116,9 +116,10 @@ export default {
       return `${minutes}:${secs < 10 ? '0' : ''}${secs}`
     },
 
-    loadTrack(src) {
+    loadTrack(src, format) {
       this.sound = new Howl({
         src: [src],
+        format: [format || 'mp3'],
         onplay: () => {
           this.duration = this.sound.duration()
           this.startTimer()
@@ -146,7 +147,7 @@ export default {
 
       this.sound.stop()
       this.currentTrack = this.getAudioQueue[this.currentTrackIndex]
-      this.loadTrack(this.currentTrack.audioUrl)
+      this.loadTrack(this.currentTrack.audioUrl, this.currentTrack?.format)
     },
 
     pause() {
@@ -170,7 +171,7 @@ export default {
 
       if (!this.sound) {
         this.currentTrack = this.getAudioQueue[this.currentTrackIndex]
-        this.loadTrack(this.currentTrack.audioUrl)
+        this.loadTrack(this.currentTrack.audioUrl, this.currentTrack?.format)
       } else {
         this.sound.play()
       }
@@ -187,7 +188,7 @@ export default {
 
       this.sound.stop()
       this.currentTrack = this.getAudioQueue[this.currentTrackIndex]
-      this.loadTrack(this.currentTrack.audioUrl)
+      this.loadTrack(this.currentTrack.audioUrl, this.currentTrack?.format)
     },
 
     restart() {

@@ -86,7 +86,15 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
       const mdResult = await axios.get(validIpfsUrlData.validUrl)
       metadata = mdResult.data
     } else if (tokenUri.startsWith('http')) {
-      const mdResult = await axios.get(tokenUri)
+      const validIpfsUrlData = await getWorkingIpfsGatewayUrl(tokenUri)
+
+      let nftUrl = tokenUri
+
+      if (validIpfsUrlData.success) {
+        nftUrl = validIpfsUrlData.validUrl
+      }
+
+      const mdResult = await axios.get(nftUrl)
       metadata = mdResult.data
     } else { // TODO: arweave, swarm, etc.
       return { success: false, message: 'Invalid token URI' }
@@ -95,7 +103,7 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
     console.log('metadata:', metadata)
 
     const nftData = {
-      name: metadata.name.replace(` #${nftId}`, ""),
+      name: metadata.name, //.replace(` #${nftId}`, ""),
       address: nftAddress,
       tokenId: nftId,
       chainId: chainId
@@ -104,14 +112,29 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
     if (metadata?.image) {
       nftData.image = metadata.image
     }
+
+    if (metadata?.description) {
+      nftData.description = metadata.description
+    }
+
+    if (metadata?.external_url) {
+      nftData.externalUrl = metadata.external_url
+    }
+
+    if (metadata?.artist_name) {
+      nftData.artistName = metadata.artist_name
+      nftData.name = metadata.artist_name + " - " + nftData.name
+    }
     
     // check if metadata has an audio_url field
     if (metadata?.audio_url) {
       let audioUrl = metadata.audio_url
 
-      if (audioUrl.startsWith('ipfs://')) {
-        const audioUrlData = await getWorkingIpfsGatewayUrl(audioUrl)
+      const audioUrlData = await getWorkingIpfsGatewayUrl(audioUrl)
+
+      if (audioUrlData.success) {
         audioUrl = audioUrlData.validUrl
+        nftData.format = audioUrlData.format
       }
 
       nftData.audioUrl = audioUrl
@@ -122,9 +145,11 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
     } else if (metadata?.animation_url) {
       let audioUrl = metadata.animation_url
 
-      if (audioUrl.startsWith('ipfs://')) {
-        const audioUrlData = await getWorkingIpfsGatewayUrl(audioUrl)
+      const audioUrlData = await getWorkingIpfsGatewayUrl(audioUrl)
+
+      if (audioUrlData.success) {
         audioUrl = audioUrlData.validUrl
+        nftData.format = audioUrlData.format
       }
 
       nftData.audioUrl = audioUrl
@@ -143,6 +168,8 @@ function storeNftAudioData(nftData, window) {
   // nftData: { name: '...', image: '(optional)', address: '...', tokenId: '...', chainId: '...', audioUrl: '...' }
 
   const key = String(nftData.address) + "-" + String(nftData.tokenId) + "-" + String(nftData.chainId)
+
+  console.log('storing nftData:', nftData)
 
   window.localStorage.setItem(key, JSON.stringify(nftData))
 }

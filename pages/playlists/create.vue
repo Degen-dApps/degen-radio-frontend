@@ -124,11 +124,12 @@
         </small>
       </div>
 
-      <button @click="loadTrack" class="btn btn-success mt-3">Add to queue</button>
+      <button @click="playNow" class="btn btn-success btn-sm mt-3">Play song</button>
 
       <!-- Buttons div -->
       <div class="d-flex justify-content-center mt-5 mb-5">
-        <!-- Create Collection button -->
+
+        <!-- Create Playlist button -->
         <button
           :disabled="waitingCreate || !fieldsValid"
           v-if="isActivated && isSupportedChain"
@@ -151,7 +152,10 @@
           class="btn btn-primary"
           btnText="Connect wallet"
         />
+
+        <!-- Switch Chain button -->
         <SwitchChainButton v-if="isActivated && !isSupportedChain" />
+
       </div>
     </div>
   </div>
@@ -248,11 +252,104 @@ export default {
 
   methods: {
     async createPlaylist() {
-      // TODO: check if track NFT exists and returns metadata with audio URL or animation URL
       this.waitingCreate = true
 
       // load track data
-      //const trackLoaded = await this.loadTrack()
+      const trackData = await this.loadTrack()
+
+      if (!trackData.success) {
+        this.waitingCreate = false
+        console.error(trackData.message)
+        this.toast.error(trackData.message)
+        return
+      }
+
+      // get provider
+      let provider = this.$getFallbackProvider(this.$config.supportedChainId)
+
+      if (this.isActivated && this.chainId === this.$config.supportedChainId) {
+        // fetch provider from user's MetaMask
+        provider = this.signer
+      }
+
+      const factoryInterface = new ethers.utils.Interface([
+        'event PlaylistCreated(address indexed caller_, address indexed playlistAddress_, uint256 paid_)',
+        'function createPlaylist(string name, string description, string image, address trackAddress, uint256 trackNftId, uint256 trackChainId) external payable returns (address playlistAddress_)',
+      ])
+
+      const factoryContract = new ethers.Contract(this.$config.radio.playlistFactoryAddress, factoryInterface, provider)
+
+      try {
+        const tx = await factoryContract.createPlaylist(
+          this.pName,
+          this.pDescription,
+          this.pImage,
+          this.tAddress,
+          this.tNftId,
+          this.tChainId,
+          { value: this.priceWei },
+        )
+
+        const toastWait = this.toast(
+          {
+            component: WaitingToast,
+            props: {
+              text: 'Please wait for your transaction to confirm. Click on this notification to see transaction in the block explorer.',
+            },
+          },
+          {
+            type: 'info',
+            onClick: () => window.open(this.$config.blockExplorerBaseUrl + '/tx/' + tx.hash, '_blank').focus(),
+          },
+        )
+
+        const receipt = await tx.wait()
+        console.log(receipt)
+
+        if (receipt.status === 1) {
+          this.waitingCreate = false
+
+          this.toast.dismiss(toastWait)
+
+          this.toast('You have successfully created an onchain playlist!', {
+            type: 'success',
+            onClick: () => window.open(this.$config.blockExplorerBaseUrl + '/tx/' + tx.hash, '_blank').focus(),
+          })
+
+          // get PlaylistCreated event from the receipt
+          const events = receipt.events
+          const [ event ] = events.filter((x) => x.event === "PlaylistCreated")
+          const playlistAddress = event.args.playlistAddress_
+
+          // redirect to the playlist page
+          return this.$router.push({ path: '/playlist', query: { id: playlistAddress } })
+        } else {
+          this.waitingCreate = false
+          this.toast.dismiss(toastWait)
+          this.toast('Transaction has failed.', {
+            type: 'error',
+            onClick: () => window.open(this.$config.blockExplorerBaseUrl + '/tx/' + tx.hash, '_blank').focus(),
+          })
+          console.log(receipt)
+        }
+      } catch (e) {
+        console.error(e)
+
+        try {
+          let extractMessage = e.message.split('reason=')[1]
+          extractMessage = extractMessage.split(', method=')[0]
+          extractMessage = extractMessage.replace(/"/g, '')
+          extractMessage = extractMessage.replace('execution reverted:', 'Error:')
+
+          console.log(extractMessage)
+
+          this.toast(extractMessage, { type: 'error' })
+        } catch (e) {
+          this.toast('Transaction has failed.', { type: 'error' })
+        }
+
+        this.waitingCreate = false
+      }
     },
 
     async fetchData() {
@@ -287,20 +384,26 @@ export default {
     async loadTrack() {
       const provider = this.$getProviderForChain(Number(this.tChainId))
       const trackData = await fetchMusicNftData(window, provider, this.tAddress, this.tNftId, this.tChainId)
-      console.log(trackData)
+
+      if (trackData.success) {
+        return { success: true, nftData: trackData.nftData }
+      } else {
+        if (trackData?.message) {
+          return { success: false, message: trackData.message }
+        }
+
+        return { success: false, message: 'Failed to load track'}
+      }
+    },
+
+    async playNow() {
+      const trackData = await this.loadTrack()
 
       if (trackData.success) {
         this.audioStore.playNow(trackData.nftData)
-        return true
       } else {
-        if (trackData?.message) {
-          console.error(trackData.message)
-          this.toast.error(trackData.message)
-          return false
-        }
-
-        this.toast.error('Failed to load track')
-        return false
+        console.error(trackData.message)
+        this.toast.error(trackData.message)
       }
     },
 
