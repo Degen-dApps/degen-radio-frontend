@@ -1,21 +1,94 @@
 import { ethers } from 'ethers'
 
 const usernameExtension = '-username'
-const collectionExtension = '-collection'
 const referrerKey = 'referrer'
 
-export function fetchCollection(window, cAddress) {
+/**
+ * 
+ * @param {*} window 
+ * @param {*} address Blockchain address of smart contract or EOA
+ * @param {*} objType E.g. 'playlist', 'nftplaylist', 'collection'
+ * @param {*} expiration In milliseconds (0 means never expire, fetch from the config file)
+ * @returns 
+ */
+export function fetchData(window, address, objType, expiration) {
   if (!window) {
-    console.log('No window object in fetchCollection')
+    console.log(`No window object for ${objType} in storageUtils/fetchData`)
     return null
   }
 
   try {
-    const config = useRuntimeConfig()
-    const expiration = config.expiryCollections // in milliseconds
     const currentTime = new Date().getTime()
 
-    const objectString = window.localStorage.getItem(String(cAddress).toLowerCase() + collectionExtension)
+    const objectString = window.localStorage.getItem(String(address).toLowerCase() + "-" + objType)
+
+    if (!objectString) {
+      return null
+    }
+
+    const obj = JSON.parse(objectString)
+
+    // check if expired (expiration = 0 means never expire)
+    if (expiration != 0 && obj.stored + expiration < currentTime) {
+      return null
+    }
+
+    if (typeof obj == 'object') {
+      return obj
+    }
+
+    return null
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+/**
+ * 
+ * @param {*} window 
+ * @param {*} addressOrNftId Enter either Playlist address, or PlaylistNft NFT token ID
+ * @returns 
+ */
+export function fetchPlaylistData(window, addressOrNftId) {
+  if (!window) {
+    console.log(`No window object for ${addressOrNftId} in storageUtils/fetchPlaylistData`)
+    return null
+  }
+
+  const config = useRuntimeConfig()
+
+  let objectType;
+  let playlistAddress;
+  let playlistNftAddress = config.radio.playlistNftAddress;
+  let nftId;
+
+  // check if addressOrNftId is an address or an NFT token ID
+  if (ethers.utils.isAddress(addressOrNftId)) {
+    objectType = 'playlist'
+    playlistAddress = addressOrNftId
+    nftId = null
+  } else {
+    objectType = 'nftplaylist'
+    nftId = addressOrNftId
+  }
+
+  if (objectType === 'playlist') {
+    const playlistString = window.localStorage.getItem(String(playlistAddress).toLowerCase() + "-" + objectType)
+
+    if (!playlistString) {
+      return null
+    }
+
+    const playlistObject = JSON.parse(playlistString)
+    // note that playlist object in local storage stores only the playlist NFT ID and never expires
+    nftId = playlistObject.playlistNftId
+  }
+
+  try {
+    const currentTime = new Date().getTime()
+
+    const objectString = window.localStorage.getItem(String(nftId) + "-" + String(playlistNftAddress).toLowerCase() + "-" + objType)
 
     if (!objectString) {
       return null
@@ -99,17 +172,75 @@ export function fetchUsername(window, userAddress) {
   }
 }
 
-export function storeCollection(window, cAddress, collectionObject) {
+/**
+ * 
+ * @param {*} window 
+ * @param {*} address Blockchain address of smart contract or EOA
+ * @param {*} dataObject Data object to store
+ * @param {*} objType E.g. 'playlist', 'nftplaylist', 'collection'
+ * @returns 
+ */
+export function storeData(window, address, dataObject, objType) {
   if (!window) {
-    console.log('No window object in storeCollection')
-    return null
+    console.log(`No window object for ${objType} in storageUtils/storeData`)
+    return { success: false, message: `No window object for ${objType} in storageUtils/storeData` }
   }
 
   const timestamp = new Date().getTime()
 
-  collectionObject['stored'] = timestamp
+  dataObject['stored'] = timestamp
 
-  window.localStorage.setItem(String(cAddress).toLowerCase() + collectionExtension, JSON.stringify(collectionObject))
+  window.localStorage.setItem(String(address).toLowerCase() + "-" + objType, JSON.stringify(dataObject))
+
+  console.log(`${objType} with address ${address} stored successfully`)
+  return { success: true, message: `${objType} with address ${address} stored successfully` }
+}
+
+export function storePlaylistData(window, playlistAddress, playlistNftId, dataObject) {
+  if (!window) {
+    console.log(`No window object for ${playlistAddress} or NFT ID ${playlistNftId} in storageUtils/storePlaylistData`)
+    return { success: false, message: `No window object for ${playlistAddress} or NFT ID ${playlistNftId} in storageUtils/storePlaylistData` }
+  }
+
+  const config = useRuntimeConfig()
+  let nftId = playlistNftId
+  const playlistNftAddress = config.radio.playlistNftAddress
+
+  if (String(playlistAddress).toLowerCase() === String(playlistNftAddress).toLowerCase()) {
+    console.error(`Error: You have entered the address of the Playlist NFT smart contract instead of a Playlist contract`)
+    return { success: false, message: `Error: You have entered the address of the Playlist NFT smart contract instead of a Playlist contract` }
+  }
+
+  if (playlistAddress) {
+    const playlistString = window.localStorage.getItem(String(playlistAddress).toLowerCase() + "-playlist")
+
+    if (!nftId && playlistString) {
+      const playlistObject = JSON.parse(playlistString)
+      // note that playlist object in local storage stores only the playlist NFT ID and never expires
+      nftId = playlistObject.playlistNftId
+    } else if (nftId && playlistString) {
+      const playlistObject = {
+        playlistNftId: nftId
+      }
+
+      window.localStorage.setItem(String(playlistAddress).toLowerCase() + "-playlist", JSON.stringify(playlistObject))
+    }
+  }
+
+  // store data in the playlist NFT object in local storage
+  if (!nftId) {
+    console.error(`Error: No NFT ID found...`)
+    return { success: false, message: `Error: No NFT ID found...` }
+  }
+
+  const timestamp = new Date().getTime()
+
+  dataObject['stored'] = timestamp
+
+  window.localStorage.setItem(String(nftId) + "-" + String(playlistNftAddress).toLowerCase() + "-nftplaylist", JSON.stringify(dataObject))
+
+  console.log(`Playlist data for Playlist NFT ID ${playlistNftId} stored successfully`)
+  return { success: true, message: `Playlist data for Playlist NFT ID ${playlistNftId} stored successfully` }
 }
 
 export function storeReferrer(window, referrerAddress) {
@@ -135,4 +266,40 @@ export function storeUsername(window, userAddress, username) {
   }
 
   window.localStorage.setItem(String(userAddress).toLowerCase() + usernameExtension, JSON.stringify(usernameObject))
+}
+
+/**
+ * 
+ * @param {*} window 
+ * @param {*} address Blockchain address of smart contract or EOA
+ * @param {*} objType E.g. 'playlist', 'nftplaylist', 'collection'
+ * @param {*} fieldName Field name to update in an existing object in local storage
+ * @param {*} fieldValue New field value for a given field name
+ * @returns 
+ */
+export function updateObjectField(window, address, objType, fieldName, fieldValue) {
+  if (!window) {
+    console.error(`No window object for ${fieldName} in storageUtils/updateObjectField`)
+    return { success: false, message: `No window object for ${fieldName} in storageUtils/updateObjectField` }
+  }
+
+  try {
+    const objectString = window.localStorage.getItem(String(address).toLowerCase() + "-" + objType)
+
+    if (!objectString) {
+      console.error(`No object found for ${fieldName} in storageUtils/updateObjectField`)
+      return { success: false, message: `No object found for ${fieldName} in storageUtils/updateObjectField` }
+    }
+
+    const obj = JSON.parse(objectString)
+
+    obj[fieldName] = fieldValue
+
+    window.localStorage.setItem(String(address).toLowerCase() + "-" + objType, JSON.stringify(obj))
+
+    return { success: true, message: `Field ${fieldName} updated successfully` }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: error.message }
+  }
 }

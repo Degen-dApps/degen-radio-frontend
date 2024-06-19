@@ -59,8 +59,9 @@ export default defineNuxtConfig({
       chatTokenImage: '', // chat token image
       chatTokenSymbol: '', // chat token symbol or name
       domainRequiredToPost: true,
-      expiryCollections: 1000 * 60 * 60 * 24 * 7, // must be in milliseconds (0 means no expiration)
-      expiryUsernames: 1000 * 60 * 60 * 24 * 7, // must be in milliseconds (0 means no expiration)
+      expiryCollections: 1000 * 60 * 60 * 24 * 10, // must be in milliseconds (0 means no expiration)
+      expiryPlaylists: 1000 * 60 * 60 * 24 * 10, // must be in milliseconds (0 means no expiration)
+      expiryUsernames: 1000 * 60 * 60 * 24 * 10, // must be in milliseconds (0 means no expiration)
       favicon: '/img/logo.svg',
       fileUploadEnabled: true, // enable/disable file uploads (enable only if external file storage is used, e.g. IPFS via ThirdWeb)
       fileUploadSizeLimit: 1 * 1024 * 1024, // max file upload size in bytes (1 * 1024 * 1024 = 1 MB)
@@ -108,13 +109,13 @@ export default defineNuxtConfig({
         // show/hide features in sidebars (if you have too many "true", make the sidebar scrollable --> sidebarLeftSticky: false)
         airdrop: true,
         governance: false,
-        randomMintedPosts: true,
+        randomMintedPosts: false,
         swap: true,
         stake: false,
         sendTokens: true,
       },
       showRepliesOnHomepage: true, // show replies on the homepage
-      sidebarLeftSticky: false, // make the left sidebar sticky (always visible)
+      sidebarLeftSticky: true, // make the left sidebar sticky (always visible)
       stakingContractAddress: '', // this is also the stake/gov token address
       stakeTokenSymbol: 'TBD', // stake token symbol (governance token symbol)
       supportedChainId: 11155111,

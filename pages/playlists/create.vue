@@ -207,7 +207,7 @@ export default {
 
   mounted() {
     this.isMounted = true
-    this.fetchData()
+    this.fetchFactoryData()
   },
 
   computed: {
@@ -352,7 +352,7 @@ export default {
       }
     },
 
-    async fetchData() {
+    async fetchFactoryData() {
       this.waitingData = true
 
       // fetch provider from hardcoded RPCs

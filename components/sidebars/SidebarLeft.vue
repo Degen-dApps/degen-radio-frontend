@@ -4,6 +4,8 @@
       <div class="sidebar-nav list-group border-0 rounded-0 text-sm-start min-vh-100">
         <div class="card m-2 p-2 bg-light">
           <div v-if="isActivated" class="text-center">
+
+            <!-- Profile image 
             <NuxtLink to="/profile">
               <ProfileImage
                 :key="userStore.getOrbisImage"
@@ -19,6 +21,9 @@
               {{ getTextWithoutBlankCharacters(userStore.getDefaultDomain) }}
             </h6>
 
+            <hr />
+            -->
+
             <!-- Chat tokens -->
             <!--
 						<button v-if="userStore.getChatTokenBalanceWei > 0 && $config.chatTokenAddress" class="btn btn-outline-primary btn-sm mt-2 mb-2 disabled">
@@ -26,7 +31,7 @@
 						</button>
 						-->
 
-            <hr />
+            
           </div>
 
           <ul class="nav nav-pills flex-column">

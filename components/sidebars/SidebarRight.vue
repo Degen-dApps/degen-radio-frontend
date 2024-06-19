@@ -2,8 +2,25 @@
   <div class="col-auto col-lg-3 px-0 mt-1">
     <div id="sidebar2" class="collapse collapse-horizontal" :class="{ show: sidebarStore.showRightSidebar }">
       <div id="sidebar-nav" class="list-group border-0 rounded-0 text-sm-start min-vh-100">
-        <!-- Mint/register a domain name -->
+        <!-- Mint/register a domain name 
         <NameMintWidget />
+        -->
+
+        <!-- Random track -->
+        <div class="card m-2 bg-light">
+          <div class="card-header bg-light">Random Song</div>
+          <div class="card-body sidebar-card-body">
+            <p>Random song</p>
+          </div>
+        </div>
+
+        <!-- Random playlists -->
+        <div class="card m-2 bg-light">
+          <div class="card-header bg-light">5 Random Playlists</div>
+          <div class="card-body sidebar-card-body">
+            <p>Random playlists to check out</p>
+          </div>
+        </div>
 
         <!-- Referrals 
 				<ReferralWidget />
