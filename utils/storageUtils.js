@@ -51,6 +51,7 @@ export function fetchData(window, address, objType, expiration) {
  * @returns 
  */
 export function fetchPlaylistData(window, addressOrNftId) {
+
   if (!window) {
     console.log(`No window object for ${addressOrNftId} in storageUtils/fetchPlaylistData`)
     return null
@@ -88,13 +89,15 @@ export function fetchPlaylistData(window, addressOrNftId) {
   try {
     const currentTime = new Date().getTime()
 
-    const objectString = window.localStorage.getItem(String(nftId) + "-" + String(playlistNftAddress).toLowerCase() + "-" + objType)
+    const objectString = window.localStorage.getItem(String(Number(nftId)) + "-" + String(playlistNftAddress).toLowerCase() + "-nftplaylist")
 
     if (!objectString) {
       return null
     }
 
     const obj = JSON.parse(objectString)
+
+    const expiration = config.expiryPlaylists // in milliseconds
 
     // check if expired (expiration = 0 means never expire)
     if (expiration != 0 && obj.stored + expiration < currentTime) {
@@ -110,6 +113,28 @@ export function fetchPlaylistData(window, addressOrNftId) {
     console.log(error)
     return null
   }
+}
+
+export function fetchPlaylistNftId(window, playlistAddress) {
+  if (!window) {
+    console.log(`No window object for ${playlistAddress} in storageUtils/fetchPlaylistNftId`)
+    return null
+  }
+
+  if (!playlistAddress || !ethers.utils.isAddress(playlistAddress)) {
+    console.error(`Invalid playlist address`)
+    return null
+  }
+
+  const playlistString = window.localStorage.getItem(String(playlistAddress).toLowerCase() + "-playlist")
+
+  if (!playlistString) {
+    return null
+  }
+
+  const playlistObject = JSON.parse(playlistString)
+
+  return playlistObject.playlistNftId
 }
 
 export function fetchReferrer(window) {
@@ -192,7 +217,6 @@ export function storeData(window, address, dataObject, objType) {
 
   window.localStorage.setItem(String(address).toLowerCase() + "-" + objType, JSON.stringify(dataObject))
 
-  console.log(`${objType} with address ${address} stored successfully`)
   return { success: true, message: `${objType} with address ${address} stored successfully` }
 }
 
@@ -218,7 +242,7 @@ export function storePlaylistData(window, playlistAddress, playlistNftId, dataOb
       const playlistObject = JSON.parse(playlistString)
       // note that playlist object in local storage stores only the playlist NFT ID and never expires
       nftId = playlistObject.playlistNftId
-    } else if (nftId && playlistString) {
+    } else if (nftId && !playlistString) {
       const playlistObject = {
         playlistNftId: nftId
       }
@@ -237,10 +261,30 @@ export function storePlaylistData(window, playlistAddress, playlistNftId, dataOb
 
   dataObject['stored'] = timestamp
 
-  window.localStorage.setItem(String(nftId) + "-" + String(playlistNftAddress).toLowerCase() + "-nftplaylist", JSON.stringify(dataObject))
+  window.localStorage.setItem(String(Number(nftId)) + "-" + String(playlistNftAddress).toLowerCase() + "-nftplaylist", JSON.stringify(dataObject))
 
-  console.log(`Playlist data for Playlist NFT ID ${playlistNftId} stored successfully`)
-  return { success: true, message: `Playlist data for Playlist NFT ID ${playlistNftId} stored successfully` }
+  return { success: true, message: `Playlist data for Playlist NFT ID ${playlistNftId} stored successfully`, data: dataObject }
+}
+
+export function storePlaylistNftId(window, playlistAddress, playlistNftId) {
+  if (!window) {
+    console.log(`No window object for ${playlistAddress} in storageUtils/storePlaylistNftId`)
+    return { success: false, message: `No window object for ${playlistAddress} in storageUtils/storePlaylistNftId` }
+  }
+
+  if (!playlistAddress || !ethers.utils.isAddress(playlistAddress)) {
+    console.error(`Invalid playlist address`)
+    return { success: false, message: `Invalid playlist address` }
+  }
+
+  const playlistObject = {
+    playlistNftId: Number(playlistNftId)
+  }
+
+  window.localStorage.setItem(String(playlistAddress).toLowerCase() + "-playlist", JSON.stringify(playlistObject))
+
+  return { success: true, message: `Playlist NFT ID ${playlistNftId} stored successfully` }
+
 }
 
 export function storeReferrer(window, referrerAddress) {
