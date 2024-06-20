@@ -101,7 +101,7 @@ export default defineNuxtConfig({
       punkTldAddress: '0x1DD820F4f48eBC2B8e7F666F34fbC5820808074e', // punk domain TLD address
       radio: {
         metadataAddress: '0xc6D85C4786bc678aB59a3B4960D73EB3266Cfa7E',
-        playlistFactoryAddress: '0x3047F44d0A8383EDd59A583092d7E6DB7ade85e0',
+        playlistFactoryAddress: '0x7c9A024C5eeed9fE96f8512cd7348245326f4bD7',
         playlistNftAddress: '0xbb6fca36B0d0107773a410103e9f1f459C3eb95e',
       },
       randomPostsNumber: 1, // number of random post NFTs to show in the sidebar widget

@@ -12,37 +12,64 @@
       </div>
     </div>
 
-    <div class="row text-center">
+    <div class="row">
+    <div class="offset-md-4 col-md-4 offset-3 col-6 mb-3">
       <img
         :src="playlistImage"
         :alt="playlistName"
-        class="offset-md-4 col-md-4 offset-3 col-6 mb-3 img-fluid rounded" 
+        class="img-fluid rounded-3" 
       />
+    </div>
     </div>
 
     <h4 class="mb-3 text-center">{{ playlistName }}</h4>
 
-    <p>Playlist address: {{ playlistAddress }}</p>
+    <p class="text-center">{{ playlistDescription }}</p>
+
+    <p>
+      <strong class="me-2 h4">Tracks</strong>
+      <button v-if="isCurrentUserOwner" class="btn btn-primary btn-sm mt-2 mb-3" type="button">
+        <i class="bi bi-plus-circle"></i>
+        Add more tracks
+      </button>
+    </p>
+
+    <div v-if="waitingTracksData" class="d-flex justify-content-center mb-3">
+      <span class="spinner-border spinner-border-lg" role="status" aria-hidden="true"></span>
+    </div>
+
+    <TracksListItem v-for="(track, index) in tracks" :key="index" :track="track" />
+
+    <div class="d-grid gap-2 mt-3">
+      <button class="btn btn-primary" type="button">Load more tracks</button>
+    </div>
+
   </div>
 </template>
 
 <script>
 import { ethers } from 'ethers'
 import { useToast } from 'vue-toastification/dist/index.mjs'
+import DegenRadioPlaylistAbi from '~/assets/abi/DegenRadioPlaylistAbi.json'
+import TracksListItem from '~/components/radio/TracksListItem.vue'
 import { useEthers } from '~/store/ethers'
 import { getDomainName } from '~/utils/domainUtils'
-import { fetchPlaylistData, fetchPlaylistNftId, storePlaylistData } from '~/utils/storageUtils'
+import { fetchPlaylistData } from '~/utils/storageUtils'
 import { fetchPlaylistDataFromBlockchain } from '~/utils/playlistUtils'
 
 export default {
   name: 'PlaylistDetails',
   props: ['playlistAddress'],
+  components: { TracksListItem },
 
   data() {
     return {
+      ownerAddress: null,
       playlistData: null,
       playlistNftId: null,
+      tracks: [],
       waitingPlaylistData: false,
+      waitingTracksData: false,
     }
   },
 
@@ -51,6 +78,14 @@ export default {
   },
 
   computed: {
+    isCurrentUserOwner() {
+      if (this.address && this.ownerAddress) {
+        return String(this.address).toLowerCase() === String(this.ownerAddress).toLowerCase()
+      }
+
+      return false
+    },
+
     playlistName() {
       return this.playlistData ? this.playlistData.name : ''
     },
@@ -90,28 +125,34 @@ export default {
 
       this.waitingPlaylistData = false
 
+      this.waitingTracksData = true
+
       // TODO: fetch playlist tracks from blockchain (do not store it in localStorage)
       // individial track data will be fetched from track components (and stored in localStorage)
+      const playlistContract = new ethers.Contract(this.playlistAddress, DegenRadioPlaylistAbi, provider)
 
-      
+      // fetch first 10 tracks
+      this.tracks = await playlistContract.getTracks(0, 10)
+
+      this.waitingTracksData = false
+
+      // fetch contract owner
+      this.ownerAddress = await playlistContract.getOwner()
+      console.log('Playlist owner:', this.ownerAddress)
     },
   },
 
   setup() {
-    const { isActivated, chainId, signer } = useEthers()
+    const { address, isActivated, chainId, signer } = useEthers()
     const toast = useToast()
 
     return {
+      address,
       isActivated,
       chainId,
       signer,
       toast,
     }
   },
-
-  // TODO:
-  // - fetch playlist name, description, image (store it into localStorage, with an expiry date)
-  // - fetch playlist tracks
-  //   - list (track component): index, track name, button to add to queue, button to play now - if song cannot load, skip it
 }
 </script>
