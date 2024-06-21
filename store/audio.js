@@ -7,6 +7,7 @@ export const useAudioStore = defineStore({
     return {
       currentTrackIndex: 0,
       playTrigger: 1, // increment to trigger play
+      stopTrigger: 1, // increment to trigger stop playing
       queue: [], // audio objects, e.g. { name: '...', audioUrl: '...', format: '...' }
     }
   },
@@ -25,6 +26,7 @@ export const useAudioStore = defineStore({
 
     clearQueue() {
       this.queue = []
+      this.currentTrackIndex = 0
     },
 
     playNow(audio) {
@@ -39,6 +41,10 @@ export const useAudioStore = defineStore({
 
     shuffleQueue() {
       this.queue = this.queue.sort(() => Math.random() - 0.5)
-    }
+    },
+
+    stopPlaying() {
+      this.stopTrigger++
+    },
   },
 })

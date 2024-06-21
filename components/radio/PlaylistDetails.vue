@@ -13,13 +13,9 @@
     </div>
 
     <div class="row">
-    <div class="offset-md-4 col-md-4 offset-3 col-6 mb-3">
-      <img
-        :src="playlistImage"
-        :alt="playlistName"
-        class="img-fluid rounded-3" 
-      />
-    </div>
+      <div class="offset-md-4 col-md-4 offset-3 col-6 mb-3">
+        <img :src="playlistImage" :alt="playlistName" class="img-fluid rounded-3" />
+      </div>
     </div>
 
     <h4 class="mb-3 text-center">{{ playlistName }}</h4>
@@ -28,7 +24,13 @@
 
     <p>
       <strong class="me-2 h4">Tracks</strong>
-      <button v-if="isCurrentUserOwner" class="btn btn-primary btn-sm mt-2 mb-3" type="button">
+      <button
+        v-if="isCurrentUserOwner"
+        class="btn btn-primary btn-sm mt-2 mb-3"
+        type="button"
+        data-bs-toggle="modal"
+        data-bs-target="#addNewTrackModal"
+      >
         <i class="bi bi-plus-circle"></i>
         Add more tracks
       </button>
@@ -44,6 +46,7 @@
       <button class="btn btn-primary" type="button">Load more tracks</button>
     </div>
 
+    <AddNewTrackModal :audioStore="audioStore" />
   </div>
 </template>
 
@@ -51,7 +54,9 @@
 import { ethers } from 'ethers'
 import { useToast } from 'vue-toastification/dist/index.mjs'
 import DegenRadioPlaylistAbi from '~/assets/abi/DegenRadioPlaylistAbi.json'
+import AddNewTrackModal from '~/components/radio/AddNewTrackModal.vue'
 import TracksListItem from '~/components/radio/TracksListItem.vue'
+import { useAudioStore } from '~/store/audio'
 import { useEthers } from '~/store/ethers'
 import { getDomainName } from '~/utils/domainUtils'
 import { fetchPlaylistData } from '~/utils/storageUtils'
@@ -60,7 +65,7 @@ import { fetchPlaylistDataFromBlockchain } from '~/utils/playlistUtils'
 export default {
   name: 'PlaylistDetails',
   props: ['playlistAddress'],
-  components: { TracksListItem },
+  components: { AddNewTrackModal, TracksListItem },
 
   data() {
     return {
@@ -143,11 +148,13 @@ export default {
   },
 
   setup() {
+    const audioStore = useAudioStore()
     const { address, isActivated, chainId, signer } = useEthers()
     const toast = useToast()
 
     return {
       address,
+      audioStore,
       isActivated,
       chainId,
       signer,

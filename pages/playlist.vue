@@ -11,13 +11,12 @@
       </p>
 
       <PlaylistDetails :playlistAddress="playlistAddress" />
-
     </div>
   </div>
 </template>
 
 <script>
-import { ethers } from 'ethers';
+import { ethers } from 'ethers'
 import PlaylistDetails from '~/components/radio/PlaylistDetails.vue'
 
 export default {
@@ -31,7 +30,7 @@ export default {
       } else {
         this.$router.push('/')
       }
-    }
-  }
+    },
+  },
 }
 </script>

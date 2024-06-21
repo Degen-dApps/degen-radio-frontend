@@ -1,16 +1,14 @@
 import axios from 'axios'
-import { ethers } from "ethers";
-import { fetchPlaylistNftId, storePlaylistData, storePlaylistNftId } from "./storageUtils";
-import { getWorkingIpfsGatewayUrl } from "./ipfsUtils";
+import { ethers } from 'ethers'
+import { fetchPlaylistNftId, storePlaylistData, storePlaylistNftId } from './storageUtils'
+import { getWorkingIpfsGatewayUrl } from './ipfsUtils'
 
 export async function fetchPlaylistDataFromBlockchain(window, provider, playlistAddress, playlistNftId) {
-  let nftId = playlistNftId || fetchPlaylistNftId(window, playlistAddress);
+  let nftId = playlistNftId || fetchPlaylistNftId(window, playlistAddress)
 
   if (!nftId) {
-    const playlistInterface = new ethers.utils.Interface([
-      'function playlistId() view returns (uint256)',
-    ])
-  
+    const playlistInterface = new ethers.utils.Interface(['function playlistId() view returns (uint256)'])
+
     const playlistContract = new ethers.Contract(playlistAddress, playlistInterface, provider)
 
     try {
@@ -35,12 +33,12 @@ export async function fetchPlaylistDataFromBlockchain(window, provider, playlist
 
   const playlistNftContract = new ethers.Contract(config.radio.playlistNftAddress, playlistNftInterface, provider)
 
-  let tokenUri;
+  let tokenUri
 
   try {
     tokenUri = await playlistNftContract.tokenURI(nftId)
 
-    let metadata;
+    let metadata
 
     // TODO: parse token URI to get playlist data, and store relevant data in playlistObject
     if (String(tokenUri).startsWith('data:application/json;base64')) {
@@ -48,7 +46,7 @@ export async function fetchPlaylistDataFromBlockchain(window, provider, playlist
       metadata = JSON.parse(atob(tokenUri.split(',')[1]))
     } else {
       console.log('fetching metadata from server...')
-      let mdServerUrl = tokenUri;
+      let mdServerUrl = tokenUri
 
       // check if token URI is an IPFS link (getWorkingIpfsGatewayUrl)
       const res = await getWorkingIpfsGatewayUrl(tokenUri)
@@ -64,7 +62,7 @@ export async function fetchPlaylistDataFromBlockchain(window, provider, playlist
     const playlistObject = {
       playlistAddress: playlistAddress,
       playlistNftId: Number(nftId),
-      ...metadata
+      ...metadata,
     }
 
     const resFromStore = storePlaylistData(window, playlistAddress, nftId, playlistObject)
@@ -73,6 +71,4 @@ export async function fetchPlaylistDataFromBlockchain(window, provider, playlist
   } catch (error) {
     return { success: false, message: 'Error fetching playlist data' }
   }
-
-  
 }

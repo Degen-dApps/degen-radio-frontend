@@ -4,7 +4,6 @@
       <div class="sidebar-nav list-group border-0 rounded-0 text-sm-start min-vh-100">
         <div class="card m-2 p-2 bg-light">
           <div v-if="isActivated" class="text-center">
-
             <!-- Profile image 
             <NuxtLink to="/profile">
               <ProfileImage
@@ -30,8 +29,6 @@
 							{{ userStore.getChatTokenBalance }} {{ $config.chatTokenSymbol }}
 						</button>
 						-->
-
-            
           </div>
 
           <ul class="nav nav-pills flex-column">

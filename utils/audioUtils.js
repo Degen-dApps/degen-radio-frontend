@@ -12,7 +12,7 @@ export async function fetchMusicNftData(window, provider, nftAddress, nftId, cha
   }
 
   // check localStorage for cached audio data
-  const key = String(nftAddress) + "-" + String(nftId) + "-" + String(chainId)
+  const key = String(nftAddress) + '-' + String(nftId) + '-' + String(chainId)
   const cachedData = window.localStorage.getItem(key)
 
   if (cachedData) {
@@ -29,7 +29,7 @@ export async function fetchMusicNftData(window, provider, nftAddress, nftId, cha
 
 export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId, chainId) {
   const config = useRuntimeConfig()
-  
+
   if (!window) {
     return { success: false, message: 'No window object' }
   }
@@ -40,18 +40,18 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
 
   const nftInterface = new ethers.utils.Interface([
     'function tokenURI(uint256 tokenId) external view returns (string)',
-    'function metadataAddress() external view returns (address)'
+    'function metadataAddress() external view returns (address)',
   ])
 
   const nftContract = new ethers.Contract(nftAddress, nftInterface, provider)
 
-  let tokenUri;
+  let tokenUri
 
   try {
     tokenUri = await nftContract.tokenURI(Number(nftId))
   } catch (error) {
     // if error, get metadata address (then fetch metadata from getMetadata function in metadata contract)
-    let metadataAddress;
+    let metadataAddress
 
     try {
       metadataAddress = await nftContract.metadataAddress()
@@ -61,7 +61,7 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
 
     if (metadataAddress) {
       const mdInterface = new ethers.utils.Interface([
-        'function getMetadata(address nftAddress_, uint256 tokenId_) external view returns (string memory)'
+        'function getMetadata(address nftAddress_, uint256 tokenId_) external view returns (string memory)',
       ])
 
       const mdContract = new ethers.Contract(metadataAddress, mdInterface, provider)
@@ -74,10 +74,8 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
     }
   }
 
-  console.log('tokenUri:', tokenUri)
-  
   if (tokenUri) {
-    let metadata;
+    let metadata
 
     if (tokenUri.startsWith('data:application/json;base64')) {
       metadata = JSON.parse(atob(tokenUri.split(',')[1]))
@@ -96,17 +94,16 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
 
       const mdResult = await axios.get(nftUrl)
       metadata = mdResult.data
-    } else { // TODO: arweave, swarm, etc.
+    } else {
+      // TODO: arweave, swarm, etc.
       return { success: false, message: 'Invalid token URI' }
     }
-  
-    console.log('metadata:', metadata)
 
     const nftData = {
-      name: metadata.name, //.replace(` #${nftId}`, ""),
+      name: metadata.name.replace(' #1', ''),
       address: nftAddress,
       tokenId: nftId,
-      chainId: chainId
+      chainId: chainId,
     }
 
     if (metadata?.image) {
@@ -123,9 +120,9 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
 
     if (metadata?.artist_name) {
       nftData.artistName = metadata.artist_name
-      nftData.name = metadata.artist_name + " - " + nftData.name
+      nftData.name = metadata.artist_name + ' - ' + nftData.name
     }
-    
+
     // check if metadata has an audio_url field
     if (metadata?.audio_url) {
       let audioUrl = metadata.audio_url
@@ -160,16 +157,13 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
     } else {
       return { success: false, message: 'No audio URL found in metadata' }
     }
-
   }
 }
 
 function storeNftAudioData(nftData, window) {
   // nftData: { name: '...', image: '(optional)', address: '...', tokenId: '...', chainId: '...', audioUrl: '...' }
 
-  const key = String(nftData.address) + "-" + String(nftData.tokenId) + "-" + String(nftData.chainId)
-
-  console.log('storing nftData:', nftData)
+  const key = String(nftData.address) + '-' + String(nftData.tokenId) + '-' + String(nftData.chainId)
 
   window.localStorage.setItem(key, JSON.stringify(nftData))
 }

@@ -14,7 +14,7 @@ export async function uploadFileToThirdWeb(file) {
 }
 
 export async function getWorkingIpfsGatewayUrl(ipfsLink) {
-  let cid;
+  let cid
 
   if (!ipfsLink.startsWith('ipfs://')) {
     console.log('ipfsLink does not start with ipfs://:', ipfsLink)
@@ -81,16 +81,15 @@ function checkIfIpfsGatewayUrl(url) {
   }
 
   return { success: false, message: 'Very likely not an IPFS gateway URL' }
-
 }
 
 function parseAudioContentType(contentType) {
   if (String(contentType).toLowerCase() === 'audio/mpeg') {
-    return "mp3"
+    return 'mp3'
   } else if (String(contentType).toLowerCase() === 'audio/wav') {
-    return "wav"
+    return 'wav'
   } else if (String(contentType).toLowerCase() === 'audio/ogg') {
-    return "ogg"
+    return 'ogg'
   } else {
     return null
   }

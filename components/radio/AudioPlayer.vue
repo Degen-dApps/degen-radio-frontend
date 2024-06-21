@@ -8,19 +8,24 @@
           </span>
 
           <ul class="dropdown-menu">
-            <li 
+            <li
               class="dropdown-item h6 cursor-pointer"
               v-for="(track, index) in getAudioQueue"
               :key="index"
               @click="skipToSong(index)"
             >
-              {{ (index + 1) }}) {{ track?.name }} {{ track?.name === currentTrack?.name ? ' ♫' : '' }}
+              <span class="me-2">{{ index + 1 }})</span>
+              <span>{{ track?.name }} {{ track?.name === currentTrack?.name ? ' ♫' : '' }}</span>
             </li>
 
-            <li><hr/></li>
+            <li><hr /></li>
 
             <li class="dropdown-item h6 cursor-pointer" @click="audioStore.shuffleQueue()">
-              <i class="bi bi-shuffle"></i> Shuffle
+              <i class="bi bi-shuffle me-1"></i> Shuffle
+            </li>
+
+            <li class="dropdown-item h6 cursor-pointer" @click="audioStore.clearQueue()">
+              <i class="bi bi-x-circle me-1"></i> Clear queue
             </li>
           </ul>
         </span>
@@ -32,7 +37,6 @@
 
       <!-- Button -->
       <div class="col-md-6 row d-flex justify-content-evenly">
-
         <button class="col btn btn-outline-primary me-2" @click="previousTrack">
           <i class="bi bi-rewind-fill"></i>
         </button>
@@ -40,15 +44,14 @@
         <button v-if="!playing" class="col btn btn-primary me-2" @click="play">
           <i class="bi bi-play-fill"></i>
         </button>
-        
+
         <button v-if="playing" class="col btn btn-primary me-2" @click="pause">
           <i class="bi bi-pause-fill"></i>
         </button>
-        
+
         <button class="col btn btn-outline-primary" @click="nextTrack">
           <i class="bi bi-fast-forward-fill"></i>
         </button>
-
       </div>
     </div>
   </div>
@@ -107,9 +110,19 @@ export default {
     getPlayTrigger() {
       return this.audioStore.playTrigger
     },
+
+    getStopTrigger() {
+      return this.audioStore.stopTrigger
+    },
   },
 
   methods: {
+    clearQueue() {
+      this.stop()
+      this.audioStore.clearQueue()
+      this.currentTrack = null
+    },
+
     formatTime(seconds) {
       const minutes = Math.floor(seconds / 60)
       const secs = Math.floor(seconds % 60)
@@ -206,7 +219,7 @@ export default {
       if (this.sound) {
         this.sound.stop()
       }
-      
+
       this.sound = null
       this.audioStore.setCurrentTrackIndex(index)
       this.playSongs()
@@ -244,6 +257,10 @@ export default {
   watch: {
     getPlayTrigger() {
       this.skipToSong(this.audioStore.currentTrackIndex)
+    },
+
+    getStopTrigger() {
+      this.stop()
     },
 
     getAudioQueueLength(newVal, oldVal) {

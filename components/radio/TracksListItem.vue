@@ -1,5 +1,5 @@
 <template>
-<div class="card track-card">
+  <div class="card track-card">
     <div class="row text-center">
       <div class="col-md-8 mt-3">
         <p>John Mayer - Gravity</p>

@@ -272,7 +272,12 @@ export default {
     if (this.post?.content?.data) {
       this.customDataType = this.post.content.data?.type
 
-      this.collection = fetchData(window, this.post.content.data.collectionAddress, "collection", this.$config.expiryCollections)
+      this.collection = fetchData(
+        window,
+        this.post.content.data.collectionAddress,
+        'collection',
+        this.$config.expiryCollections,
+      )
 
       if (!this.collection) {
         this.collection = {}
@@ -283,7 +288,7 @@ export default {
       this.collection['description'] = this.post.content.data.collectionDescription
       this.collection['image'] = this.post.content.data.collectionImage
 
-      storeData(window, this.post.content.data.collectionAddress, this.collection, "collection")
+      storeData(window, this.post.content.data.collectionAddress, this.collection, 'collection')
     }
 
     // create quote post object
@@ -514,7 +519,7 @@ export default {
       this.customDataType = 'nftCollectionCreated'
 
       // check storage if collection data is already stored
-      this.collection = fetchData(window, cAddress, "collection", this.$config.expiryCollections)
+      this.collection = fetchData(window, cAddress, 'collection', this.$config.expiryCollections)
 
       if (!this.collection) {
         // fetch provider from hardcoded RPCs

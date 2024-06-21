@@ -80,9 +80,7 @@
       <h5 class="mt-3">Enter the first track to playlist</h5>
 
       <p>
-        <small>
-          You'll add others later, after the playlist is created.
-        </small>
+        <small> You'll add others later, after the playlist is created. </small>
       </p>
 
       <!-- Track address -->
@@ -112,15 +110,23 @@
           <ul class="dropdown-menu">
             <li><span class="dropdown-item cursor-points" @click="selectChain(42161, 'Arbitrum')">Arbitrum</span></li>
             <li><span class="dropdown-item cursor-points" @click="selectChain(8453, 'Base')">Base</span></li>
-            <li><span class="dropdown-item cursor-points" @click="selectChain(666666666, 'Degen Chain')">Degen Chain</span></li>
+            <li>
+              <span class="dropdown-item cursor-points" @click="selectChain(666666666, 'Degen Chain')"
+                >Degen Chain</span
+              >
+            </li>
             <li><span class="dropdown-item cursor-points" @click="selectChain(1, 'Ethereum')">Ethereum</span></li>
             <li><span class="dropdown-item cursor-points" @click="selectChain(10, 'Optimism')">Optimism</span></li>
-            <li><span class="dropdown-item cursor-points" @click="selectChain(137, 'Polygon PoS Chain')">Polygon PoS Chain</span></li>
+            <li>
+              <span class="dropdown-item cursor-points" @click="selectChain(137, 'Polygon PoS Chain')"
+                >Polygon PoS Chain</span
+              >
+            </li>
           </ul>
         </div>
         <small class="mb-4">
-          Note that the track data will be entered in the smart contract on Degen Chain, 
-          even if track itself is on another chain.
+          Note that the track data will be entered in the smart contract on Degen Chain, even if track itself is on
+          another chain.
         </small>
       </div>
 
@@ -128,7 +134,6 @@
 
       <!-- Buttons div -->
       <div class="d-flex justify-content-center mt-5 mb-5">
-
         <!-- Create Playlist button -->
         <button
           :disabled="waitingCreate || !fieldsValid"
@@ -155,7 +160,6 @@
 
         <!-- Switch Chain button -->
         <SwitchChainButton v-if="isActivated && !isSupportedChain" />
-
       </div>
     </div>
   </div>
@@ -318,7 +322,7 @@ export default {
 
           // get PlaylistCreated event from the receipt
           const events = receipt.events
-          const [ event ] = events.filter((x) => x.event === "PlaylistCreated")
+          const [event] = events.filter(x => x.event === 'PlaylistCreated')
           const playlistAddress = event.args.playlistAddress_
 
           // redirect to the playlist page
@@ -392,7 +396,7 @@ export default {
           return { success: false, message: trackData.message }
         }
 
-        return { success: false, message: 'Failed to load track'}
+        return { success: false, message: 'Failed to load track' }
       }
     },
 

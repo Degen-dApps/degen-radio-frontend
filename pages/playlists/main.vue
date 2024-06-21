@@ -58,7 +58,8 @@ export default {
       },
       {
         name: 'Degen Name, Degen Fame',
-        audioUrl: 'https://nftdegeniggy.myfilebase.com/ipfs/QmZ8keL488WqXV41K4V1D4zC7AEzpvhKnM2kp2C2NneTNk/degen-name-degen-fame-2.mp3',
+        audioUrl:
+          'https://nftdegeniggy.myfilebase.com/ipfs/QmZ8keL488WqXV41K4V1D4zC7AEzpvhKnM2kp2C2NneTNk/degen-name-degen-fame-2.mp3',
       },
     ]
 
