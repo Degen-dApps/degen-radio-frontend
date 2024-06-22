@@ -9,11 +9,15 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="addNewTrackModalLabel">Add new track (music NFT)</h5>
+          <h5 class="modal-title" id="addNewTrackModalLabel">Add new track (music NFT) to {{ playlist?.name }}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
+          <p>
+            {{ playlist }}
+          </p>
+
           <!-- Track blockchain -->
           <div class="mb-3">
             <label for="tChain" class="form-label">Select the chain where the music NFT is deployed on:</label>
@@ -97,7 +101,7 @@
             @click="submit"
             :disabled="!tChainId || !tAddress || !tNftId || waitingSubmitTrack"
           >
-            Submit track
+            Add track to playlist
           </button>
         </div>
       </div>
@@ -115,7 +119,8 @@ import { fetchMusicNftData } from '~/utils/audioUtils'
 
 export default {
   name: 'AddNewTrackModal',
-  props: ['audioStore'],
+  props: ['audioStore', 'playlist'],
+  emits: ['addSongToTracks'],
   components: { SwitchChainButton },
 
   data() {
@@ -174,6 +179,93 @@ export default {
 
     async submit() {
       // submit track data to playlist smart contract
+      this.waitingSubmitTrack = true
+
+      // load track data
+      const trackData = await this.loadTrack()
+
+      if (!trackData.success) {
+        this.waitingSubmitTrack = false
+        console.error(trackData.message)
+        this.toast.error(trackData.message)
+        return
+      }
+
+      // get provider
+      let provider = this.$getFallbackProvider(this.$config.supportedChainId)
+
+      if (this.isActivated && this.chainId === this.$config.supportedChainId) {
+        // fetch provider from user's MetaMask
+        provider = this.signer
+      }
+
+      const playlistInterface = new ethers.utils.Interface([
+        'function addTrack(address addr_, uint256 tokenId_, uint256 chainId_) external',
+      ])
+
+      const playlistContract = new ethers.Contract(this.playlist.playlistAddress, playlistInterface, provider)
+
+      try {
+        const tx = await playlistContract.addTrack(this.tAddress, this.tNftId, this.tChainId)
+
+        const toastWait = this.toast(
+          {
+            component: WaitingToast,
+            props: {
+              text: 'Please wait for your transaction to confirm. Click on this notification to see transaction in the block explorer.',
+            },
+          },
+          {
+            type: 'info',
+            onClick: () => window.open(this.$config.blockExplorerBaseUrl + '/tx/' + tx.hash, '_blank').focus(),
+          },
+        )
+
+        const receipt = await tx.wait()
+
+        if (receipt.status === 1) {
+          this.waitingSubmitTrack = false
+
+          this.toast.dismiss(toastWait)
+
+          this.toast('You have successfully created an onchain playlist!', {
+            type: 'success',
+            onClick: () => window.open(this.$config.blockExplorerBaseUrl + '/tx/' + tx.hash, '_blank').focus(),
+          })
+
+          this.$emit('addSongToTracks', {
+            nftData: trackData.nftData,
+            chainId: this.tChainId,
+            address: this.tAddress,
+            tokenId: this.tNftId,
+          })
+        } else {
+          this.waitingSubmitTrack = false
+          this.toast.dismiss(toastWait)
+          this.toast('Transaction has failed.', {
+            type: 'error',
+            onClick: () => window.open(this.$config.blockExplorerBaseUrl + '/tx/' + tx.hash, '_blank').focus(),
+          })
+          console.log(receipt)
+        }
+      } catch (e) {
+        console.error(e)
+
+        try {
+          let extractMessage = e.message.split('reason=')[1]
+          extractMessage = extractMessage.split(', method=')[0]
+          extractMessage = extractMessage.replace(/"/g, '')
+          extractMessage = extractMessage.replace('execution reverted:', 'Error:')
+
+          console.log(extractMessage)
+
+          this.toast(extractMessage, { type: 'error' })
+        } catch (e) {
+          this.toast('Transaction has failed.', { type: 'error' })
+        }
+
+        this.waitingSubmitTrack = false
+      }
     },
 
     selectChain(chainId, chainName) {

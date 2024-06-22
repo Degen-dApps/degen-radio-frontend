@@ -40,13 +40,13 @@
       <span class="spinner-border spinner-border-lg" role="status" aria-hidden="true"></span>
     </div>
 
-    <TracksListItem v-for="(track, index) in tracks" :key="index" :track="track" />
+    <TracksListItem class="mb-2" v-for="(track, index) in tracks" :key="index" :track="track" />
 
     <div class="d-grid gap-2 mt-3">
       <button class="btn btn-primary" type="button">Load more tracks</button>
     </div>
 
-    <AddNewTrackModal :audioStore="audioStore" />
+    <AddNewTrackModal :audioStore="audioStore" :playlist="playlistData" @addSongToTracks="addSongToTracks" />
   </div>
 </template>
 
@@ -58,6 +58,7 @@ import AddNewTrackModal from '~/components/radio/AddNewTrackModal.vue'
 import TracksListItem from '~/components/radio/TracksListItem.vue'
 import { useAudioStore } from '~/store/audio'
 import { useEthers } from '~/store/ethers'
+import { fetchMusicNftData } from '~/utils/audioUtils'
 import { getDomainName } from '~/utils/domainUtils'
 import { fetchPlaylistData } from '~/utils/storageUtils'
 import { fetchPlaylistDataFromBlockchain } from '~/utils/playlistUtils'
@@ -103,6 +104,15 @@ export default {
   },
 
   methods: {
+    async addSongToTracks(musicNft) {
+      const provider = this.$getProviderForChain(Number(this.tChainId))
+      const trackData = await fetchMusicNftData(window, provider, musicNft.tAddress, musicNft.tNftId, musicNft.tChainId)
+
+      if (trackData.success) {
+        this.tracks.push(trackData.nftData)
+      }
+    },
+
     async loadPlaylistData() {
       this.waitingPlaylistData = true
 
@@ -137,13 +147,21 @@ export default {
       const playlistContract = new ethers.Contract(this.playlistAddress, DegenRadioPlaylistAbi, provider)
 
       // fetch first 10 tracks
-      this.tracks = await playlistContract.getTracks(0, 10)
+      const musicNfts = await playlistContract.getTracks(0, 10)
+
+      for (let i = 0; i < musicNfts.length; i++) {
+        const musicNft = musicNfts[i]
+        const trackData = await fetchMusicNftData(window, provider, musicNft.nftAddress, musicNft.tokenId, musicNft.chainId)
+
+        if (trackData.success) {
+          this.tracks.push(trackData?.nftData)
+        }
+      }
 
       this.waitingTracksData = false
 
       // fetch contract owner
       this.ownerAddress = await playlistContract.getOwner()
-      console.log('Playlist owner:', this.ownerAddress)
     },
   },
 

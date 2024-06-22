@@ -2,7 +2,7 @@
   <div class="card track-card">
     <div class="row text-center">
       <div class="col-md-8 mt-3">
-        <p>John Mayer - Gravity</p>
+        <p>{{ track?.name }}</p>
       </div>
       <div class="col-md-4 align-self-center track-buttons">
         <button class="btn btn-primary btn-sm me-2" :disabled="!songUrlAccessible">Add to queue</button>
@@ -16,6 +16,10 @@
 export default {
   name: 'TracksListItem',
   props: ['track'],
+
+  mounted() {
+    console.log('Track:', this.track);
+  },
 
   data() {
     return {
