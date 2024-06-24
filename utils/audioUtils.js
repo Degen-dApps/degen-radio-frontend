@@ -28,7 +28,6 @@ export async function fetchMusicNftData(window, provider, nftAddress, nftId, cha
 }
 
 export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId, chainId) {
-  const config = useRuntimeConfig()
 
   if (!window) {
     return { success: false, message: 'No window object' }

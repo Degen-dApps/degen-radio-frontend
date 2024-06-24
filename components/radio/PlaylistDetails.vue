@@ -169,7 +169,10 @@ export default {
 
       for (let i = 0; i < musicNfts.length; i++) {
         const musicNft = musicNfts[i]
-        const trackData = await fetchMusicNftData(window, provider, musicNft.nftAddress, musicNft.tokenId, musicNft.chainId)
+        const trackProvider = this.$getProviderForChain(Number(musicNft.chainId))
+        const trackData = await fetchMusicNftData(
+          window, trackProvider, musicNft.nftAddress, Number(musicNft.tokenId), Number(musicNft.chainId)
+        )
 
         if (trackData.success) {
           this.tracks.push(trackData?.nftData)
