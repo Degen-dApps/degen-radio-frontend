@@ -34,7 +34,9 @@
     </div>
 
     <!-- Footer -->
-    <StickyFooterPlayer />
+    <Transition name="slide-up-down">
+      <StickyFooterPlayer v-if="audioQueueLength > 0" />
+    </Transition>
 
     <!-- Connect Wallet modal -->
     <VueDappModal :dark="siteStore.getColorMode === 'dark'" auto-connect auto-connect-browser-wallet-if-solo />
@@ -57,27 +59,28 @@
 </template>
 
 <script>
+import '@vue-dapp/modal/dist/style.css'
+import { BrowserWalletConnector, RdnsEnum } from '@vue-dapp/core'
+import { VueDappModal } from '@vue-dapp/modal'
 import { ethers } from 'ethers'
+import ChatSettingsModal from '~/components/ChatSettingsModal.vue'
+import VerifyAccountOwnership from '~/components/VerifyAccountOwnership.vue'
+import ChangeUserPostMintPriceModal from '~/components/minted-posts/ChangeUserPostMintPriceModal.vue'
+import ChangeUsernameModal from '~/components/names/ChangeUsernameModal.vue'
+import NavbarDesktop from '~/components/navbars/NavbarDesktop.vue'
+import NavbarMobile from '~/components/navbars/NavbarMobile.vue'
+import StickyFooterPlayer from '~/components/radio/StickyFooterPlayer.vue'
+import ReferralModal from '~/components/referrals/ReferralModal.vue'
+import FindUserModal from '~/components/search/FindUserModal.vue'
+import SidebarLeft from '~/components/sidebars/SidebarLeft.vue'
+import SidebarRight from '~/components/sidebars/SidebarRight.vue'
+import { useAudioStore } from '~/store/audio'
+import { useEthers } from '~/store/ethers'
 import { useSidebarStore } from '~/store/sidebars'
 import { useSiteStore } from '~/store/site'
 import { useUserStore } from '~/store/user'
-import NavbarDesktop from '~/components/navbars/NavbarDesktop.vue'
-import NavbarMobile from '~/components/navbars/NavbarMobile.vue'
-import SidebarLeft from '~/components/sidebars/SidebarLeft.vue'
-import SidebarRight from '~/components/sidebars/SidebarRight.vue'
-import ChatSettingsModal from '~/components/ChatSettingsModal.vue'
 import { getDomainHolder, getDomainName } from '~/utils/domainUtils'
 import { storeReferrer, storeUsername } from '~/utils/storageUtils'
-import VerifyAccountOwnership from '~/components/VerifyAccountOwnership.vue'
-import StickyFooterPlayer from '~/components/radio/StickyFooterPlayer.vue'
-import ReferralModal from '~/components/referrals/ReferralModal.vue'
-import ChangeUsernameModal from '~/components/names/ChangeUsernameModal.vue'
-import ChangeUserPostMintPriceModal from '~/components/minted-posts/ChangeUserPostMintPriceModal.vue'
-import FindUserModal from '~/components/search/FindUserModal.vue'
-import { BrowserWalletConnector, RdnsEnum } from '@vue-dapp/core'
-import { VueDappModal } from '@vue-dapp/modal'
-import '@vue-dapp/modal/dist/style.css'
-import { useEthers } from '~/store/ethers'
 
 export default {
   data() {
@@ -162,6 +165,10 @@ export default {
   },
 
   computed: {
+    audioQueueLength() {
+      return this.audioStore.queue.length
+    },
+
     isConnectedToOrbis() {
       return this.userStore.getIsConnectedToOrbis
     },
@@ -311,6 +318,7 @@ export default {
   },
 
   setup() {
+    const audioStore = useAudioStore()
     const config = useRuntimeConfig()
     const sidebarStore = useSidebarStore()
     const siteStore = useSiteStore()
@@ -418,6 +426,7 @@ export default {
 
     return {
       address,
+      audioStore,
       chainId,
       connectTo,
       isActivated,

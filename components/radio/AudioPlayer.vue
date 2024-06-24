@@ -1,5 +1,5 @@
 <template>
-  <div class="card m-3 audio-player-card">
+  <div class="card audio-player-card">
     <div class="card-body row d-flex justify-content-evenly">
       <div class="col-md-6 text-center mb-2 mt-2">
         <span class="dropup-center dropup align-text-top" v-if="currentTrack?.name">

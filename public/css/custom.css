@@ -258,7 +258,8 @@ a:hover {
 }
 
 .audio-player-card {
-  border: 1px solid #38B6FF;
+  border-radius: 0;
+  border-top: 1px solid #38B6FF;
 }
 
 .force-circle {
@@ -467,6 +468,23 @@ a:hover {
 .sidebar-nav {
   width: 100vw;
 }
+
+/* Transition */
+.slide-up-down-enter-active,
+.slide-up-down-leave-active {
+  transition: all 0.25s ease-out;
+}
+
+.slide-up-down-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.slide-up-down-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+/* END Transition */
 
 .tech-stack {
   max-height: 30px;
