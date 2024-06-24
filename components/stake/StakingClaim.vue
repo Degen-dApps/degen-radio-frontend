@@ -76,7 +76,6 @@ import { useToast } from 'vue-toastification/dist/index.mjs'
 import WaitingToast from '~/components/WaitingToast'
 import { useUserStore } from '~/store/user'
 import { getLessDecimals } from '~/utils/numberUtils'
-import earlyStakers from '~/assets/merkle/earlyStakers.json' // @TODO: check if needed
 
 export default {
   name: 'StakingClaim',
