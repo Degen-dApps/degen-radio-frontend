@@ -14,9 +14,6 @@
         </div>
 
         <div class="modal-body">
-          <p>
-            {{ playlist }}
-          </p>
 
           <!-- Track blockchain -->
           <div class="mb-3">
@@ -96,6 +93,7 @@
 
           <!-- Submit track button -->
           <button
+            v-if="isSupportedChain"
             type="button"
             class="btn btn-primary"
             @click="submit"
@@ -103,6 +101,8 @@
           >
             Add track to playlist
           </button>
+
+          <SwitchChainButton v-if="!isSupportedChain" />
         </div>
       </div>
     </div>
@@ -112,19 +112,19 @@
 <script>
 import { ethers } from 'ethers'
 import { useEthers } from '~/store/ethers'
-import { useToast } from 'vue-toastification/dist/index.mjs'
 import SwitchChainButton from '~/components/SwitchChainButton.vue'
 import WaitingToast from '~/components/WaitingToast'
 import { fetchMusicNftData } from '~/utils/audioUtils'
 
 export default {
   name: 'AddNewTrackModal',
-  props: ['audioStore', 'playlist'],
+  props: ['audioStore', 'playlist', 'toast'],
   emits: ['addSongToTracks'],
   components: { SwitchChainButton },
 
   data() {
     return {
+      //chainId: null,
       playingNow: false,
       tAddress: null,
       tChainId: 666666666,
@@ -136,7 +136,18 @@ export default {
     }
   },
 
+  computed: {
+    isSupportedChain() {
+      if (this.chainId === this.$config.supportedChainId) {
+        return true
+      } else {
+        return false
+      }
+    },
+  },
+
   methods: {
+
     async loadTrack() {
       this.waitingLoadTrack = true
 
@@ -276,9 +287,8 @@ export default {
 
   setup() {
     const { address, chainId, isActivated, signer } = useEthers()
-    const { toast } = useToast()
 
-    return { address, chainId, isActivated, signer, toast }
+    return { address, chainId, isActivated, signer }
   },
 }
 </script>

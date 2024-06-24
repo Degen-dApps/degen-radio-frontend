@@ -46,7 +46,13 @@
       <button class="btn btn-primary" type="button">Load more tracks</button>
     </div>
 
-    <AddNewTrackModal :audioStore="audioStore" :playlist="playlistData" @addSongToTracks="addSongToTracks" />
+    <AddNewTrackModal 
+      v-if="isCurrentUserOwner" 
+      :audioStore="audioStore" 
+      :playlist="playlistData" 
+      :toast="toast"
+      @addSongToTracks="addSongToTracks" 
+    />
   </div>
 </template>
 
@@ -105,8 +111,8 @@ export default {
 
   methods: {
     async addSongToTracks(musicNft) {
-      const provider = this.$getProviderForChain(Number(this.tChainId))
-      const trackData = await fetchMusicNftData(window, provider, musicNft.tAddress, musicNft.tNftId, musicNft.tChainId)
+      const provider = this.$getProviderForChain(Number(this.chainId))
+      const trackData = await fetchMusicNftData(window, provider, musicNft.address, musicNft.tokenId, musicNft.chainId)
 
       if (trackData.success) {
         this.tracks.push(trackData.nftData)
