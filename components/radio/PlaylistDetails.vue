@@ -25,7 +25,11 @@
     <p>
       <strong class="me-2 h4">Tracks</strong>
 
-      <button @click="playTracks" class="btn btn-primary btn-sm mt-2 mb-3 me-2">
+      <button 
+        v-if="tracks.length > 0"
+        @click="playTracks" 
+        class="btn btn-primary btn-sm mt-2 mb-3 me-2"
+      >
         <i class="bi bi-play-circle"></i>
         Play
       </button>
@@ -178,7 +182,7 @@ export default {
     },
 
     playTracks() {
-      this.audioStore.playNewQueue(this.tracks)
+      this.audioStore.playNewPlaylist(this.tracks, this.playlistAddress)
     },
   },
 

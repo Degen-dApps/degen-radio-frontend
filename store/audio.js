@@ -5,6 +5,7 @@ export const useAudioStore = defineStore({
 
   state: () => {
     return {
+      currentPlaylistAddress: null,
       currentTrackIndex: 0,
       playTrigger: 1, // increment to trigger play
       stopTrigger: 1, // increment to trigger stop playing
@@ -27,11 +28,13 @@ export const useAudioStore = defineStore({
     clearQueue() {
       this.queue = []
       this.currentTrackIndex = 0
+      this.currentPlaylistAddress = null
     },
 
-    async playNewQueue(queue) {
+    async playNewPlaylist(queue, playlistAddress) {
       this.queue = queue
       this.currentTrackIndex = 0
+      this.currentPlaylistAddress = playlistAddress
       // pause so that the audio player can be rendered
       await new Promise(resolve => setTimeout(resolve, 500)); // pause
       this.playTrigger++

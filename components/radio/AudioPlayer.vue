@@ -20,6 +20,14 @@
 
             <li><hr /></li>
 
+            <NuxtLink
+              v-if="getPlaylistAddress"
+              :to="'/playlist?id='+getPlaylistAddress"
+              class="dropdown-item h6 cursor-pointer"
+            >
+              <i class="bi bi-music-note-list me-1"></i> View playlist
+            </NuxtLink>
+
             <li class="dropdown-item h6 cursor-pointer" @click="audioStore.shuffleQueue()">
               <i class="bi bi-shuffle me-1"></i> Shuffle
             </li>
@@ -106,6 +114,10 @@ export default {
 
     getAudioQueueLength() {
       return this.audioStore.queue.length
+    },
+
+    getPlaylistAddress() {
+      return this.audioStore.currentPlaylistAddress
     },
 
     getPlayTrigger() {
