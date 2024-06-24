@@ -23,7 +23,7 @@
     <!-- Main content with sidebars -->
     <div class="container-fluid page-container">
       <div class="row flex-nowrap">
-        <SidebarLeft :lSidebar="lSidebar" :isMobile="isMobile" />
+        <SidebarLeft :lSidebar="lSidebar" :isMobile="isMobile" class="z-1" />
 
         <main class="col col-lg-4 ps-md-2 pt-2 main-containter" v-show="sidebarStore.showMainContent">
           <slot></slot>
@@ -35,7 +35,7 @@
 
     <!-- Footer -->
     <Transition name="slide-up-down">
-      <StickyFooterPlayer v-if="audioQueueLength > 0" />
+      <StickyFooterPlayer v-if="audioQueueLength > 0"  class="z-2" />
     </Transition>
 
     <!-- Connect Wallet modal -->

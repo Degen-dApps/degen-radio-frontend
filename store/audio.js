@@ -19,9 +19,17 @@ export const useAudioStore = defineStore({
       this.queue.push(audio)
     },
 
-    addToQueueAtIndex(audio, index) {
+    async addToQueueAtIndex(audio, index) {
+      let newQueue = this.queue.length === 0 ? true : false;
+
       this.queue.splice(index, 0, audio)
       this.currentTrackIndex = index
+
+      if (newQueue) {
+        // pause so that the audio player can be rendered
+        await new Promise(resolve => setTimeout(resolve, 500)); // pause
+      }
+
       this.playTrigger++
     },
 
@@ -32,17 +40,31 @@ export const useAudioStore = defineStore({
     },
 
     async playNewPlaylist(queue, playlistAddress) {
+      let newQueue = this.queue.length === 0 ? true : false;
+
       this.queue = queue
       this.currentTrackIndex = 0
       this.currentPlaylistAddress = playlistAddress
-      // pause so that the audio player can be rendered
-      await new Promise(resolve => setTimeout(resolve, 500)); // pause
+
+      if (newQueue) {
+        // pause so that the audio player can be rendered
+        await new Promise(resolve => setTimeout(resolve, 500)); // pause
+      }
+      
       this.playTrigger++
     },
 
-    playNow(audio) {
+    async playNow(audio) {
+      let newQueue = this.queue.length === 0 ? true : false;
+
       this.queue.push(audio)
       this.currentTrackIndex = this.queue.length - 1
+
+      if (newQueue) {
+        // pause so that the audio player can be rendered
+        await new Promise(resolve => setTimeout(resolve, 500)); // pause
+      }
+
       this.playTrigger++
     },
 
