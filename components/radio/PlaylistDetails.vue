@@ -24,6 +24,12 @@
 
     <p>
       <strong class="me-2 h4">Tracks</strong>
+
+      <button @click="playTracks" class="btn btn-primary btn-sm mt-2 mb-3 me-2">
+        <i class="bi bi-play-circle"></i>
+        Play
+      </button>
+
       <button
         v-if="isCurrentUserOwner"
         class="btn btn-primary btn-sm mt-2 mb-3"
@@ -32,8 +38,9 @@
         data-bs-target="#addNewTrackModal"
       >
         <i class="bi bi-plus-circle"></i>
-        Add more tracks
+        Add track
       </button>
+
     </p>
 
     <div v-if="waitingTracksData" class="d-flex justify-content-center mb-3">
@@ -168,6 +175,10 @@ export default {
 
       // fetch contract owner
       this.ownerAddress = await playlistContract.getOwner()
+    },
+
+    playTracks() {
+      this.audioStore.playNewQueue(this.tracks)
     },
   },
 

@@ -29,6 +29,14 @@ export const useAudioStore = defineStore({
       this.currentTrackIndex = 0
     },
 
+    async playNewQueue(queue) {
+      this.queue = queue
+      this.currentTrackIndex = 0
+      // pause so that the audio player can be rendered
+      await new Promise(resolve => setTimeout(resolve, 500)); // pause
+      this.playTrigger++
+    },
+
     playNow(audio) {
       this.queue.push(audio)
       this.currentTrackIndex = this.queue.length - 1

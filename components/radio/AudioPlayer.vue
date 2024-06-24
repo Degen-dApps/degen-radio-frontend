@@ -69,6 +69,7 @@ export default {
       currentTime: 0,
       currentTrack: null,
       duration: 0,
+      loadTimeout: null,
       playing: false,
       sound: null,
       timer: null,
@@ -133,6 +134,16 @@ export default {
       this.sound = new Howl({
         src: [src],
         format: [format || 'mp3'],
+        preload: true,
+        onload: () => {
+          clearTimeout(this.loadTimeout);
+          this.sound.play();
+        },
+        onloaderror: (id, error) => {
+          clearTimeout(this.loadTimeout);
+          console.log('Error loading song, skipping to the next one...');
+          this.nextTrack(); // skip to next song if current song fails to load
+        },
         onplay: () => {
           this.duration = this.sound.duration()
           this.startTimer()
@@ -146,7 +157,15 @@ export default {
       })
 
       this.playing = true
-      this.sound.play()
+      
+      // timeout to skip to next song if loading takes too long
+      this.loadTimeout = setTimeout(() => {
+        console.warn('Loading timeout, skipping to next song');
+        this.sound.unload();
+        this.nextTrack();
+      }, 2000)
+
+      this.sound.load()
     },
 
     nextTrack() {
