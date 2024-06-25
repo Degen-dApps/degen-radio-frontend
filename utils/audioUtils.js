@@ -98,8 +98,14 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
       return { success: false, message: 'Invalid token URI' }
     }
 
+    let nftName = metadata.name
+
+    if (Number(nftId) === 1) {
+      nftName = nftName.replace(' #1', '')
+    }
+
     const nftData = {
-      name: metadata.name.replace(' #1', ''),
+      name: nftName,
       address: nftAddress,
       tokenId: nftId,
       chainId: chainId,

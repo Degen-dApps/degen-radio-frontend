@@ -2,9 +2,14 @@
   <div class="col-auto col-lg-3 px-0 mt-1">
     <div id="sidebar2" class="collapse collapse-horizontal" :class="{ show: sidebarStore.showRightSidebar }">
       <div id="sidebar-nav" class="list-group border-0 rounded-0 text-sm-start min-vh-100">
-        <!-- Mint/register a domain name 
-        <NameMintWidget />
-        -->
+
+        <!-- Connect wallet / Switch Chain -->
+        <div v-if="isMobile" class="card m-2 bg-light">
+          <div class="card-body sidebar-card-body text-center mt-4">
+            <ConnectWalletButton v-if="!isActivated" class="btn btn-primary" btnText="Connect wallet" />
+            <SwitchChainButton v-if="isActivated && !isSupportedChain" />
+          </div>
+        </div>
 
         <!-- Random track -->
         <div class="card m-2 bg-light">
@@ -21,6 +26,10 @@
             <p>Random playlists to check out</p>
           </div>
         </div>
+
+        <!-- Mint/register a domain name 
+        <NameMintWidget />
+        -->
 
         <!-- Referrals 
 				<ReferralWidget />
@@ -43,21 +52,36 @@
 
 <script>
 import tokens from '~/assets/data/tokens.json'
-import { useSidebarStore } from '~/store/sidebars'
+import ConnectWalletButton from '~/components/ConnectWalletButton.vue'
+import SwitchChainButton from '~/components/SwitchChainButton.vue'
 import MintedPostsWidget from '~/components/minted-posts/MintedPostsWidget.vue'
 import NameMintWidget from '~/components/names/NameMintWidget.vue'
-import SimpleSwapWidget from '~/components/swap/SimpleSwapWidget.vue'
 import ReferralWidget from '~/components/referrals/ReferralWidget.vue'
+import SimpleSwapWidget from '~/components/swap/SimpleSwapWidget.vue'
+import { useEthers } from '~/store/ethers'
+import { useSidebarStore } from '~/store/sidebars'
 
 export default {
   name: 'SidebarRight',
   props: ['rSidebar', 'isMobile'],
 
   components: {
+    ConnectWalletButton,
     MintedPostsWidget,
     NameMintWidget,
     ReferralWidget,
     SimpleSwapWidget,
+    SwitchChainButton,
+  },
+
+  computed: {
+    isSupportedChain() {
+      if (this.chainId === this.$config.supportedChainId) {
+        return true
+      } else {
+        return false
+      }
+    },
   },
 
   methods: {
@@ -71,8 +95,9 @@ export default {
   },
 
   setup() {
+    const { chainId, isActivated } = useEthers()
     const sidebarStore = useSidebarStore()
-    return { sidebarStore, tokens }
+    return { chainId, isActivated, sidebarStore, tokens }
   },
 }
 </script>

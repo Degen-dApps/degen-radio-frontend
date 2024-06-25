@@ -68,6 +68,18 @@ export const useAudioStore = defineStore({
       this.playTrigger++
     },
 
+    async playNowExisting(audio) {
+      let index = this.queue.findIndex(item => item.name === audio.name)
+
+      if (index === -1) {
+        console.error('Audio not found in queue')
+        this.playNow(audio)
+      } else {
+        this.currentTrackIndex = index
+        this.playTrigger++
+      }
+    },
+
     setCurrentTrackIndex(index) {
       this.currentTrackIndex = index
     },

@@ -51,7 +51,15 @@
       <span class="spinner-border spinner-border-lg" role="status" aria-hidden="true"></span>
     </div>
 
-    <TracksListItem class="mb-2" v-for="(track, index) in tracks" :key="index" :track="track" />
+    <TracksListItem 
+      class="mb-2" 
+      v-for="(track, index) in tracks" 
+      :key="index" 
+      :audioStore="audioStore"
+      :track="track" 
+      :isCurrentUserOwner="isCurrentUserOwner"
+      @removeTrack="removeTrack"
+    />
 
     <div class="d-grid gap-2 mt-3">
       <button class="btn btn-primary" type="button">Load more tracks</button>
@@ -188,6 +196,8 @@ export default {
     playTracks() {
       this.audioStore.playNewPlaylist(this.tracks, this.playlistAddress)
     },
+
+    async removeTrack() {}
   },
 
   setup() {
@@ -203,6 +213,6 @@ export default {
       signer,
       toast,
     }
-  },
+  }
 }
 </script>

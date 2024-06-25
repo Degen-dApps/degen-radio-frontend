@@ -175,7 +175,7 @@ export default {
         console.warn('Loading timeout, skipping to next song');
         this.sound.unload();
         this.nextTrack();
-      }, 2500) // timeout in milliseconds
+      }, 3000) // timeout in milliseconds
 
       this.sound.load()
     },
