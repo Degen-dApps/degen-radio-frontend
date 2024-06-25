@@ -44,7 +44,7 @@ export default {
 
   methods: {
     async playSong() {
-      this.audioStore.playNowExisting(this.track)
+      this.audioStore.playNow(this.track)
     },
 
     removeTrack() {

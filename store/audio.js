@@ -55,25 +55,20 @@ export const useAudioStore = defineStore({
     },
 
     async playNow(audio) {
-      let newQueue = this.queue.length === 0 ? true : false;
-
-      this.queue.push(audio)
-      this.currentTrackIndex = this.queue.length - 1
-
-      if (newQueue) {
-        // pause so that the audio player can be rendered
-        await new Promise(resolve => setTimeout(resolve, 500)); // pause
-      }
-
-      this.playTrigger++
-    },
-
-    async playNowExisting(audio) {
       let index = this.queue.findIndex(item => item.name === audio.name)
 
       if (index === -1) {
-        console.error('Audio not found in queue')
-        this.playNow(audio)
+        let newQueue = this.queue.length === 0 ? true : false;
+
+        this.queue.push(audio)
+        this.currentTrackIndex = this.queue.length - 1
+
+        if (newQueue) {
+          // pause so that the audio player can be rendered
+          await new Promise(resolve => setTimeout(resolve, 500)); // pause
+        }
+
+        this.playTrigger++
       } else {
         this.currentTrackIndex = index
         this.playTrigger++
