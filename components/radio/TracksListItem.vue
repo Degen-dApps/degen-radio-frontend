@@ -6,7 +6,14 @@
       </div>
       <div class="col-md-4 align-self-center track-buttons">
 
-        <button class="btn btn-primary btn-sm me-2" :disabled="!songUrlAccessible">Add to queue</button>
+        <button 
+          v-if="!isCurrentPlaylist"
+          @click="addToQueue"
+          class="btn btn-primary btn-sm me-2" 
+          :disabled="isAlreadyInQueue"
+        >
+          Add to queue
+        </button>
 
         <button 
           @click="playSong"
@@ -31,26 +38,52 @@
 </template>
 
 <script>
+import { ethers } from 'ethers'
+import { useEthers } from '~/store/ethers'
+import { useToast } from 'vue-toastification/dist/index.mjs'
+import DegenRadioPlaylistAbi from '~/assets/abi/DegenRadioPlaylistAbi.json'
+import SwitchChainButton from '~/components/SwitchChainButton.vue'
+import WaitingToast from '~/components/WaitingToast'
+
 export default {
   name: 'TracksListItem',
-  props: ['audioStore', 'isCurrentUserOwner', 'track'],
+  props: ['audioStore', 'isCurrentUserOwner', 'playlistAddress', 'track'],
   emits: ['removeTrack'],
+  components: { SwitchChainButton },
 
-  data() {
-    return {
-      songUrlAccessible: false, // if song file is accessible, make it true
+  computed: {
+    isAlreadyInQueue() {
+      return this.audioStore.queue.some((q) => q.id === this.track.id)
+    },
+
+    isCurrentPlaylist() {
+      return String(this.audioStore.currentPlaylistAddress).toLowerCase() === String(this.playlistAddress).toLowerCase()
     }
   },
 
   methods: {
-    async playSong() {
+    addToQueue() {
+      this.audioStore.addToQueue(this.track)
+      this.toast.info('Track added to the listening queue.', {
+        timeout: 2000,
+      })
+    },
+
+    playSong() {
       this.audioStore.playNow(this.track)
     },
 
     removeTrack() {
       this.$emit('removeTrack', this.track);
     }
-  }
+  },
+
+  setup() {
+    const { address, isActivated, signer } = useEthers()
+    const toast = useToast()
+
+    return { address, isActivated, signer, toast }
+  },
 }
 </script>
 

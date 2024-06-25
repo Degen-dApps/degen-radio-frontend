@@ -130,7 +130,10 @@
         </small>
       </div>
 
-      <button @click="playNow" class="btn btn-success btn-sm mt-3">Play song</button>
+      <button @click="playNow" class="btn btn-outline-primary btn-sm mt-3">
+        <i class="bi bi-play-circle-fill"></i>
+        Play song
+      </button>
 
       <!-- Buttons div -->
       <div class="d-flex justify-content-center mt-5 mb-5">

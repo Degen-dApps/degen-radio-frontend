@@ -56,8 +56,9 @@
       v-for="(track, index) in tracks" 
       :key="index" 
       :audioStore="audioStore"
-      :track="track" 
       :isCurrentUserOwner="isCurrentUserOwner"
+      :playlistAddress="playlistAddress"
+      :track="track" 
       @removeTrack="removeTrack"
     />
 

@@ -23,7 +23,11 @@
         <div class="card m-2 bg-light">
           <div class="card-header bg-light">5 Random Playlists</div>
           <div class="card-body sidebar-card-body">
-            <p>Random playlists to check out</p>
+            <p>Random playlists to check out:</p>
+
+            <li>
+              <NuxtLink to="/playlist?id=0x0Dd272d469fB118f26Db72563f501Bb522AC2A95">Happy Songs</NuxtLink>
+            </li>
           </div>
         </div>
 

@@ -55,7 +55,7 @@ export const useAudioStore = defineStore({
     },
 
     async playNow(audio) {
-      let index = this.queue.findIndex(item => item.name === audio.name)
+      let index = this.queue.findIndex(item => item.id === audio.id)
 
       if (index === -1) {
         let newQueue = this.queue.length === 0 ? true : false;

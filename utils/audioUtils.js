@@ -105,6 +105,7 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
     }
 
     const nftData = {
+      id: `${nftAddress}-${nftId}-${chainId}`,
       name: nftName,
       address: nftAddress,
       tokenId: nftId,
