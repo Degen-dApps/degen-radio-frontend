@@ -22,7 +22,7 @@
 
     <p class="text-center">{{ playlistDescription }}</p>
 
-    <p>
+    <div>
       <strong class="me-2 h4">Tracks</strong>
 
       <button 
@@ -34,18 +34,28 @@
         Play
       </button>
 
-      <button
-        v-if="isCurrentUserOwner"
-        class="btn btn-primary btn-sm mt-2 mb-3"
-        type="button"
-        data-bs-toggle="modal"
-        data-bs-target="#addNewTrackModal"
-      >
-        <i class="bi bi-plus-circle"></i>
-        Add track
-      </button>
+      <div v-if="tracks.length > 0" class="btn-group ms-1 align-text-bottom">
+          <span class="dropdown-toggle cursor-pointer hover-color dropdown-no-caret" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-three-dots-vertical"></i>
+          </span>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <button 
+                class="dropdown-item" 
+                v-if="isCurrentUserOwner"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#addNewTrackModal"
+              >
+                Add another track
+              </button>
+            </li>
 
-    </p>
+            <li><button class="dropdown-item" type="button" :disabled="true">Refresh playlist data</button></li>
+          </ul>
+        </div>
+
+    </div>
 
     <div v-if="waitingTracksData" class="d-flex justify-content-center mb-3">
       <span class="spinner-border spinner-border-lg" role="status" aria-hidden="true"></span>

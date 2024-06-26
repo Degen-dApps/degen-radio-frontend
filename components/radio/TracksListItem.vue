@@ -23,7 +23,7 @@
         </button>
 
         <div class="btn-group">
-          <span class="dropdown-toggle cursor-pointer hover-color" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="dropdown-toggle cursor-pointer hover-color dropdown-no-caret" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-three-dots-vertical"></i>
           </span>
           <ul class="dropdown-menu dropdown-menu-end">
@@ -35,6 +35,8 @@
             </button></li>
 
             <li v-if="track.externalUrl"><a class="dropdown-item" target="_blank" :href="track.externalUrl">Go to track external URL</a></li>
+            
+            <li><button class="dropdown-item" type="button" :disabled="true">Refresh track data</button></li>
           </ul>
         </div>
 
@@ -161,10 +163,6 @@ export default {
 </script>
 
 <style scoped>
-.dropdown-toggle::after {
-  display: none;
-}
-
 .track-card {
   border: 1px solid #adb5bd;
 }

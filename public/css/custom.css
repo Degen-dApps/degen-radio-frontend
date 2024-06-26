@@ -241,6 +241,10 @@ a:hover {
   cursor: pointer;
 }
 
+.dropdown-no-caret::after {
+  display: none;
+}
+
 /* EmojiPicker.vue + <Picker class="emoji-mart-category" */
 .emoji-mart-category {
   color: #0f1110;
