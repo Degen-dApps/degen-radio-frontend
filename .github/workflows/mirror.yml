@@ -16,7 +16,7 @@ jobs:
           target_repo_url:
             git@bitbucket.org:punk-domains/degen-radio-frontend.git
           ssh_private_key:                              # <-- use 'secrets' to pass credential information.
-            ${{ secrets.BITBUCKET_SSH_PRIVATE_KEY }}
+            ${{ secrets.MIRROR_KEY }}
 
   to_gitlab:
     runs-on: ubuntu-latest
@@ -30,4 +30,4 @@ jobs:
           target_repo_url:
             git@gitlab.com:degen-dapps/degen-radio-frontend.git
           ssh_private_key:                              # <-- use 'secrets' to pass credential information.
-            ${{ secrets.BITBUCKET_SSH_PRIVATE_KEY }}
+            ${{ secrets.MIRROR_KEY }}
