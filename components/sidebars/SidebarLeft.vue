@@ -32,26 +32,14 @@
           </div>
 
           <ul class="nav nav-pills flex-column">
-            <ul class="list-group">
-              <NuxtLink
-                to="/playlists/main"
-                class="list-group-item cursor-pointer hover-color bg-light border-0"
-                :class="$route.path === '/playlists/main' ? 'active' : ''"
-                @click="closeLeftSidebar"
-              >
-                Top Hits
+
+            <li class="nav-item p-1" @click="closeLeftSidebar">
+              <NuxtLink class="nav-link" :class="$route.path === '/playlists/main' ? 'active' : ''" aria-current="page" to="/playlists/main">
+                <i class="bi bi-trophy me-1"></i> Top Hits
               </NuxtLink>
-            </ul>
+            </li>
 
             <hr />
-
-            <!-- Home 
-						<li class="nav-item p-1" @click="closeLeftSidebar">
-							<NuxtLink class="nav-link" :class="$route.path === '/' ? 'active' : ''" aria-current="page" to="/">
-								<i class="bi bi-house me-1"></i> Home
-							</NuxtLink>
-						</li>
-						-->
 
             <!-- Create Playlist -->
             <li class="nav-item p-1" @click="closeLeftSidebar">

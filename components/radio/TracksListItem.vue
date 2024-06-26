@@ -29,6 +29,7 @@
           <ul class="dropdown-menu dropdown-menu-end">
             <li><button class="dropdown-item" type="button">Add to another playlist</button></li>
             <li v-if="isCurrentUserOwner"><button class="dropdown-item" type="button">Remove track</button></li>
+            <li v-if="track.externalUrl"><a class="dropdown-item" target="_blank" :href="track.externalUrl">Go to track external URL</a></li>
           </ul>
         </div>
 
