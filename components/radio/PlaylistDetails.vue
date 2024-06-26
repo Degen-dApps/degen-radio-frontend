@@ -59,6 +59,7 @@
       :isCurrentUserOwner="isCurrentUserOwner"
       :playlistAddress="playlistAddress"
       :track="track" 
+      :trackIndex="index" 
       @removeTrack="removeTrack"
     />
 
@@ -198,7 +199,10 @@ export default {
       this.audioStore.playNewPlaylist(this.tracks, this.playlistAddress)
     },
 
-    async removeTrack() {}
+    async removeTrack() {
+      this.tracks = []
+      this.loadPlaylistData()
+    }
   },
 
   setup() {

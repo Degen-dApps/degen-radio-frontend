@@ -27,8 +27,13 @@
             <i class="bi bi-three-dots-vertical"></i>
           </span>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><button class="dropdown-item" type="button">Add to another playlist</button></li>
-            <li v-if="isCurrentUserOwner"><button class="dropdown-item" type="button">Remove track</button></li>
+            <li><button class="dropdown-item" type="button" :disabled="true">Add to another playlist</button></li>
+
+            <li @click="removeTrack" v-if="isCurrentUserOwner"><button class="dropdown-item" type="button" :disabled="waitingRemoveTrack">
+              <span v-if="waitingRemoveTrack" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              Remove track
+            </button></li>
+
             <li v-if="track.externalUrl"><a class="dropdown-item" target="_blank" :href="track.externalUrl">Go to track external URL</a></li>
           </ul>
         </div>
@@ -42,15 +47,20 @@
 import { ethers } from 'ethers'
 import { useEthers } from '~/store/ethers'
 import { useToast } from 'vue-toastification/dist/index.mjs'
-import DegenRadioPlaylistAbi from '~/assets/abi/DegenRadioPlaylistAbi.json'
 import SwitchChainButton from '~/components/SwitchChainButton.vue'
 import WaitingToast from '~/components/WaitingToast'
 
 export default {
   name: 'TracksListItem',
-  props: ['audioStore', 'isCurrentUserOwner', 'playlistAddress', 'track'],
+  props: ['audioStore', 'isCurrentUserOwner', 'playlistAddress', 'track', 'trackIndex'],
   emits: ['removeTrack'],
   components: { SwitchChainButton },
+
+  data() {
+    return {
+      waitingRemoveTrack: false
+    }
+  },
 
   computed: {
     isAlreadyInQueue() {
@@ -65,17 +75,79 @@ export default {
   methods: {
     addToQueue() {
       this.audioStore.addToQueue(this.track)
-      this.toast.info('Track added to the listening queue.', {
-        timeout: 2000,
-      })
+      this.toast.info('Track added to the listening queue.', { timeout: 2000 })
     },
 
     playSong() {
       this.audioStore.playNow(this.track)
     },
 
-    removeTrack() {
-      this.$emit('removeTrack', this.track);
+    async removeTrack() {
+      this.waitingRemoveTrack = true
+
+      const playlistInterface = new ethers.utils.Interface([
+        'function removeTrackByIndex(uint256 index_) external',
+      ])
+
+      const playlistContract = new ethers.Contract(this.playlistAddress, playlistInterface, this.signer)
+
+      try {
+        const tx = await playlistContract.removeTrackByIndex(this.trackIndex)
+
+        const toastWait = this.toast(
+          {
+            component: WaitingToast,
+            props: {
+              text: 'Please wait for your transaction to confirm. Click on this notification to see transaction in the block explorer.',
+            },
+          },
+          {
+            type: 'info',
+            onClick: () => window.open(this.$config.blockExplorerBaseUrl + '/tx/' + tx.hash, '_blank').focus(),
+          },
+        )
+
+        const receipt = await tx.wait()
+
+        if (receipt.status === 1) {
+          this.waitingRemoveTrack = false
+
+          this.toast.dismiss(toastWait)
+
+          this.toast('You have successfully removed track from the playlist!', {
+            type: 'success',
+            onClick: () => window.open(this.$config.blockExplorerBaseUrl + '/tx/' + tx.hash, '_blank').focus(),
+          })
+
+          this.$emit('removeTrack');
+
+        } else {
+          this.waitingRemoveTrack = false
+          this.toast.dismiss(toastWait)
+          this.toast('Transaction has failed.', {
+            type: 'error',
+            onClick: () => window.open(this.$config.blockExplorerBaseUrl + '/tx/' + tx.hash, '_blank').focus(),
+          })
+          console.log(receipt)
+        }
+      } catch (e) {
+        console.error(e)
+
+        try {
+          let extractMessage = e.message.split('reason=')[1]
+          extractMessage = extractMessage.split(', method=')[0]
+          extractMessage = extractMessage.replace(/"/g, '')
+          extractMessage = extractMessage.replace('execution reverted:', 'Error:')
+
+          console.log(extractMessage)
+
+          this.toast(extractMessage, { type: 'error' })
+        } catch (e) {
+          this.toast('Transaction has failed.', { type: 'error' })
+        }
+
+        this.waitingRemoveTrack = false
+      }
     }
   },
 

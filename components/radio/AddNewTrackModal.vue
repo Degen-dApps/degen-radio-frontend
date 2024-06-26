@@ -202,19 +202,11 @@ export default {
         return
       }
 
-      // get provider
-      let provider = this.$getFallbackProvider(this.$config.supportedChainId)
-
-      if (this.isActivated && this.chainId === this.$config.supportedChainId) {
-        // fetch provider from user's MetaMask
-        provider = this.signer
-      }
-
       const playlistInterface = new ethers.utils.Interface([
         'function addTrack(address addr_, uint256 tokenId_, uint256 chainId_) external',
       ])
 
-      const playlistContract = new ethers.Contract(this.playlist.playlistAddress, playlistInterface, provider)
+      const playlistContract = new ethers.Contract(this.playlist.playlistAddress, playlistInterface, this.signer)
 
       try {
         const tx = await playlistContract.addTrack(this.tAddress, this.tNftId, this.tChainId)
