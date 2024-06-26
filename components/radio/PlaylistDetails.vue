@@ -23,7 +23,7 @@
     <p class="text-center">{{ playlistDescription }}</p>
 
     <div>
-      <strong class="me-2 h4">Tracks</strong>
+      <strong class="me-2 h4 me-3">Tracks</strong>
 
       <button 
         v-if="tracks.length > 0"
@@ -79,6 +79,7 @@
 
     <AddNewTrackModal 
       v-if="isCurrentUserOwner" 
+      :allTracksLength="allTracksLength"
       :audioStore="audioStore" 
       :playlist="playlistData" 
       :toast="toast"
@@ -108,6 +109,7 @@ export default {
 
   data() {
     return {
+      allTracksLength: 0, // the total number of tracks in the playlist
       ownerAddress: null,
       playlistData: null,
       playlistNftId: null,
@@ -203,6 +205,8 @@ export default {
 
       // fetch contract owner
       this.ownerAddress = await playlistContract.getOwner()
+
+      this.allTracksLength = await playlistContract.getTracksLength()
     },
 
     playTracks() {

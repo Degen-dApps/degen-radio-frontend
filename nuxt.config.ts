@@ -100,6 +100,7 @@ export default defineNuxtConfig({
       punkNumberOfPrices: 1, // number of different prices (based on domain length), usually 1 (price()) or 5 (price1char() - price5char())
       punkTldAddress: '0x1DD820F4f48eBC2B8e7F666F34fbC5820808074e', // punk domain TLD address
       radio: {
+        maxTracks: 20, // max number of tracks in a playlist
         metadataAddress: '0xc6D85C4786bc678aB59a3B4960D73EB3266Cfa7E',
         playlistFactoryAddress: '0x7c9A024C5eeed9fE96f8512cd7348245326f4bD7',
         playlistNftAddress: '0xbb6fca36B0d0107773a410103e9f1f459C3eb95e',

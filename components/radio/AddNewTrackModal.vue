@@ -15,6 +15,10 @@
 
         <div class="modal-body">
 
+          <div v-if="tooManyTracks" class="alert alert-danger" role="alert">
+            Your playlist has reached the maximum number of tracks allowed ({{ $config.radio.maxTracks }}). You can't add more tracks to this playlist.
+          </div>
+
           <!-- Track blockchain -->
           <div class="mb-3">
             <label for="tChain" class="form-label">Select the chain where the music NFT is deployed on:</label>
@@ -97,7 +101,7 @@
             type="button"
             class="btn btn-primary"
             @click="submit"
-            :disabled="!tChainId || !tAddress || !tNftId || waitingSubmitTrack"
+            :disabled="!tChainId || !tAddress || !tNftId || waitingSubmitTrack || tooManyTracks"
           >
             Add track to playlist
           </button>
@@ -118,13 +122,12 @@ import { fetchMusicNftData } from '~/utils/audioUtils'
 
 export default {
   name: 'AddNewTrackModal',
-  props: ['audioStore', 'playlist', 'toast'],
+  props: ['allTracksLength', 'audioStore', 'playlist', 'toast'],
   emits: ['addSongToTracks'],
   components: { SwitchChainButton },
 
   data() {
     return {
-      //chainId: null,
       playingNow: false,
       tAddress: null,
       tChainId: 666666666,
@@ -143,6 +146,10 @@ export default {
       } else {
         return false
       }
+    },
+
+    tooManyTracks() {
+      return this.allTracksLength >= this.$config.radio.maxTracks
     },
   },
 
