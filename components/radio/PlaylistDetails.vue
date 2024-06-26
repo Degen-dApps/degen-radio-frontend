@@ -57,7 +57,7 @@
 
     </div>
 
-    <div v-if="waitingTracksData" class="d-flex justify-content-center mb-3">
+    <div v-if="waitingTracksData && allTracksLoaded" class="d-flex justify-content-center mb-3">
       <span class="spinner-border spinner-border-lg" role="status" aria-hidden="true"></span>
     </div>
 
@@ -74,7 +74,16 @@
     />
 
     <div class="d-grid gap-2 mt-3">
-      <button class="btn btn-primary" type="button">Load more tracks</button>
+      <button 
+        v-if="!allTracksLoaded"
+        class="btn btn-primary" 
+        type="button"
+        :disabled="waitingTracksData"
+        @click="loadTracks(loadTrackIndexStart, loadTrackIndexEnd)"
+      >
+        <span v-if="waitingTracksData" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Load more tracks
+      </button>
     </div>
 
     <AddNewTrackModal 
@@ -110,6 +119,7 @@ export default {
   data() {
     return {
       allTracksLength: 0, // the total number of tracks in the playlist
+      loadTrackIndexStart: 0, // the next track index to load via load more button
       ownerAddress: null,
       playlistData: null,
       playlistNftId: null,
@@ -124,12 +134,20 @@ export default {
   },
 
   computed: {
+    allTracksLoaded() {
+      return this.tracks.length >= this.allTracksLength
+    },
+
     isCurrentUserOwner() {
       if (this.address && this.ownerAddress) {
         return String(this.address).toLowerCase() === String(this.ownerAddress).toLowerCase()
       }
 
       return false
+    },
+
+    loadTrackIndexEnd() {
+      return this.loadTrackIndexStart + Number(this.$config.radio.loadTrackLimit) - 1
     },
 
     playlistName() {
@@ -180,14 +198,16 @@ export default {
 
       this.waitingPlaylistData = false
 
+      /*
       this.waitingTracksData = true
 
-      // TODO: fetch playlist tracks from blockchain (do not store it in localStorage)
+      // fetch playlist tracks from blockchain (do not store it in localStorage)
       // individial track data will be fetched from track components (and stored in localStorage)
       const playlistContract = new ethers.Contract(this.playlistAddress, DegenRadioPlaylistAbi, provider)
 
       // fetch first 10 tracks
-      const musicNfts = await playlistContract.getTracks(0, 10)
+      const musicNfts = await playlistContract.getTracks(0, Number(this.$config.radio.loadTrackLimit)-1)
+      this.loadTrackIndexStart = Number(this.$config.radio.loadTrackLimit)
 
       for (let i = 0; i < musicNfts.length; i++) {
         const musicNft = musicNfts[i]
@@ -202,11 +222,40 @@ export default {
       }
 
       this.waitingTracksData = false
+      */
+
+      await this.loadTracks(0, Number(this.$config.radio.loadTrackLimit)-1)
 
       // fetch contract owner
+      const playlistContract = new ethers.Contract(this.playlistAddress, DegenRadioPlaylistAbi, provider)
+
       this.ownerAddress = await playlistContract.getOwner()
 
       this.allTracksLength = await playlistContract.getTracksLength()
+    },
+
+    async loadTracks(startIndex, endIndex) {
+      this.waitingTracksData = true
+
+      let provider = this.$getFallbackProvider(this.$config.supportedChainId)
+      const playlistContract = new ethers.Contract(this.playlistAddress, DegenRadioPlaylistAbi, provider)
+
+      const musicNfts = await playlistContract.getTracks(startIndex, endIndex)
+      this.loadTrackIndexStart = endIndex + 1
+
+      for (let i = 0; i < musicNfts.length; i++) {
+        const musicNft = musicNfts[i]
+        const trackProvider = this.$getProviderForChain(Number(musicNft.chainId))
+        const trackData = await fetchMusicNftData(
+          window, trackProvider, musicNft.nftAddress, Number(musicNft.tokenId), Number(musicNft.chainId)
+        )
+
+        if (trackData.success) {
+          this.tracks.push(trackData?.nftData)
+        }
+      }
+
+      this.waitingTracksData = false
     },
 
     playTracks() {

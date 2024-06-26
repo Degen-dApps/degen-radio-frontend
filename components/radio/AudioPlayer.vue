@@ -2,9 +2,10 @@
   <div class="card audio-player-card">
     <div class="card-body row d-flex justify-content-evenly">
       <div class="col-md-6 text-center mb-2 mt-2">
-        <span class="dropup-center dropup align-text-top" v-if="currentTrack?.name">
-          <span class="dropdown-toggle me-4 cursor-pointer h6" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ currentTrack.name }}
+        
+        <span class="dropup-center dropup align-text-top me-4" v-if="currentTrack?.name">
+          <span class="dropdown-toggle cursor-pointer h6" data-bs-toggle="dropdown" aria-expanded="false" data-bs-offset="0,30">
+            <span class="me-1 text-wrap">{{ currentTrack.name }}</span>
           </span>
 
           <ul class="dropdown-menu">
