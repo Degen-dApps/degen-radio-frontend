@@ -1,11 +1,17 @@
 <template>
-  <img :src="parseImageLink" />
+  <img :src="parseImageLink" :alt="domainName" class="rounded-circle" />
 </template>
 
 <script>
+import { ethers } from 'ethers'
+import Image from '~/components/Image.vue'
+import { useEthers } from '~/store/ethers'
+import { fetchData, storeData } from '~/utils/storageUtils'
+
 export default {
   name: 'ProfileImage',
-  props: ['address', 'domain', 'image'],
+  props: ['domain', 'image'],
+  components: { Image },
 
   data() {
     return {
@@ -19,17 +25,18 @@ export default {
   },
 
   mounted() {
-    const storedImage = sessionStorage.getItem(String(this.address).toLowerCase() + '-img')
-
-    if (storedImage) {
-      this.imgPath = storedImage
-    } else if (this.image) {
-      this.imgPath = this.image
-      sessionStorage.setItem(String(this.address).toLowerCase() + '-img', this.image)
-    }
+    this.fetchProfilePicture()
   },
 
   computed: {
+    domainName() {
+      if (!this.domain) {
+        return null
+      }
+
+      return this.domain.replace(this.$config.tldName, '')
+    },
+
     parseImageLink() {
       let parsedImage = this.imgPath
 
@@ -41,11 +48,84 @@ export default {
     },
   },
 
+  methods: {
+    async fetchProfilePicture() {
+      if (this.image) {
+        console.log('Image is passed as a prop:', this.image)
+        return this.imgPath = this.image
+      }
+      
+      // Check if domain name is passed as a prop
+      if (this.domainName) {
+        console.log('Domain name is passed as a prop:', this.domainName)
+
+        // Check if domain name has an image (domainName-img key)
+        const dataObject = fetchData(window, this.domainName, "img", this.$config.expiryPfps)
+
+        console.log('Data object:', dataObject)
+
+        if (dataObject) {
+          return this.imgPath = dataObject.image
+        } else {
+          // fetch image from blockchain
+          let provider = this.$getFallbackProvider(this.$config.supportedChainId)
+
+          if (this.isActivated && this.chainId === this.$config.supportedChainId) {
+            // fetch provider from user's wallet
+            provider = this.signer
+          }
+
+          const punkInterface = new ethers.utils.Interface([
+            'function getDomainData(string calldata _domainName) public view returns(string memory) ', // returns a stringified JSON object
+          ])
+
+          const punkContract = new ethers.Contract(this.$config.punkTldAddress, punkInterface, provider)
+
+          try {
+            const domainData = await punkContract.getDomainData(String(this.domainName).toLowerCase())
+            console.log('Domain data:', domainData)
+
+            if (domainData) {
+              const domainDataJson = JSON.parse(domainData)
+
+              if (domainDataJson?.image) {
+                this.imgPath = domainDataJson.image
+                storeData(window, this.domainName, { image: domainDataJson.image }, "img")
+                return
+              }
+            }
+          } catch (error) {
+            console.error('Error fetching domain data:', error)
+          }
+        }
+      }
+
+      // If none of the above, use default image
+      return this.imgPath = this.defaultImage
+    },
+  },
+
+  setup() {
+    const { signer, chainId, isActivated } = useEthers()
+
+    return {
+      signer,
+      chainId,
+      isActivated,
+    }
+  },
+
   watch: {
+    domain(oldValue, newValue) {
+      if (oldValue != newValue) {
+        this.fetchProfilePicture()
+      }
+    },
+
     image(oldValue, newValue) {
-      if (newValue) {
+      if (oldValue != newValue) {
         this.imgPath = newValue
-        sessionStorage.setItem(String(this.address).toLowerCase() + '-img', this.image)
+        storeData(window, this.domainName, { image: newValue }, "img")
       }
     },
   },

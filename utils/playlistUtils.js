@@ -40,9 +40,8 @@ export async function fetchPlaylistDataFromBlockchain(window, provider, playlist
 
     let metadata
 
-    // TODO: parse token URI to get playlist data, and store relevant data in playlistObject
+    // parse token URI to get playlist data, and store relevant data in playlistObject
     if (String(tokenUri).startsWith('data:application/json;base64')) {
-      // TODO: parse data URI
       metadata = JSON.parse(atob(tokenUri.split(',')[1]))
     } else {
       console.log('fetching metadata from server...')
@@ -58,7 +57,7 @@ export async function fetchPlaylistDataFromBlockchain(window, provider, playlist
       metadata = mdResult.data
     }
 
-    // TODO: store metadata in playlistObject
+    // store metadata in playlistObject
     const playlistObject = {
       playlistAddress: playlistAddress,
       playlistNftId: Number(nftId),

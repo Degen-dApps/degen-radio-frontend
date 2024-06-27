@@ -9,12 +9,10 @@
         <div class="row">
           <div class="col-md-3 mt-3">
             <ProfileImage
-              :key="orbisImage"
-              v-if="uAddress"
+              :key="domain"
               class="img-fluid img-thumbnail rounded-circle force-circle col-6 col-md-12"
-              :address="uAddress"
               :domain="domain"
-              :image="orbisImage"
+              :image="newImageLink"
             />
           </div>
 
@@ -54,17 +52,6 @@
 
             <!-- Buttons -->
             <div class="mt-2" v-if="isCurrentUser">
-              <!-- Verify Account Ownership button 
-            <button 
-              v-if="!userStore.getIsConnectedToOrbis"
-              class="btn btn-primary mt-2 me-2 col-8 col-md-4" 
-              data-bs-toggle="modal" 
-              data-bs-target="#verifyAccountModal"
-            >
-              <i class="bi bi-person-check-fill"></i>
-              Verify Account
-            </button>
-            -->
 
               <!-- Actions dropdown button -->
               <div class="dropdown mt-2">
@@ -78,20 +65,11 @@
                   Profile settings
                 </button>
                 <div class="dropdown-menu">
-                  <span
-                    v-if="!userStore.getIsConnectedToOrbis"
-                    class="dropdown-item cursor-pointer"
-                    data-bs-toggle="modal"
-                    :data-bs-target="'#verifyAccountModal'"
-                  >
-                    <i class="bi bi-person-check-fill"></i> Verify account ownership
-                  </span>
 
                   <span
                     class="dropdown-item cursor-pointer"
-                    :class="!userStore.getIsConnectedToOrbis ? 'disabled' : ''"
                     data-bs-toggle="modal"
-                    :data-bs-target="'#fileUploadModal' + $.uid"
+                    :data-bs-target="'#changeImageModal' + $.uid"
                   >
                     <i class="bi bi-person-circle"></i> Change your profile picture
                   </span>
@@ -104,6 +82,7 @@
                     <i class="bi bi-pencil-square"></i> Change your username
                   </span>
 
+                  <!--
                   <span
                     class="dropdown-item cursor-pointer"
                     data-bs-toggle="modal"
@@ -115,6 +94,7 @@
                   <span class="dropdown-item cursor-pointer" data-bs-toggle="modal" data-bs-target="#chatSettingsModal">
                     <i class="bi bi-gear-fill"></i> Other settings
                   </span>
+                  -->
 
                   <!--
 									<span
@@ -149,30 +129,29 @@
       --></div>
 
       <!-- Change Image Modal -->
-      <FileUploadModal
-        v-if="userStore.getIsConnectedToOrbis"
-        @processFileUrl="insertImage"
-        title="Change profile image"
-        infoText="Upload a new profile picture."
-        storageType="ipfs"
+      <ChangePfpModal
+        v-if="isCurrentUser"
+        :key="domain"
+        :domainName="domain"
         :componentId="$.uid"
-        :maxFileSize="$config.fileUploadSizeLimit"
+        storageType="ipfs" 
+        @processFileUrl="insertImage"
       />
       <!-- END Change Image Modal -->
     </div>
 
-    <div v-show="false" class="card border mt-3 mb-3">
+    <div class="card border mt-3 mb-3">
       <div class="card-body">
         <!-- Tabs Navigation -->
         <ul class="nav nav-tabs nav-fill">
           <li class="nav-item">
-            <button class="nav-link" :class="currentTab === 'posts' ? 'active' : ''" @click="changeCurrentTab('posts')">
-              Posts
+            <button class="nav-link" :class="currentTab === 'userPlaylists' ? 'active' : ''" @click="changeCurrentTab('userPlaylists')">
+              Playlists
             </button>
           </li>
           <li class="nav-item">
-            <button class="nav-link" :class="currentTab === 'mints' ? 'active' : ''" @click="changeCurrentTab('mints')">
-              Mints
+            <button class="nav-link" :class="currentTab === 'likedPlaylists' ? 'active' : ''" @click="changeCurrentTab('likedPlaylists')">
+              Liked
             </button>
           </li>
         </ul>
@@ -180,14 +159,14 @@
 
         <!-- Tabs Content -->
         <div class="tab-content mt-3">
-          <!-- Posts Tab -->
-          <div v-if="currentTab === 'posts' && uDid">
-            <ChatFeed :byDid="uDid" :hideCommentBox="true" :orbisContext="getOrbisContext" />
+          <!-- Playlists Tab -->
+          <div v-if="currentTab === 'userPlaylists'">
+            <!-- TODO -->
           </div>
 
-          <!-- Mints Tab -->
-          <div v-if="currentTab === 'mints' && uAddress">
-            <UserMintedPosts :address="uAddress" />
+          <!-- Liked Tab -->
+          <div v-if="currentTab === 'likedPlaylists'">
+            <!-- TODO -->
           </div>
         </div>
       </div>
@@ -200,10 +179,8 @@ import { useEthers, shortenAddress } from '~/store/ethers'
 import { ethers } from 'ethers'
 import { useUserStore } from '~/store/user'
 import { useToast } from 'vue-toastification/dist/index.mjs'
+import ChangePfpModal from '~/components/profile/ChangePfpModal.vue'
 import ProfileImage from '~/components/profile/ProfileImage.vue'
-import FileUploadModal from '~/components/storage/FileUploadModal.vue'
-import UserMintedPosts from '~/components/minted-posts/UserMintedPosts.vue'
-import ChatFeed from '../chat/ChatFeed.vue'
 import { getDomainName, getDomainHolder } from '~/utils/domainUtils'
 import { fetchUsername, storeUsername } from '~/utils/storageUtils'
 import { getTextWithoutBlankCharacters } from '~/utils/textUtils'
@@ -215,15 +192,13 @@ export default {
   data() {
     return {
       balanceChatTokenWei: 0,
-      currentTab: 'posts',
+      currentTab: 'userPlaylists',
       domain: this.pDomain,
       followers: 0,
       following: 0,
       lastActivityTimestamp: null,
       newEmail: null,
       newImageLink: null,
-      orbisImage: null,
-      orbisProfile: null,
       uAddress: this.pAddress,
       uBalance: 0,
       uDid: null,
@@ -234,10 +209,8 @@ export default {
   },
 
   components: {
-    ChatFeed,
-    FileUploadModal,
+    ChangePfpModal,
     ProfileImage,
-    UserMintedPosts,
   },
 
   mounted() {
@@ -245,15 +218,13 @@ export default {
     this.currentTab = localStorage.getItem('profileCurrentTab')
 
     if (!this.currentTab) {
-      this.currentTab = 'posts'
+      this.currentTab = 'userPlaylists'
     }
 
     // if uAddress and/or domain is not provided via props, then find it yourself
     if (!this.pAddress || !this.pDomain) {
       this.fetchAddressAndDomain()
     }
-
-    this.checkConnectionToOrbis()
   },
 
   computed: {
@@ -277,53 +248,8 @@ export default {
       }
     },
 
-    getChatName() {
-      if (this.domain) {
-        if (this.domain.endsWith(this.$config.tldName)) {
-          return this.domain.replace(this.$config.tldName, '')
-        }
-      }
-
-      return null
-    },
-
-    getOrbisContext() {
-      if (this.$config.orbisTest) {
-        return this.$config.orbisTestContext
-      } else {
-        return this.$config.chatChannels.general
-      }
-    },
-
     isCurrentUser() {
       return String(this.uAddress).toLowerCase() === String(this.address).toLowerCase()
-    },
-
-    isEmail() {
-      if (this.newEmail) {
-        if (this.newEmail.includes('@') && this.newEmail.includes('.')) {
-          return true
-        }
-      }
-
-      return false
-    },
-
-    isImage() {
-      // check if orbisImage includes a valid image extension
-      if (this.newImageLink) {
-        if (
-          this.newImageLink.includes('.jpg') ||
-          this.newImageLink.includes('.jpeg') ||
-          this.newImageLink.includes('.png') ||
-          this.newImageLink.includes('.gif') ||
-          this.newImageLink.includes('.webp')
-        ) {
-          return true
-        }
-      }
-
-      return false
     },
   },
 
@@ -331,83 +257,6 @@ export default {
     changeCurrentTab(tab) {
       this.currentTab = tab
       localStorage.setItem('profileCurrentTab', tab)
-    },
-
-    async changeImage() {
-      if (this.userStore.getIsConnectedToOrbis) {
-        this.waitingImageUpdate = true
-
-        if (!this.orbisProfile) {
-          this.orbisProfile = {
-            pfp: '',
-            username: '',
-          }
-        }
-
-        this.orbisProfile.pfp = this.newImageLink
-
-        if (!this.orbisProfile.username && this.domain) {
-          this.orbisProfile.username = this.domain
-        }
-
-        const res = await this.$orbis.updateProfile(this.orbisProfile)
-
-        /** Check if request is successful or not */
-        if (res.status !== 200) {
-          // unsuccessful
-          console.log('Error: ', res)
-          this.toast(res.result, { type: 'error' })
-          this.waitingImageUpdate = false
-        } else {
-          // successful
-          this.orbisImage = this.newImageLink
-          this.userStore.setOrbisImage(this.newImageLink)
-          sessionStorage.setItem(String(this.address).toLowerCase() + '-img', this.newImageLink)
-          this.toast('Image successfully updated!', { type: 'success' })
-          this.waitingImageUpdate = false
-        }
-      } else {
-        this.toast('Please connect to chat first', { type: 'error' })
-      }
-    },
-
-    async checkConnectionToOrbis() {
-      if (!this.userStore.getIsConnectedToOrbis) {
-        let res = await this.$orbis.isConnected()
-
-        if (res) {
-          this.userStore.setIsConnectedToOrbis(true)
-
-          if (this.$orbis.session && !this.userStore.getDid) {
-            this.userStore.setDid(this.$orbis.session.did._id)
-            this.userStore.setDidParent(this.$orbis.session.did._parentId)
-          }
-        } else {
-          this.userStore.setIsConnectedToOrbis(false)
-        }
-      }
-    },
-
-    async connectToOrbis() {
-      if (!this.userStore.getIsConnectedToOrbis) {
-        let res = await this.$orbis.connect_v2({
-          provider: this.signer.provider.provider,
-          lit: false,
-        })
-
-        /** Check if connection is successful or not */
-        if (res.status == 200) {
-          this.userStore.setIsConnectedToOrbis(true)
-
-          if (this.$orbis.session) {
-            this.userStore.setDid(this.$orbis.session.did._id)
-            this.userStore.setDidParent(this.$orbis.session.did._parentId)
-          }
-        } else {
-          console.log('Error connecting to Ceramic: ', res)
-          this.toast(res.result, { type: 'error' })
-        }
-      }
     },
 
     async fetchAddressAndDomain() {
@@ -460,7 +309,6 @@ export default {
         storeUsername(window, this.uAddress, this.domain)
       }
 
-      await this.fetchOrbisProfile()
       await this.fetchBalance()
     },
 
@@ -468,66 +316,23 @@ export default {
       if (this.uAddress) {
         let provider = this.$getFallbackProvider(this.$config.supportedChainId)
 
-        /*
-        if (this.isActivated && this.chainId === this.$config.supportedChainId) {
-          // fetch provider from user's wallet
-          provider = this.signer.provider.provider;
-        }
-        */
-
         // fetch balance of an address
         this.uBalance = await provider.getBalance(this.uAddress)
 
         if (this.$config.chatTokenAddress) {
           // fetch chat balance
-          const chatInterface = new ethers.utils.Interface(['function balanceOf(address owner) view returns (uint256)'])
+          const chatTokenInterface = new ethers.utils.Interface(['function balanceOf(address owner) view returns (uint256)'])
 
-          const chatContract = new ethers.Contract(this.$config.chatTokenAddress, chatInterface, provider)
+          const chatTokenContract = new ethers.Contract(this.$config.chatTokenAddress, chatTokenInterface, provider)
 
-          this.balanceChatTokenWei = await chatContract.balanceOf(this.uAddress)
+          this.balanceChatTokenWei = await chatTokenContract.balanceOf(this.uAddress)
         }
-      }
-    },
-
-    async fetchOrbisProfile() {
-      this.orbisProfile = {
-        pfp: '',
-        username: '',
-      }
-
-      if (this.uAddress) {
-        let { data, error } = await this.$orbis.getDids(this.uAddress)
-
-        if (data[0]?.did) {
-          this.uDid = data[0].did
-
-          const profile = await this.$orbis.getProfile(data[0].did)
-
-          if (profile.status === 200) {
-            this.orbisProfile = profile.data.details.profile
-
-            if (profile && profile.data.details.profile && profile.data.details.profile.pfp) {
-              this.orbisImage = profile.data.details.profile.pfp
-            }
-
-            if (profile) {
-              this.followers = profile.data.count_followers
-              this.following = profile.data.count_following
-              this.lastActivityTimestamp = profile.data.last_activity_timestamp
-            }
-
-            this.waitingDataLoad = false
-          }
-        }
-
-        this.waitingDataLoad = false
       }
     },
 
     async insertImage(imageUrl) {
       // get image from file upload modal component and call the changeImage function
       this.newImageLink = imageUrl
-      this.changeImage()
     },
   },
 

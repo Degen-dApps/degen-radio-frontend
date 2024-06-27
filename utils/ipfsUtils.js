@@ -17,7 +17,6 @@ export async function getWorkingIpfsGatewayUrl(ipfsLink) {
   let cid
 
   if (!ipfsLink.startsWith('ipfs://')) {
-    console.log('ipfsLink does not start with ipfs://:', ipfsLink)
     const res = checkIfIpfsGatewayUrl(ipfsLink)
 
     if (res.success) {
@@ -26,11 +25,8 @@ export async function getWorkingIpfsGatewayUrl(ipfsLink) {
       return { success: false, message: 'Invalid IPFS link' }
     }
   } else {
-    console.log('ipfsLink starts with ipfs://:', ipfsLink)
     cid = ipfsLink.replace('ipfs://', '')
   }
-
-  console.log('cid in getWorkingIpfsGatewayUrl:', cid)
 
   const ipfsGateways = [
     'https://ipfs.io/ipfs/',
@@ -43,7 +39,6 @@ export async function getWorkingIpfsGatewayUrl(ipfsLink) {
   // prefetch the IPFS link to see if it's valid or accessible
   for (const gateway of ipfsGateways) {
     try {
-      console.log('gateway in getWorkingIpfsGatewayUrl:', gateway)
       const ipfsUrl = gateway + cid
       const response = await axios.head(gateway + cid)
 
@@ -59,8 +54,6 @@ export async function getWorkingIpfsGatewayUrl(ipfsLink) {
 }
 
 function checkIfIpfsGatewayUrl(url) {
-  console.log('checkIfIpfsGatewayUrl url:', url)
-
   const ipfsGateways = [
     'https://cloudflare-ipfs.com/ipfs/',
     'https://ipfs.io/ipfs/',
@@ -71,10 +64,7 @@ function checkIfIpfsGatewayUrl(url) {
 
   for (const gateway of ipfsGateways) {
     if (url.startsWith(gateway)) {
-      console.log('gateway:', gateway)
-
       const cid = url.replace(gateway, '')
-      console.log('cid:', cid)
 
       return { success: true, cid: cid }
     }

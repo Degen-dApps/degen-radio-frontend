@@ -15,7 +15,6 @@ export const useAudioStore = defineStore({
 
   actions: {
     addToQueue(audio) {
-      // TODO: prefetch the audio URL to see if it's valid or accessible
       this.queue.push(audio)
     },
 

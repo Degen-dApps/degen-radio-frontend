@@ -60,6 +60,7 @@ export default defineNuxtConfig({
       chatTokenSymbol: '', // chat token symbol or name
       domainRequiredToPost: true,
       expiryCollections: 1000 * 60 * 60 * 24 * 10, // must be in milliseconds (0 means no expiration)
+      expiryPfps: 1000 * 60 * 60 * 24 * 10, // must be in milliseconds (0 means no expiration)
       expiryPlaylists: 1000 * 60 * 60 * 24 * 10, // must be in milliseconds (0 means no expiration)
       expiryUsernames: 1000 * 60 * 60 * 24 * 10, // must be in milliseconds (0 means no expiration)
       favicon: '/img/logo.svg',

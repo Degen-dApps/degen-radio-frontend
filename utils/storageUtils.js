@@ -6,12 +6,12 @@ const referrerKey = 'referrer'
 /**
  *
  * @param {*} window
- * @param {*} address Blockchain address of smart contract or EOA
+ * @param {*} addressOrName Blockchain address of smart contract or EOA or domain name
  * @param {*} objType E.g. 'playlist', 'nftplaylist', 'collection'
  * @param {*} expiration In milliseconds (0 means never expire, fetch from the config file)
  * @returns
  */
-export function fetchData(window, address, objType, expiration) {
+export function fetchData(window, addressOrName, objType, expiration) {
   if (!window) {
     console.log(`No window object for ${objType} in storageUtils/fetchData`)
     return null
@@ -20,7 +20,7 @@ export function fetchData(window, address, objType, expiration) {
   try {
     const currentTime = new Date().getTime()
 
-    const objectString = window.localStorage.getItem(String(address).toLowerCase() + '-' + objType)
+    const objectString = window.localStorage.getItem(String(addressOrName).toLowerCase() + '-' + objType)
 
     if (!objectString) {
       return null
@@ -201,12 +201,12 @@ export function fetchUsername(window, userAddress) {
 /**
  *
  * @param {*} window
- * @param {*} address Blockchain address of smart contract or EOA
+ * @param {*} addressOrName Blockchain address of smart contract or EOA or domain name
  * @param {*} dataObject Data object to store
  * @param {*} objType E.g. 'playlist', 'nftplaylist', 'collection'
  * @returns
  */
-export function storeData(window, address, dataObject, objType) {
+export function storeData(window, addressOrName, dataObject, objType) {
   if (!window) {
     console.log(`No window object for ${objType} in storageUtils/storeData`)
     return { success: false, message: `No window object for ${objType} in storageUtils/storeData` }
@@ -216,9 +216,9 @@ export function storeData(window, address, dataObject, objType) {
 
   dataObject['stored'] = timestamp
 
-  window.localStorage.setItem(String(address).toLowerCase() + '-' + objType, JSON.stringify(dataObject))
+  window.localStorage.setItem(String(addressOrName).toLowerCase() + '-' + objType, JSON.stringify(dataObject))
 
-  return { success: true, message: `${objType} with address ${address} stored successfully` }
+  return { success: true, message: `${objType} with address or name ${addressOrName} stored successfully` }
 }
 
 export function storePlaylistData(window, playlistAddress, playlistNftId, dataObject) {
