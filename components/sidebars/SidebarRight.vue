@@ -8,6 +8,16 @@
           <div class="card-body sidebar-card-body text-center mt-4">
             <ConnectWalletButton v-if="!isActivated" class="btn btn-primary" btnText="Connect wallet" />
             <SwitchChainButton v-if="isActivated && !isSupportedChain" />
+
+            <div class="dropdown" v-if="isActivated && isSupportedChain">
+              <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Actions
+              </button>
+              <ul class="dropdown-menu">
+                <li><button class="dropdown-item" @click="disconnect">Disconnect wallet</button></li>
+                <li><button class="dropdown-item">Delete local storage</button></li>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -99,9 +109,9 @@ export default {
   },
 
   setup() {
-    const { chainId, isActivated } = useEthers()
+    const { chainId, disconnect, isActivated } = useEthers()
     const sidebarStore = useSidebarStore()
-    return { chainId, isActivated, sidebarStore, tokens }
+    return { chainId, disconnect, isActivated, sidebarStore, tokens }
   },
 }
 </script>

@@ -141,7 +141,7 @@ export default {
   },
 
   setup() {
-    const { address, isActivated, disconnect } = useEthers()
+    const { address, disconnect, isActivated } = useEthers()
     const siteStore = useSiteStore()
     const userStore = useUserStore()
 

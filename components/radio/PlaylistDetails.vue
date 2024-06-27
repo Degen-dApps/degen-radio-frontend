@@ -51,7 +51,16 @@
               </button>
             </li>
 
-            <li><button class="dropdown-item" type="button" :disabled="true">Refresh playlist data</button></li>
+            <li>
+              <button 
+                @click="refreshPlaylistData" 
+                class="dropdown-item" 
+                type="button" 
+                :disabled="waitingPlaylistData"
+              >
+                Refresh playlist data
+              </button>
+            </li>
           </ul>
         </div>
 
@@ -122,7 +131,6 @@ export default {
       loadTrackIndexStart: 0, // the next track index to load via load more button
       ownerAddress: null,
       playlistData: null,
-      playlistNftId: null,
       tracks: [],
       waitingPlaylistData: false,
       waitingTracksData: false,
@@ -151,13 +159,19 @@ export default {
     },
 
     playlistName() {
-      return this.playlistData ? this.playlistData.name : ''
+      return this.playlistData ? this.playlistData.name : null
     },
+
+    playlistNftId() {
+      return this.playlistData ? this.playlistData.playlistNftId : null
+    },
+
     playlistDescription() {
-      return this.playlistData ? this.playlistData.description : ''
+      return this.playlistData ? this.playlistData.description : null
     },
+
     playlistImage() {
-      return this.playlistData ? this.playlistData.image : ''
+      return this.playlistData ? this.playlistData.image : null
     },
   },
 
@@ -198,32 +212,6 @@ export default {
 
       this.waitingPlaylistData = false
 
-      /*
-      this.waitingTracksData = true
-
-      // fetch playlist tracks from blockchain (do not store it in localStorage)
-      // individial track data will be fetched from track components (and stored in localStorage)
-      const playlistContract = new ethers.Contract(this.playlistAddress, DegenRadioPlaylistAbi, provider)
-
-      // fetch first 10 tracks
-      const musicNfts = await playlistContract.getTracks(0, Number(this.$config.radio.loadTrackLimit)-1)
-      this.loadTrackIndexStart = Number(this.$config.radio.loadTrackLimit)
-
-      for (let i = 0; i < musicNfts.length; i++) {
-        const musicNft = musicNfts[i]
-        const trackProvider = this.$getProviderForChain(Number(musicNft.chainId))
-        const trackData = await fetchMusicNftData(
-          window, trackProvider, musicNft.nftAddress, Number(musicNft.tokenId), Number(musicNft.chainId)
-        )
-
-        if (trackData.success) {
-          this.tracks.push(trackData?.nftData)
-        }
-      }
-
-      this.waitingTracksData = false
-      */
-
       await this.loadTracks(0, Number(this.$config.radio.loadTrackLimit)-1)
 
       // fetch contract owner
@@ -260,6 +248,29 @@ export default {
 
     playTracks() {
       this.audioStore.playNewPlaylist(this.tracks, this.playlistAddress)
+    },
+
+    async refreshPlaylistData() {
+      this.waitingPlaylistData = true
+
+      let provider = this.$getFallbackProvider(this.$config.supportedChainId)
+
+      if (this.isActivated && this.chainId === this.$config.supportedChainId) {
+        // fetch provider from user's wallet
+        provider = this.signer
+      }
+
+      // fetch playlist data from blockchain
+      const result = await fetchPlaylistDataFromBlockchain(window, provider, this.playlistAddress, this.playlistNftId)
+
+      if (result.success) {
+        this.playlistData = result.data
+      } else {
+        console.error(result.message)
+        return this.toast.error(result.message)
+      }
+
+      this.waitingPlaylistData = false
     },
 
     async removeTrack() {
