@@ -123,10 +123,7 @@
           </div>
         </div>
 
-        <!--
-      <p class="text-break mt-3">Followers: {{ followers }}</p>
-      <p class="text-break mt-3">Following: {{ following }}</p>
-      --></div>
+      </div>
 
       <!-- Change Image Modal -->
       <ChangePfpModal
@@ -194,14 +191,10 @@ export default {
       balanceChatTokenWei: 0,
       currentTab: 'userPlaylists',
       domain: this.pDomain,
-      followers: 0,
-      following: 0,
-      lastActivityTimestamp: null,
       newEmail: null,
       newImageLink: null,
       uAddress: this.pAddress,
       uBalance: 0,
-      uDid: null,
       waitingDataLoad: false,
       waitingImageUpdate: false,
       waitingSetEmail: false,

@@ -33,21 +33,6 @@
         <li><a href="https://github.com/degen-dapps" target="_blank">Degen dApps GitHub</a></li>
       </ul>
 
-      <h5>Tech stack</h5>
-
-      <p class="text-break mt-3">
-        This chat is built on top of various decentralized and open source technologies, such as:
-      </p>
-
-      <ul>
-        <li><a href="https://ipfs.tech/" target="_blank">IPFS</a></li>
-        <li><a href="https://ceramic.network/" target="_blank">Ceramic Network</a></li>
-        <li><a href="https://useorbis.com/" target="_blank">Orbis</a></li>
-        <li><a href="https://punk.domains/" target="_blank">Punk Domains</a></li>
-        <li><a href="https://iggy.social/" target="_blank">Iggy Social</a></li>
-        <li>... and others.</li>
-      </ul>
-
       <hr />
 
       <h5>Feedback</h5>

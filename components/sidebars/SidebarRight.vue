@@ -57,8 +57,6 @@
           title="Swap tokens"
         />
 
-        <!-- Random minted post(s) -->
-        <MintedPostsWidget v-if="$config.showFeatures.randomMintedPosts" @closeRightSidebar="closeRightSidebar" />
       </div>
     </div>
   </div>
@@ -68,7 +66,6 @@
 import tokens from '~/assets/data/tokens.json'
 import ConnectWalletButton from '~/components/ConnectWalletButton.vue'
 import SwitchChainButton from '~/components/SwitchChainButton.vue'
-import MintedPostsWidget from '~/components/minted-posts/MintedPostsWidget.vue'
 import NameMintWidget from '~/components/names/NameMintWidget.vue'
 import ReferralWidget from '~/components/referrals/ReferralWidget.vue'
 import SimpleSwapWidget from '~/components/swap/SimpleSwapWidget.vue'
@@ -81,7 +78,6 @@ export default {
 
   components: {
     ConnectWalletButton,
-    MintedPostsWidget,
     NameMintWidget,
     ReferralWidget,
     SimpleSwapWidget,

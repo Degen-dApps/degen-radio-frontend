@@ -51,10 +51,6 @@ export default defineNuxtConfig({
       airdropApAddress: '', // chat token claim for APs
       airdropClaimDomainsAddress: '', // chat token claim for domain holders
       blockExplorerBaseUrl: 'https://sepolia.etherscan.io',
-      chatChannels: {
-        // go to Orbis Dashboard (https://useorbis.com/dashboard), create a new Project and then create a new Context for each of the channels below
-        general: 'kjzl6cwe1jw149zsapqlwdgyu1eu3a489jlhpmwsrcxbh7z3wh09lwgpclgay81', // general discussion channel
-      },
       chatTokenAddress: '', // chat token address
       chatTokenImage: '', // chat token image
       chatTokenSymbol: '', // chat token symbol or name
@@ -67,7 +63,6 @@ export default defineNuxtConfig({
       fileUploadEnabled: true, // enable/disable file uploads (enable only if external file storage is used, e.g. IPFS via ThirdWeb)
       fileUploadSizeLimit: 1 * 1024 * 1024, // max file upload size in bytes (1 * 1024 * 1024 = 1 MB)
       fileUploadTokenService: process.env.FILE_UPLOAD_SERVICE || 'netlify', // "netlify" or "vercel" (or leave empty for no file uploads)
-      getPostsLimit: 30, // number of posts to fetch from Orbis in the getPosts() function
       governanceUrl: 'https://warpcast.com/~/channel/degen', // governance url (snapshot, Tally, etc.)
       iggyPostAddress: '0x0BF6333Fc85159663A30Ac89FD02c5031B97c5ee',
       iggyPostMinterAddress: '0xc486B08Ed47fFe5c1b4b1A2ff5c671EA0083D9bA',
@@ -83,8 +78,6 @@ export default defineNuxtConfig({
       marketplacePostNftUrl: 'https://explorer.degen.tips/token/0x99Dbf11aCd46baFBCE82506FaeB4F13E6Ea1726A',
       marketplacePostNftItemUrl:
         'https://explorer.degen.tips/token/0x99Dbf11aCd46baFBCE82506FaeB4F13E6Ea1726A/instance/', // url (append nft id to it)
-      orbisTest: false, // if true, test context will be used instead of the production one
-      orbisTestContext: 'kjzl6cwe1jw145tfqv2eqv8tiz6puo27meyz4smz40atppuc13tulqca87k35z2', // test context
       previewImage: '/img/covers/cover.png',
       previewImageAirdrop: '/img/covers/cover-airdrop.png',
       previewImagePost: '/img/covers/cover-post.png',

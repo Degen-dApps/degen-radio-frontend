@@ -4,18 +4,7 @@
       <div class="sidebar-nav list-group border-0 rounded-0 text-sm-start min-vh-100">
         <div class="card m-2 p-2 bg-light">
           <div v-if="isActivated" class="text-center">
-            <!-- Profile image 
-            <NuxtLink to="/profile">
-              <ProfileImage
-                :key="userStore.getOrbisImage"
-                @click="closeLeftSidebar"
-                class="img-fluid mt-3 rounded-circle w-30 sidebar-profile-image"
-                :address="address"
-                :domain="userStore.getDefaultDomain"
-                :image="userStore.getOrbisImage"
-              />
-            </NuxtLink>
-
+            <!-- Profile 
             <h6 class="mt-3" v-if="userStore.getDefaultDomain">
               {{ getTextWithoutBlankCharacters(userStore.getDefaultDomain) }}
             </h6>
@@ -203,16 +192,11 @@ import { useEthers } from '~/store/ethers'
 import { useToast } from 'vue-toastification/dist/index.mjs'
 import { useSidebarStore } from '~/store/sidebars'
 import { useUserStore } from '~/store/user'
-import ProfileImage from '~/components/profile/ProfileImage.vue'
 import { getTextWithoutBlankCharacters } from '~/utils/textUtils'
 
 export default {
   name: 'SidebarLeft',
   props: ['lSidebar', 'isMobile'],
-
-  components: {
-    ProfileImage,
-  },
 
   methods: {
     closeLeftSidebar() {

@@ -45,13 +45,9 @@
 
     <ChangeUsernameModal />
 
-    <ChangeUserPostMintPriceModal />
-
     <FindUserModal />
 
     <ReferralModal />
-
-    <VerifyAccountOwnership />
   </div>
 
   <!-- Do not delete: ugly hack to make "global" work with Vite -->
@@ -64,8 +60,6 @@ import { BrowserWalletConnector, RdnsEnum } from '@vue-dapp/core'
 import { VueDappModal } from '@vue-dapp/modal'
 import { ethers } from 'ethers'
 import ChatSettingsModal from '~/components/ChatSettingsModal.vue'
-import VerifyAccountOwnership from '~/components/VerifyAccountOwnership.vue'
-import ChangeUserPostMintPriceModal from '~/components/minted-posts/ChangeUserPostMintPriceModal.vue'
 import ChangeUsernameModal from '~/components/names/ChangeUsernameModal.vue'
 import NavbarDesktop from '~/components/navbars/NavbarDesktop.vue'
 import NavbarMobile from '~/components/navbars/NavbarMobile.vue'
@@ -96,7 +90,6 @@ export default {
 
   components: {
     ChangeUsernameModal,
-    ChangeUserPostMintPriceModal,
     ChatSettingsModal,
     FindUserModal,
     NavbarDesktop,
@@ -105,7 +98,6 @@ export default {
     SidebarLeft,
     SidebarRight,
     StickyFooterPlayer,
-    VerifyAccountOwnership,
     VueDappModal,
   },
 
@@ -169,24 +161,11 @@ export default {
       return this.audioStore.queue.length
     },
 
-    isConnectedToOrbis() {
-      return this.userStore.getIsConnectedToOrbis
-    },
-
     isMobile() {
       if (this.width < this.breakpoint) {
         return true
       }
       return false
-    },
-
-    orbisAddress() {
-      // address which is signed with Orbis
-      if (this.userStore.getDidParent) {
-        // did parent example: did:pkh:eip155:137:0xb29050965a5ac70ab487aa47546cdcbc97dae45d
-        // get the last item (address) from did parent
-        return this.userStore.getDidParent.split(':').pop()
-      }
     },
   },
 
@@ -203,90 +182,8 @@ export default {
       document.getElementById('closeConnectModal').click()
     },
 
-    // async fetchChatTokenBalance() {
-    // 	if (this.$config.chatTokenAddress) {
-    // 		const chatTokenInterface = new ethers.utils.Interface([
-    // 			'function balanceOf(address owner) view returns (uint256)',
-    // 		])
-
-    // 		const chatTokenContract = new ethers.Contract(
-    // 			this.$config.chatTokenAddress,
-    // 			chatTokenInterface,
-    // 			this.signer,
-    // 		)
-
-    // 		const balance = await chatTokenContract.balanceOf(this.address)
-
-    // 		this.userStore.setChatTokenBalanceWei(balance)
-    // 	}
-    // },
-
-    async fetchOrbisProfile() {
-      if (this.isActivated) {
-        let { data, error } = await this.$orbis.getDids(this.address)
-
-        if (data[0].did) {
-          const profile = await this.$orbis.getProfile(data[0].did)
-
-          if (profile && profile.data.details.profile) {
-            this.userStore.setOrbisImage(profile.data.details.profile.pfp)
-          }
-
-          if (profile) {
-            this.userStore.setFollowers(profile.data.count_followers)
-            this.userStore.setFollowing(profile.data.count_following)
-            this.userStore.setLastActivityTimestamp(profile.data.last_activity_timestamp)
-          }
-        }
-      }
-    },
-
-    // async fetchUserDomain() {
-    // 	if (
-    // 		this.chainId === this.$config.supportedChainId &&
-    // 		this.address != this.userStore.getCurrentUserAddress
-    // 	) {
-    // 		this.userStore.setCurrentUserAddress(this.address)
-
-    // 		let userDomain
-
-    // 		if (this.signer) {
-    // 			userDomain = await this.getDomainName(this.address, this.signer)
-    // 		} else {
-    // 			userDomain = await this.getDomainName(this.address)
-    // 		}
-
-    // 		if (userDomain) {
-    // 			this.userStore.setDefaultDomain(userDomain + this.$config.tldName)
-    // 			storeUsername(window, this.address, userDomain + this.$config.tldName)
-    // 		} else {
-    // 			this.userStore.setDefaultDomain(null)
-    // 		}
-
-    // 		this.fetchChatTokenBalance()
-    // 	}
-    // },
-
-    // async getOrbisDids() {
-    // 	const isConn = await this.$orbis.isConnected()
-    // 	this.userStore.setIsConnectedToOrbis(isConn)
-
-    // 	if (this.$orbis.session) {
-    // 		this.userStore.setDid(this.$orbis.session.did._id)
-    // 		this.userStore.setDidParent(this.$orbis.session.did._parentId)
-    // 	}
-    // },
-
     onWidthChange() {
       this.width = window.innerWidth
-    },
-
-    async orbisLogout() {
-      await this.$orbis.logout()
-      this.userStore.setIsConnectedToOrbis(false)
-      this.userStore.setDid(null)
-      this.userStore.setDidParent(null)
-      this.userStore.setOrbisImage(null)
     },
 
     async parseReferrer() {
@@ -319,7 +216,6 @@ export default {
 
   setup() {
     const audioStore = useAudioStore()
-    const config = useRuntimeConfig()
     const sidebarStore = useSidebarStore()
     const siteStore = useSiteStore()
     const userStore = useUserStore()
@@ -342,17 +238,13 @@ export default {
       addConnectors([new BrowserWalletConnector()])
     }
 
-    const { $orbis, $config } = useNuxtApp()
+    const { $config } = useNuxtApp()
 
     watchWalletChanged(async wallet => {
       setWallet(wallet.provider)
       await fetchBalance()
 
       fetchUserDomain()
-
-      if (!userStore.getDid) {
-        getOrbisDids()
-      }
     })
 
     watchDisconnect(() => {
@@ -361,21 +253,11 @@ export default {
       // if user disconnects, clear the local storage
       console.log('user disconnected')
       localStorage.setItem('connected', '')
-      orbisLogout()
     })
 
     watchAddressChanged(() => {
-      // if address changes, clear local & session storage (needs further testing)
-      orbisLogout()
+      // if address changes, clear local & session storage?
     })
-
-    async function orbisLogout() {
-      await $orbis.logout()
-      userStore.setIsConnectedToOrbis(false)
-      userStore.setDid(null)
-      userStore.setDidParent(null)
-      userStore.setOrbisImage(null)
-    }
 
     async function fetchUserDomain() {
       if (chainId.value === $config.supportedChainId && address.value != userStore.getCurrentUserAddress) {
@@ -414,16 +296,6 @@ export default {
       }
     }
 
-    async function getOrbisDids() {
-      const isConn = await $orbis.isConnected()
-      userStore.setIsConnectedToOrbis(isConn)
-
-      if ($orbis.session) {
-        userStore.setDid($orbis.session.did._id)
-        userStore.setDidParent($orbis.session.did._parentId)
-      }
-    }
-
     return {
       address,
       audioStore,
@@ -434,65 +306,12 @@ export default {
       sidebarStore,
       siteStore,
       userStore,
-      orbisLogout,
       fetchUserDomain,
       fetchChatTokenBalance,
-      getOrbisDids,
     }
   },
 
   watch: {
-    // address(newVal, oldVal) {
-    // 	// if address changes, clear local & session storage (needs further testing)
-    // 	if (
-    // 		newVal.startsWith('0x') &&
-    // 		oldVal.startsWith('0x') &&
-    // 		String(newVal).toLowerCase() !== String(oldVal).toLowerCase()
-    // 	) {
-    // 		this.orbisLogout()
-    // 	}
-
-    // 	if (newVal) {
-    // 		this.fetchUserDomain()
-    // 	}
-    // },
-
-    // chainId(newVal, oldVal) {
-    // 	if (newVal) {
-    // 		this.fetchUserDomain()
-    // 	}
-    // },
-
-    // isActivated(newVal, oldVal) {
-    // 	if (oldVal === true && newVal === false) {
-    // 		// if user disconnects, clear the local storage
-    // 		console.log('user disconnected')
-    // 		localStorage.setItem('connected', '')
-    // 		this.orbisLogout()
-    // 	} else {
-    // 		if (!this.userStore.getDid) {
-    // 			this.getOrbisDids()
-    // 		}
-    // 	}
-    // },
-
-    isConnectedToOrbis(newVal, oldVal) {
-      if (newVal && oldVal === false) {
-        this.fetchOrbisProfile()
-      }
-    },
-
-    orbisAddress(newVal, oldVal) {
-      if (newVal && this.address) {
-        if (String(newVal).toLowerCase() != String(this.address).toLowerCase()) {
-          console.log(
-            "Logging out of Orbis because the address in signed Orbis credentials does not matched the current user's address.",
-          )
-          this.orbisLogout()
-        }
-      }
-    },
-
     width(newVal, oldVal) {
       if (newVal > this.breakpoint) {
         this.lSidebar.show()
