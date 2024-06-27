@@ -2,8 +2,12 @@
   <div class="card track-card">
     <div class="row text-center">
       <div class="col-md-8 mt-3">
-        <p>{{ track?.name }}</p>
+        <p>
+          <span v-if="waitingRefresh" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          {{ track?.name }}
+        </p>
       </div>
+
       <div class="col-md-4 align-self-center track-buttons">
 
         <button 
@@ -36,7 +40,13 @@
 
             <li v-if="track.externalUrl"><a class="dropdown-item" target="_blank" :href="track.externalUrl">Go to track external URL</a></li>
             
-            <li><button class="dropdown-item" type="button" :disabled="true">Refresh track data</button></li>
+            <li>
+              <button 
+                @click="refreshTrackData"
+                class="dropdown-item" 
+                type="button" 
+                :disabled="waitingRefresh"
+              >Refresh track data</button></li>
           </ul>
         </div>
 
@@ -47,10 +57,11 @@
 
 <script>
 import { ethers } from 'ethers'
-import { useEthers } from '~/store/ethers'
 import { useToast } from 'vue-toastification/dist/index.mjs'
 import SwitchChainButton from '~/components/SwitchChainButton.vue'
 import WaitingToast from '~/components/WaitingToast'
+import { useEthers } from '~/store/ethers'
+import { fetchFreshMusicNftData } from '~/utils/audioUtils'
 
 export default {
   name: 'TracksListItem',
@@ -60,6 +71,7 @@ export default {
 
   data() {
     return {
+      waitingRefresh: false,
       waitingRemoveTrack: false
     }
   },
@@ -82,6 +94,20 @@ export default {
 
     playSong() {
       this.audioStore.playNow(this.track)
+    },
+
+    async refreshTrackData() {
+      this.waitingRefresh = true
+
+      try {
+        const provider = this.$getProviderForChain(Number(this.track.chainId))
+        await fetchFreshMusicNftData(window, provider, this.track.address, this.track.tokenId, this.track.chainId)
+      } catch (e) {
+        console.error(e)
+        this.toast('Failed to refresh track data.', { type: 'error' })
+      }
+
+      this.waitingRefresh = false
     },
 
     async removeTrack() {
