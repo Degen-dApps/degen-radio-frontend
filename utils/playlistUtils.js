@@ -4,7 +4,24 @@ import { fetchPlaylistNftId, storePlaylistData, storePlaylistNftId } from './sto
 import { getWorkingIpfsGatewayUrl } from './ipfsUtils'
 
 export async function fetchPlaylistDataFromBlockchain(window, provider, playlistAddress, playlistNftId) {
-  let nftId = playlistNftId || fetchPlaylistNftId(window, playlistAddress)
+  let nftId = Number(playlistNftId)
+
+  if (!nftId && playlistAddress) {
+    nftId = fetchPlaylistNftId(window, playlistAddress)
+  }
+
+  const config = useRuntimeConfig()
+  
+  const playlistNftInterface = new ethers.utils.Interface([
+    'function getPlaylistAddress(uint256 tokenId_) external view returns (address)',
+    'function tokenURI(uint256 tokenId_) public view returns (string memory)',
+  ])
+
+  const playlistNftContract = new ethers.Contract(config.radio.playlistNftAddress, playlistNftInterface, provider)
+
+  if (!playlistAddress && nftId) {
+    playlistAddress = await playlistNftContract.getPlaylistAddress(nftId)
+  }
 
   if (!nftId) {
     const playlistInterface = new ethers.utils.Interface(['function playlistId() view returns (uint256)'])
@@ -23,15 +40,6 @@ export async function fetchPlaylistDataFromBlockchain(window, provider, playlist
   if (!nftId) {
     return { success: false, message: 'No playlist NFT ID' }
   }
-
-  const config = useRuntimeConfig()
-
-  // fetch blockchain data for playlist NFT ID
-  const playlistNftInterface = new ethers.utils.Interface([
-    'function tokenURI(uint256 tokenId_) public view returns (string memory)',
-  ])
-
-  const playlistNftContract = new ethers.Contract(config.radio.playlistNftAddress, playlistNftInterface, provider)
 
   let tokenUri
 

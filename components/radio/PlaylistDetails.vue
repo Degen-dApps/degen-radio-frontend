@@ -206,6 +206,7 @@ export default {
           this.playlistData = result.data
         } else {
           console.error(result.message)
+          this.waitingPlaylistData = false
           return this.toast.error(result.message)
         }
       }

@@ -147,7 +147,7 @@
             </button>
           </li>
           <li class="nav-item">
-            <button class="nav-link" :class="currentTab === 'likedPlaylists' ? 'active' : ''" @click="changeCurrentTab('likedPlaylists')">
+            <button class="nav-link disabled" :class="currentTab === 'likedPlaylists' ? 'active' : ''" @click="changeCurrentTab('likedPlaylists')">
               Liked
             </button>
           </li>
@@ -158,7 +158,7 @@
         <div class="tab-content mt-3">
           <!-- Playlists Tab -->
           <div v-if="currentTab === 'userPlaylists'">
-            <!-- TODO -->
+            <UserPlaylists v-if="uAddress" :address="uAddress" />
           </div>
 
           <!-- Liked Tab -->
@@ -178,9 +178,11 @@ import { useUserStore } from '~/store/user'
 import { useToast } from 'vue-toastification/dist/index.mjs'
 import ChangePfpModal from '~/components/profile/ChangePfpModal.vue'
 import ProfileImage from '~/components/profile/ProfileImage.vue'
+import UserPlaylists from '~/components/radio/UserPlaylists.vue'
 import { getDomainName, getDomainHolder } from '~/utils/domainUtils'
 import { fetchUsername, storeUsername } from '~/utils/storageUtils'
 import { getTextWithoutBlankCharacters } from '~/utils/textUtils'
+import UserPlaylistsVue from '../radio/UserPlaylists.vue'
 
 export default {
   name: 'PunkProfile',
@@ -204,6 +206,7 @@ export default {
   components: {
     ChangePfpModal,
     ProfileImage,
+    UserPlaylists,
   },
 
   mounted() {
