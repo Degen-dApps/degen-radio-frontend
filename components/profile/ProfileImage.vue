@@ -51,18 +51,14 @@ export default {
   methods: {
     async fetchProfilePicture() {
       if (this.image) {
-        console.log('Image is passed as a prop:', this.image)
         return this.imgPath = this.image
       }
       
       // Check if domain name is passed as a prop
       if (this.domainName) {
-        console.log('Domain name is passed as a prop:', this.domainName)
 
         // Check if domain name has an image (domainName-img key)
         const dataObject = fetchData(window, this.domainName, "img", this.$config.expiryPfps)
-
-        console.log('Data object:', dataObject)
 
         if (dataObject) {
           return this.imgPath = dataObject.image
@@ -83,7 +79,6 @@ export default {
 
           try {
             const domainData = await punkContract.getDomainData(String(this.domainName).toLowerCase())
-            console.log('Domain data:', domainData)
 
             if (domainData) {
               const domainDataJson = JSON.parse(domainData)

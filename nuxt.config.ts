@@ -96,7 +96,7 @@ export default defineNuxtConfig({
       radio: {
         loadTrackLimit: 10, // number of tracks to load initially and later via the "Load more" button
         maxTracks: 20, // max number of tracks in a playlist
-        metadataAddress: '0xc6D85C4786bc678aB59a3B4960D73EB3266Cfa7E',
+        metadataAddress: '0x11940a7290331866d3eD0310DFb2C1ea6312A5d9',
         playlistFactoryAddress: '0x7c9A024C5eeed9fE96f8512cd7348245326f4bD7',
         playlistNftAddress: '0xbb6fca36B0d0107773a410103e9f1f459C3eb95e',
       },

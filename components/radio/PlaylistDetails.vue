@@ -1,25 +1,47 @@
 <template>
-  <div>
-    <div v-if="waitingPlaylistData">
-      <div class="d-flex justify-content-center mb-3">
-        <span class="spinner-border spinner-border-lg" role="status" aria-hidden="true"></span>
-      </div>
-      <div class="row">
-        <div class="col-md-6 offset-md-3 text-center">
-          <p>Loading Playlist data for the first time, please wait until it's loaded...</p>
-          <p>(Next time it will be quicker, we promise!)</p>
-        </div>
+  <div v-if="waitingPlaylistData">
+    <div class="row">
+      <div class="offset-md-4 col-md-4 offset-3 col-6 mb-3">
+        <img src="/img/user/anon.svg" alt="Playlist Image Placeholder" class="img-fluid rounded-3" />
       </div>
     </div>
 
+    <h4 class="text-center"><span class="placeholder col-4"></span></h4>
+
+    <p class="text-center"><span class="placeholder col-3"></span></p>
+
+    <p class="text-center"><span class="placeholder col-8"></span></p>
+
+    <div class="d-flex justify-content-center mb-3">
+      <span class="spinner-border spinner-border-lg" role="status" aria-hidden="true"></span>
+    </div>
+    <div class="row">
+      <div class="col-md-6 offset-md-3 text-center">
+        <p>Loading Playlist data for the first time, please wait until it's loaded...</p>
+        <p>(Next time it will be quicker, we promise!)</p>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="!waitingPlaylistData">
+    <!-- Playlist image -->
     <div class="row">
       <div class="offset-md-4 col-md-4 offset-3 col-6 mb-3">
         <Image v-if="playlistImage" :url="playlistImage" :alt="playlistName" cls="img-fluid rounded-3" />
       </div>
     </div>
 
-    <h4 class="mb-3 text-center">{{ playlistName }}</h4>
+    <!-- Playlist name -->
+    <h4 class="text-center">{{ playlistName }}</h4>
 
+    <!-- Playlist owner -->
+    <p v-if="ownerDomainOrShortAddress" class="text-center"><small><em>by 
+      <NuxtLink :to="`/profile?id=${ownerDomainOrLongAddress}`">{{ ownerDomainOrShortAddress }}</NuxtLink>
+    </em></small></p>
+
+    <p v-if="!ownerDomainOrShortAddress" class="text-center"><span class="placeholder col-3"></span></p>
+
+    <!-- Playlist description -->
     <p class="text-center">{{ playlistDescription }}</p>
 
     <div>
@@ -114,7 +136,7 @@ import Image from '~/components/Image.vue'
 import AddNewTrackModal from '~/components/radio/AddNewTrackModal.vue'
 import TracksListItem from '~/components/radio/TracksListItem.vue'
 import { useAudioStore } from '~/store/audio'
-import { useEthers } from '~/store/ethers'
+import { shortenAddress, useEthers } from '~/store/ethers'
 import { fetchMusicNftData } from '~/utils/audioUtils'
 import { getDomainName } from '~/utils/domainUtils'
 import { fetchPlaylistData } from '~/utils/storageUtils'
@@ -129,7 +151,7 @@ export default {
     return {
       allTracksLength: 0, // the total number of tracks in the playlist
       loadTrackIndexStart: 0, // the next track index to load via load more button
-      ownerAddress: null,
+      ownerDomain: null,
       playlistData: null,
       tracks: [],
       waitingPlaylistData: false,
@@ -173,6 +195,30 @@ export default {
     playlistImage() {
       return this.playlistData ? this.playlistData.image : null
     },
+
+    ownerAddress() {
+      return this.playlistData ? this.playlistData.owner : null
+    },
+
+    ownerDomainOrLongAddress() {
+      if (this.ownerDomain) {
+        return this.ownerDomain + this.$config.tldName
+      } else if (this.ownerAddress) {
+        return this.ownerAddress
+      }
+
+      return null
+    },
+
+    ownerDomainOrShortAddress() {
+      if (this.ownerDomain) {
+        return this.ownerDomain + this.$config.tldName
+      } else if (this.ownerAddress) {
+        return shortenAddress(this.ownerAddress)
+      }
+
+      return null
+    } 
   },
 
   methods: {
@@ -211,16 +257,19 @@ export default {
         }
       }
 
+      // fetch owner domain
+      if (this.ownerAddress) {
+        this.ownerDomain = await getDomainName(this.ownerAddress, provider)
+      }
+
       this.waitingPlaylistData = false
 
       await this.loadTracks(0, Number(this.$config.radio.loadTrackLimit)-1)
 
-      // fetch contract owner
+      // fetch tracks length
       const playlistContract = new ethers.Contract(this.playlistAddress, DegenRadioPlaylistAbi, provider)
-
-      this.ownerAddress = await playlistContract.getOwner()
-
       this.allTracksLength = await playlistContract.getTracksLength()
+
     },
 
     async loadTracks(startIndex, endIndex) {
@@ -277,7 +326,8 @@ export default {
     async removeTrack() {
       this.tracks = []
       this.loadPlaylistData()
-    }
+    },
+
   },
 
   setup() {
