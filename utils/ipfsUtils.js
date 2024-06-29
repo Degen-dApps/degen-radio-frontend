@@ -16,15 +16,25 @@ export async function uploadFileToThirdWeb(file) {
 export async function getWorkingIpfsGatewayUrl(ipfsLink) {
   let cid
 
-  if (!ipfsLink.startsWith('ipfs://')) {
+  if (!ipfsLink.startsWith('ipfs://')) { // either an IPFS gateway link or a classic web2 server HTTP link
     const res = checkIfIpfsGatewayUrl(ipfsLink)
 
     if (res.success) {
       cid = res.cid
     } else {
-      return { success: false, message: 'Invalid IPFS link' }
+      // probably an HTTP link (non-IPFS link or unknown IPFS gateway link)
+      const httpLink = ipfsLink
+      const httpResponse = await axios.head(httpLink)
+
+      if (httpResponse.status == 200) {
+        const contentType = httpResponse.headers['content-type'] // this is needed for song URLs to determine the format
+        const format = parseAudioContentType(contentType) // get the format of the audio file
+
+        return { success: true, validUrl: httpLink, contentType: contentType, format: format }
+      }
+      
     }
-  } else {
+  } else { // IPFS link
     cid = ipfsLink.replace('ipfs://', '')
   }
 
@@ -80,7 +90,10 @@ function parseAudioContentType(contentType) {
     return 'wav'
   } else if (String(contentType).toLowerCase() === 'audio/ogg') {
     return 'ogg'
-  } else {
+  } else if (String(contentType).toLowerCase() === 'video/mp4') { // howler.js supports mp4, plays it as audio
+    return 'mp4'
+  }
+  else {
     return null
   }
 }

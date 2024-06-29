@@ -62,6 +62,7 @@ import SwitchChainButton from '~/components/SwitchChainButton.vue'
 import WaitingToast from '~/components/WaitingToast'
 import { useEthers } from '~/store/ethers'
 import { fetchFreshMusicNftData } from '~/utils/audioUtils'
+import { getWorkingIpfsGatewayUrl } from '~/utils/ipfsUtils'
 
 export default {
   name: 'TracksListItem',
@@ -87,7 +88,14 @@ export default {
   },
 
   methods: {
-    addToQueue() {
+    async addToQueue() {
+      const prefetchResult = await getWorkingIpfsGatewayUrl(this.track.audioUrl)
+
+      if (prefetchResult.success && prefetchResult.format) {
+        this.track.audioUrl = prefetchResult.validUrl
+        this.track.format = prefetchResult.format
+      }
+
       this.audioStore.addToQueue(this.track)
       this.toast.info('Track added to the listening queue.', { timeout: 2000 })
     },
