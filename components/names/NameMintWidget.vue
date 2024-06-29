@@ -1,9 +1,8 @@
 <template>
   <div class="card m-2 bg-light">
-    <div class="card-header bg-light">Get a {{ $config.tldName }} name</div>
+    <div class="card-header bg-light text-center">Get a {{ $config.tldName }} name</div>
 
-    <div class="card-body sidebar-card-body">
-      <p>Get yourself a {{ $config.tldName }} username and start chatting with other community members.</p>
+    <div class="card-body sidebar-card-body mt-2">
 
       <div class="input-group mb-3">
         <input
@@ -16,11 +15,11 @@
         <span class="input-group-text" id="mint-name">{{ $config.tldName }}</span>
       </div>
 
-      <p v-if="domainNotValid.invalid && domainNotValid.message" class="text-danger">
+      <p v-if="domainNotValid.invalid && domainNotValid.message" class="text-danger text-center">
         <small> <i class="bi bi-exclamation-octagon"></i> {{ domainNotValid.message }} </small>
       </p>
 
-      <p>Minting price: {{ getNamePrice }} {{ $config.tokenSymbol }}</p>
+      <p class="text-center mt-4">Minting price: {{ getNamePrice }} {{ $config.tokenSymbol }}</p>
 
       <div class="text-center">
         <button

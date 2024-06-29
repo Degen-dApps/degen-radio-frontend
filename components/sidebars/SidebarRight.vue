@@ -21,29 +21,23 @@
           </div>
         </div>
 
-        <!-- Random track -->
+        <!-- Random playlist -->
+        <RandomPlaylistOneWidget />
+
+        <!-- Featured playlists 
         <div class="card m-2 bg-light">
-          <div class="card-header bg-light">Random Song</div>
+          <div class="card-header bg-light text-center">Featured Playlists</div>
           <div class="card-body sidebar-card-body">
-            <p>Random song</p>
+            <p class="text-center">
+              <NuxtLink to="/playlist?id=0x0Dd272d469fB118f26Db72563f501Bb522AC2A95">Happy Songs</NuxtLink> by 
+              <NuxtLink to="/profile?id=techie.sepolia">techie.sepolia</NuxtLink>
+            </p>
           </div>
         </div>
-
-        <!-- Random playlists -->
-        <div class="card m-2 bg-light">
-          <div class="card-header bg-light">5 Random Playlists</div>
-          <div class="card-body sidebar-card-body">
-            <p>Random playlists to check out:</p>
-
-            <li>
-              <NuxtLink to="/playlist?id=0x0Dd272d469fB118f26Db72563f501Bb522AC2A95">Happy Songs</NuxtLink>
-            </li>
-          </div>
-        </div>
-
-        <!-- Mint/register a domain name 
-        <NameMintWidget />
         -->
+
+        <!-- Mint/register a domain name -->
+        <NameMintWidget />
 
         <!-- Referrals 
 				<ReferralWidget />
@@ -67,6 +61,7 @@ import tokens from '~/assets/data/tokens.json'
 import ConnectWalletButton from '~/components/ConnectWalletButton.vue'
 import SwitchChainButton from '~/components/SwitchChainButton.vue'
 import NameMintWidget from '~/components/names/NameMintWidget.vue'
+import RandomPlaylistOneWidget from '~/components/radio/RandomPlaylistOneWidget.vue'
 import ReferralWidget from '~/components/referrals/ReferralWidget.vue'
 import SimpleSwapWidget from '~/components/swap/SimpleSwapWidget.vue'
 import { useEthers } from '~/store/ethers'
@@ -79,6 +74,7 @@ export default {
   components: {
     ConnectWalletButton,
     NameMintWidget,
+    RandomPlaylistOneWidget,
     ReferralWidget,
     SimpleSwapWidget,
     SwitchChainButton,

@@ -139,8 +139,8 @@ import { useAudioStore } from '~/store/audio'
 import { shortenAddress, useEthers } from '~/store/ethers'
 import { fetchMusicNftData } from '~/utils/audioUtils'
 import { getDomainName } from '~/utils/domainUtils'
-import { fetchPlaylistData } from '~/utils/storageUtils'
 import { fetchPlaylistDataFromBlockchain } from '~/utils/playlistUtils'
+import { fetchPlaylistData } from '~/utils/storageUtils'
 
 export default {
   name: 'PlaylistDetails',
