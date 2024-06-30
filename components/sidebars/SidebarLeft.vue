@@ -146,6 +146,28 @@
               </NuxtLink>
             </li>
 
+            <li class="nav-item p-1 dropdown">
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                <i class="bi bi-three-dots me-1"></i> More
+              </a>
+
+              <ul class="dropdown-menu">
+
+                <li class="pt-1 pb-1" @click="closeLeftSidebar">
+                  <a class="dropdown-item" href="https://nftdegen.lol" target="_blank">
+                    <i class="bi bi-rocket-takeoff me-1"></i> NFTdegen.lol <small><i class="bi bi-box-arrow-up-right ms-1"></i></small>
+                  </a>
+                </li>
+
+                <li class="pt-1 pb-1" @click="closeLeftSidebar">
+                  <a class="dropdown-item" href="https://degendapps.lol" target="_blank">
+                    <i class="bi bi-card-list me-1"></i> Degen dApps <small><i class="bi bi-box-arrow-up-right ms-1"></i></small>
+                  </a>
+                </li>
+
+              </ul>
+            </li>
+
             <!-- More 
           <li class="nav-item p-1 dropdown">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">

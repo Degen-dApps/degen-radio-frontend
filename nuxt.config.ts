@@ -87,7 +87,7 @@ export default defineNuxtConfig({
       profileMintedPostIdsMax: 36, // max number of minted post ids to show in the profile page
       projectMetadataTitle: 'Degen Radio | Listen to your favorite Music NFTs!',
       projectName: 'Degen Radio',
-      projectDescription: 'Stream Music NFTs & Create Your Own Playlists!',
+      projectDescription: 'Stream Music NFTs & Create Your Own Playlists',
       projectTwitter: 'https://twitter.com/iggysocial',
       projectUrl: 'https://degenradio.lol', // without trailing slash!
       punkMinterAddress: '', // punk domain minter contract address
