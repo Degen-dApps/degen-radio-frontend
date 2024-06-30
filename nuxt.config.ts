@@ -79,11 +79,11 @@ export default defineNuxtConfig({
       marketplacePostNftItemUrl:
         'https://explorer.degen.tips/token/0x99Dbf11aCd46baFBCE82506FaeB4F13E6Ea1726A/instance/', // url (append nft id to it)
       previewImage: '/img/covers/cover.png',
-      previewImageAirdrop: '/img/covers/cover-airdrop.png',
-      previewImagePost: '/img/covers/cover-post.png',
-      previewImagePostNft: '/img/covers/cover-post-nft.png',
-      previewImageProfile: '/img/covers/cover-profile.png',
-      previewImageStake: '/img/covers/cover-stake.png',
+      previewImageAirdrop: '/img/covers/cover.png',
+      previewImagePost: '/img/covers/cover.png',
+      previewImagePostNft: '/img/covers/cover.png',
+      previewImageProfile: '/img/covers/cover.png',
+      previewImageStake: '/img/covers/cover.png',
       profileMintedPostIdsMax: 36, // max number of minted post ids to show in the profile page
       projectMetadataTitle: 'Degen Radio | Listen to your favorite Music NFTs!',
       projectName: 'Degen Radio',
