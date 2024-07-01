@@ -69,6 +69,7 @@ export async function fetchPlaylistDataFromBlockchain(window, provider, playlist
     const playlistObject = {
       playlistAddress: playlistAddress,
       playlistNftId: Number(nftId),
+      externalUrl: metadata?.external_url || '',
       ...metadata,
     }
 

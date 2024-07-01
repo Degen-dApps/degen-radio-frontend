@@ -1,5 +1,5 @@
 <template>
-<div v-if="!playlistData" class="col-md-4 card">
+<div v-if="!playlistData" class="col-md-4 card mb-3">
   <div class="card-body">
     <img src="/img/user/anon.svg" class="card-img-top" alt="Placeholder image">
     <h5 class="card-title placeholder-glow"><span class="placeholder col-6"></span></h5>
@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<div v-if="playlistData" class="col-md-4 card">
+<div v-if="playlistData" class="col-md-4 card mb-3">
   <NuxtLink :to="`/playlist?id=`+playlistData.playlistAddress">
     <Image :url="playlistData.image" :alt="playlistData.name" cls="card-img-top" />
   </NuxtLink>

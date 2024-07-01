@@ -15,7 +15,7 @@
       <p class="mt-4 mb-4">
         <small>
           All playlist data is stored on the blockchain and can be updated at any time.
-          <span v-if="price">Price: {{ price }} {{ $config.tokenSymbol }}</span>
+          <span v-if="price">Price to create a playlist: {{ price }} {{ $config.tokenSymbol }}</span>
         </small>
       </p>
 
@@ -130,8 +130,9 @@
         </small>
       </div>
 
-      <button @click="playNow" class="btn btn-outline-primary btn-sm mt-3">
-        <i class="bi bi-play-circle-fill"></i>
+      <button @click="playNow" class="btn btn-outline-primary btn-sm mt-3" :disabled="waitingPlayNow">
+        <span v-if="waitingPlayNow" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <i v-if="!waitingPlayNow" class="bi bi-play-circle-fill"></i>
         Play song
       </button>
 
@@ -209,6 +210,7 @@ export default {
       tNftId: 1,
       waitingCreate: false,
       waitingData: false,
+      waitingPlayNow: false,
     }
   },
 
@@ -404,6 +406,8 @@ export default {
     },
 
     async playNow() {
+      this.waitingPlayNow = true
+
       const trackData = await this.loadTrack()
 
       if (trackData.success) {
@@ -412,6 +416,8 @@ export default {
         console.error(trackData.message)
         this.toast.error(trackData.message)
       }
+
+      this.waitingPlayNow = false
     },
 
     selectChain(chainId, chainName) {
