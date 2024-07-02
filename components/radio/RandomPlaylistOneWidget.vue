@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import { ethers } from 'ethers'
 import Image from '~/components/Image.vue'
 import { shortenAddress, useEthers } from '~/store/ethers'
@@ -101,6 +102,25 @@ export default {
         provider = this.signer
       }
 
+      // fetch totalSupply from API
+      if (!this.totalSupply) {
+        const apiUrl = `${this.$config.radio.apiBaseUrl}/endpoints/playlistNftSupply/${this.$config.supportedChainId}/${this.$config.radio.playlistNftAddress}`
+        //console.log('fetching totalSupply from API:', apiUrl)
+
+        try {
+          const response = await axios.get(apiUrl)
+          //console.log('response:', response)
+
+          if (response.data?.success) {
+            const item = response.data?.item
+            this.totalSupply = Number(item?.supply)
+            //console.log('totalSupply fetched from API:', this.totalSupply)
+          }
+        } catch (error) {
+          console.error('Failed to fetch totalSupply from API:', error)
+        }
+      }
+
       if (!this.totalSupply) {
         // measure time taken to fetch totalSupply
         //console.time('fetch totalSupply')
@@ -120,7 +140,7 @@ export default {
         //console.timeEnd('fetch totalSupply')
       }
 
-      const randomTokenId = Math.floor(Math.random() * this.totalSupply.toNumber()) + 1
+      const randomTokenId = Math.floor(Math.random() * Number(this.totalSupply)) + 1
 
       // fetch playlist data from localStorage
       this.playlistData = await fetchPlaylistData(window, randomTokenId)
