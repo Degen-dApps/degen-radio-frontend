@@ -55,7 +55,7 @@ export default {
       this.waiting = true
 
       // fetch playlist data from localStorage
-      this.playlistData = fetchPlaylistData(window, this.nftId)
+      this.playlistData = await fetchPlaylistData(window, this.nftId)
 
       let provider = this.$getFallbackProvider(this.$config.supportedChainId)
 

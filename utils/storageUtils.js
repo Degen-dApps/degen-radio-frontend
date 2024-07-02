@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { ethers } from 'ethers'
 
 const usernameExtension = '-username'
@@ -50,7 +51,7 @@ export function fetchData(window, addressOrName, objType, expiration) {
  * @param {*} addressOrNftId Enter either Playlist address, or PlaylistNft NFT token ID
  * @returns
  */
-export function fetchPlaylistData(window, addressOrNftId) {
+export async function fetchPlaylistData(window, addressOrNftId) {
   if (!window) {
     console.log(`No window object for ${addressOrNftId} in storageUtils/fetchPlaylistData`)
     return null
@@ -77,6 +78,32 @@ export function fetchPlaylistData(window, addressOrNftId) {
     const playlistString = window.localStorage.getItem(String(playlistAddress).toLowerCase() + '-' + objectType)
 
     if (!playlistString) {
+      try {
+        // fetch playlist data from API and store it in local storage
+        const apiUrl = config.radio.apiBaseUrl + '/endpoints/playlist/' + config.supportedChainId + '/' + playlistAddress
+
+        const response = await axios.get(apiUrl)
+
+        if (response.status === 200) {
+          const resData = response.data
+
+          if (resData?.success) {
+            const playlistData = resData.playlist
+
+            storePlaylistData(window, playlistAddress, playlistData.playlistNftId, playlistData)
+
+            storePlaylistNftId(window, playlistAddress, playlistData.playlistNftId)
+
+            return playlistData
+          }
+
+          return null
+        }
+      } catch (error) {
+        console.log('Could not fetch playlist data from API.')
+        return null
+      }
+
       return null
     }
 

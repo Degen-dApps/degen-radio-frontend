@@ -94,6 +94,7 @@ export default defineNuxtConfig({
       punkNumberOfPrices: 1, // number of different prices (based on domain length), usually 1 (price()) or 5 (price1char() - price5char())
       punkTldAddress: '0x1DD820F4f48eBC2B8e7F666F34fbC5820808074e', // punk domain TLD address
       radio: {
+        apiBaseUrl: 'https://api.degenradio.lol',
         loadTrackLimit: 10, // number of tracks to load initially and later via the "Load more" button
         maxTracks: 20, // max number of tracks in a playlist
         metadataAddress: '0x11940a7290331866d3eD0310DFb2C1ea6312A5d9',

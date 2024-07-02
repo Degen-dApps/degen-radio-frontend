@@ -44,7 +44,7 @@ import Image from '~/components/Image.vue'
 import { shortenAddress, useEthers } from '~/store/ethers'
 import { getDomainName } from '~/utils/domainUtils'
 import { fetchPlaylistDataFromBlockchain } from '~/utils/playlistUtils'
-import { fetchPlaylistData } from '~/utils/storageUtils'
+import { fetchPlaylistData, fetchUsername, storeUsername } from '~/utils/storageUtils'
 
 export default {
   name: 'RandomPlaylistOneWidget',
@@ -112,7 +112,7 @@ export default {
       const randomTokenId = Math.floor(Math.random() * totalSupply.toNumber()) + 1
 
       // fetch playlist data from localStorage
-      this.playlistData = fetchPlaylistData(window, randomTokenId)
+      this.playlistData = await fetchPlaylistData(window, randomTokenId)
 
       if (!this.playlistData) {
         // fetch playlist data from blockchain
@@ -125,8 +125,13 @@ export default {
         }
       }
 
-      if (this.playlistData) {
-        this.ownerDomain = await getDomainName(this.ownerAddress, provider)
+      if (!this.ownerDomain && this.ownerAddress) {
+        this.ownerDomain = fetchUsername(window, this.ownerAddress)
+
+        if (!this.ownerDomain && this.ownerAddress) {
+          this.ownerDomain = await getDomainName(this.ownerAddress, provider)
+          storeUsername(window, this.ownerAddress, this.ownerDomain)
+        }
       }
     },
   },

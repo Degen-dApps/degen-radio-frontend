@@ -141,7 +141,7 @@ import { fetchMusicNftData } from '~/utils/audioUtils'
 import { getDomainName } from '~/utils/domainUtils'
 import { getWorkingIpfsGatewayUrl } from '~/utils/ipfsUtils'
 import { fetchPlaylistDataFromBlockchain } from '~/utils/playlistUtils'
-import { fetchPlaylistData } from '~/utils/storageUtils'
+import { fetchPlaylistData, fetchUsername, storeUsername } from '~/utils/storageUtils'
 
 export default {
   name: 'PlaylistDetails',
@@ -236,7 +236,7 @@ export default {
       this.waitingPlaylistData = true
 
       // fetch playlist data from localStorage
-      this.playlistData = fetchPlaylistData(window, this.playlistAddress)
+      this.playlistData = await fetchPlaylistData(window, this.playlistAddress)
 
       let provider = this.$getFallbackProvider(this.$config.supportedChainId)
 
@@ -258,9 +258,8 @@ export default {
         }
       }
 
-      // fetch owner domain
-      if (this.ownerAddress) {
-        this.ownerDomain = await getDomainName(this.ownerAddress, provider)
+      if (!this.ownerDomain && this.ownerAddress) {
+        this.ownerDomain = fetchUsername(window, this.ownerAddress)
       }
 
       this.waitingPlaylistData = false
@@ -270,6 +269,12 @@ export default {
       // fetch tracks length
       const playlistContract = new ethers.Contract(this.playlistAddress, DegenRadioPlaylistAbi, provider)
       this.allTracksLength = await playlistContract.getTracksLength()
+
+      // fetch owner domain
+      if (!this.ownerDomain && this.ownerAddress) {
+        this.ownerDomain = await getDomainName(this.ownerAddress, provider)
+        storeUsername(window, this.ownerAddress, this.ownerDomain)
+      }
 
     },
 
