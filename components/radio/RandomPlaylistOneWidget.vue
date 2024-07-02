@@ -1,6 +1,9 @@
 <template>
 <div class="card m-2 bg-light">
-  <div class="card-header bg-light text-center">Random Playlist</div>
+  <div class="card-header bg-light text-center">
+    <span class="me-1">Random Playlist</span>
+    <i v-if="totalSupply" @click="loadPlaylistData" class="bi bi-arrow-clockwise cursor-pointer hover-color align-middle"></i>
+  </div>
   <div class="card-body sidebar-card-body text-center">
 
     <div v-if="!playlistData">
@@ -18,7 +21,7 @@
       <p class="card-text placeholder-glow"><span class="placeholder col-4"></span></p>
     </div>
 
-    <div v-if="playlistData">
+    <div v-if="playlistData" :key="playlistData">
       <NuxtLink :to="`/playlist?id=`+playlistData.playlistAddress">
         <Image :url="playlistData.image" :alt="playlistData.name" cls="card-img-top w-50 rounded-bottom-3" />
       </NuxtLink>
@@ -54,6 +57,7 @@ export default {
     return {
       ownerDomain: null,
       playlistData: null,
+      totalSupply: null,
       waitingPlaylistData: false,
     }
   },
@@ -97,24 +101,26 @@ export default {
         provider = this.signer
       }
 
-      // measure time taken to fetch totalSupply
-      //console.time('fetch totalSupply')
+      if (!this.totalSupply) {
+        // measure time taken to fetch totalSupply
+        //console.time('fetch totalSupply')
 
-      const playlistNftInterface = new ethers.utils.Interface([
-        'function totalSupply() external view returns (uint256)',
-      ])
+        const playlistNftInterface = new ethers.utils.Interface([
+          'function totalSupply() external view returns (uint256)',
+        ])
 
-      const playlistNftContract = new ethers.Contract(
-        this.$config.radio.playlistNftAddress,
-        playlistNftInterface,
-        provider
-      )
+        const playlistNftContract = new ethers.Contract(
+          this.$config.radio.playlistNftAddress,
+          playlistNftInterface,
+          provider
+        )
 
-      const totalSupply = await playlistNftContract.totalSupply()
+        this.totalSupply = await playlistNftContract.totalSupply()
 
-      //console.timeEnd('fetch totalSupply')
+        //console.timeEnd('fetch totalSupply')
+      }
 
-      const randomTokenId = Math.floor(Math.random() * totalSupply.toNumber()) + 1
+      const randomTokenId = Math.floor(Math.random() * this.totalSupply.toNumber()) + 1
 
       // fetch playlist data from localStorage
       this.playlistData = await fetchPlaylistData(window, randomTokenId)
