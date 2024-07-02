@@ -10,7 +10,7 @@
         <i class="bi bi-arrow-left-circle cursor-pointer" @click="$router.back()"></i>
       </p>
 
-      <PlaylistDetails :playlistAddress="playlistAddress" />
+      <PlaylistDetails :playlistAddress="playlistAddress" :key="playlistAddress" />
     </div>
   </div>
 </template>
