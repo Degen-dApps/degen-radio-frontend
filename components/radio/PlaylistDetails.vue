@@ -203,7 +203,7 @@ export default {
 
     ownerDomainOrLongAddress() {
       if (this.ownerDomain) {
-        return this.ownerDomain + this.$config.tldName
+        return String(this.ownerDomain).replace(this.$config.tldName, "") + this.$config.tldName
       } else if (this.ownerAddress) {
         return this.ownerAddress
       }
@@ -213,7 +213,7 @@ export default {
 
     ownerDomainOrShortAddress() {
       if (this.ownerDomain) {
-        return this.ownerDomain + this.$config.tldName
+        return String(this.ownerDomain).replace(this.$config.tldName, "") + this.$config.tldName
       } else if (this.ownerAddress) {
         return shortenAddress(this.ownerAddress)
       }
