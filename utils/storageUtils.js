@@ -52,6 +52,7 @@ export function fetchData(window, addressOrName, objType, expiration) {
  * @returns
  */
 export async function fetchPlaylistData(window, addressOrNftId) {
+
   if (!window) {
     console.log(`No window object for ${addressOrNftId} in storageUtils/fetchPlaylistData`)
     return null
@@ -120,7 +121,7 @@ export async function fetchPlaylistData(window, addressOrNftId) {
     )
 
     if (!objectString) {
-      return null
+      return fetchPlaylistByNftIdFromApi(window, config.radio.apiBaseUrl, config.supportedChainId, nftId, playlistNftAddress)
     }
 
     const obj = JSON.parse(objectString)
@@ -129,7 +130,7 @@ export async function fetchPlaylistData(window, addressOrNftId) {
 
     // check if expired (expiration = 0 means never expire)
     if (expiration != 0 && obj.stored + expiration < currentTime) {
-      return null
+      return fetchPlaylistByNftIdFromApi(window, config.radio.apiBaseUrl, config.supportedChainId, nftId, playlistNftAddress)
     }
 
     if (typeof obj == 'object') {
@@ -141,6 +142,35 @@ export async function fetchPlaylistData(window, addressOrNftId) {
     console.log(error)
     return null
   }
+}
+
+async function fetchPlaylistByNftIdFromApi(window, baseApiUrl, chainId, nftId, playlistNftAddress) {
+  try {
+    // fetch playlist data from API and store it in local storage
+    const apiUrl = baseApiUrl + '/endpoints/playlistNft/' + chainId + '/' + nftId + '/' + playlistNftAddress
+
+    const response = await axios.get(apiUrl)
+
+    if (response.status === 200) {
+      const resData = response.data
+
+      if (resData?.success) {
+        const playlistData = resData.playlist
+
+        if (playlistData) {
+          storePlaylistData(window, playlistAddress, playlistData.playlistNftId, playlistData)
+
+          storePlaylistNftId(window, playlistAddress, playlistData.playlistNftId)
+
+          return playlistData
+        }
+      }
+    }
+  } catch (error) {
+    console.log('Could not fetch playlist data from API.')
+  }
+
+  return null
 }
 
 export function fetchPlaylistNftId(window, playlistAddress) {

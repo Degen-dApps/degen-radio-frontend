@@ -97,6 +97,9 @@ export default {
         provider = this.signer
       }
 
+      // measure time taken to fetch totalSupply
+      //console.time('fetch totalSupply')
+
       const playlistNftInterface = new ethers.utils.Interface([
         'function totalSupply() external view returns (uint256)',
       ])
@@ -108,6 +111,8 @@ export default {
       )
 
       const totalSupply = await playlistNftContract.totalSupply()
+
+      //console.timeEnd('fetch totalSupply')
 
       const randomTokenId = Math.floor(Math.random() * totalSupply.toNumber()) + 1
 
