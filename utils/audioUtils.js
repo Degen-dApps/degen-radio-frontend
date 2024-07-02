@@ -3,6 +3,8 @@ import { ethers } from 'ethers'
 import { getWorkingIpfsGatewayUrl } from './ipfsUtils'
 
 export async function fetchMusicNftData(window, provider, nftAddress, nftId, chainId) {
+  const config = useRuntimeConfig()
+
   if (!window) {
     return { success: false, message: 'No window object' }
   }
@@ -20,6 +22,18 @@ export async function fetchMusicNftData(window, provider, nftAddress, nftId, cha
 
     if (nftData.audioUrl) {
       return { success: true, nftData: nftData }
+    } else {
+      const trackData = await fetchTrackDataFromApi(config.radio.apiBaseUrl, nftAddress, nftId, chainId)
+
+      if (trackData) {
+        return { success: true, nftData: trackData }
+      }
+    }
+  } else {
+    const trackData = await fetchTrackDataFromApi(config.radio.apiBaseUrl, nftAddress, nftId, chainId)
+
+    if (trackData) {
+      return { success: true, nftData: trackData }
     }
   }
 
@@ -172,4 +186,29 @@ function storeNftAudioData(nftData, window) {
   const key = String(nftData.address) + '-' + String(nftData.tokenId) + '-' + String(nftData.chainId)
 
   window.localStorage.setItem(key, JSON.stringify(nftData))
+}
+
+async function fetchTrackDataFromApi(apiBaseUrl, trackAddress, trackNftId, chainId) {
+  try {
+    // fetch track data from API and store it in local storage
+    const apiUrl = apiBaseUrl + '/endpoints/track/' + chainId + '/' + trackAddress + '/' + trackNftId
+
+    const response = await axios.get(apiUrl)
+
+    if (response.status === 200) {
+      const resData = response.data
+
+      if (resData?.success) {
+        const trackData = resData.track
+
+        storeNftAudioData(trackData, window)
+
+        return trackData
+      }
+
+      return null
+    }
+  } catch (error) {
+    return null
+  }
 }
