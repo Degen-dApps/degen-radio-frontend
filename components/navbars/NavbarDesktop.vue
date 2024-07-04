@@ -42,9 +42,15 @@
             <span class="dropdown-item cursor-pointer" data-bs-toggle="modal" data-bs-target="#findUserModal"
               >Find user</span
             >
+
+            <!--
             <span class="dropdown-item cursor-pointer" data-bs-toggle="modal" data-bs-target="#referralModal"
               >Share referral link</span
             >
+            -->
+
+            <span class="dropdown-item cursor-pointer" @click="deleteBrowserStorage">Delete browser storage</span>
+
             <span class="dropdown-item cursor-pointer" @click="disconnectWallet">Disconnect</span>
           </div>
         </li>
@@ -133,6 +139,12 @@ export default {
     changeColorMode(newMode) {
       this.siteStore.setColorMode(newMode)
       document.documentElement.setAttribute('data-bs-theme', this.siteStore.getColorMode)
+    },
+
+    deleteBrowserStorage() {
+      window.localStorage.clear()
+      window.sessionStorage.clear()
+      window.location.reload()
     },
 
     async disconnectWallet() {

@@ -6,7 +6,7 @@
 
   <div class="card border scroll-500">
     <div class="card-body">
-      <PlaylistDetails playlistAddress="0x82541de0EdCf1B5046c74a5D9896A0D27701DF79" />
+      <PlaylistDetails playlistAddress="0xed12d701B4E8D00fC5e06c03a6efFDf6135DE71D" />
     </div>
   </div>
 </template>

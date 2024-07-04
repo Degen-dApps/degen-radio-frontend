@@ -377,8 +377,7 @@ export default {
       const factoryContract = new ethers.Contract(this.$config.radio.playlistFactoryAddress, factoryInterface, provider)
 
       try {
-        const priceWei = await factoryContract.price()
-        this.priceWei = Number(priceWei)
+        this.priceWei = await factoryContract.price()
       } catch (error) {
         console.error(error)
       }

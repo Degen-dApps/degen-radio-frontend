@@ -50,7 +50,7 @@ export default defineNuxtConfig({
     public: {
       airdropApAddress: '', // chat token claim for APs
       airdropClaimDomainsAddress: '', // chat token claim for domain holders
-      blockExplorerBaseUrl: 'https://sepolia.etherscan.io',
+      blockExplorerBaseUrl: 'https://explorer.degen.tips',
       chatTokenAddress: '', // chat token address
       chatTokenImage: '', // chat token image
       chatTokenSymbol: '', // chat token symbol or name
@@ -90,16 +90,16 @@ export default defineNuxtConfig({
       projectDescription: 'Stream Music NFTs & Create Your Own Playlists',
       projectTwitter: 'https://twitter.com/iggysocial',
       projectUrl: 'https://degenradio.lol', // without trailing slash!
-      punkMinterAddress: '', // punk domain minter contract address
-      punkNumberOfPrices: 1, // number of different prices (based on domain length), usually 1 (price()) or 5 (price1char() - price5char())
-      punkTldAddress: '0x1DD820F4f48eBC2B8e7F666F34fbC5820808074e', // punk domain TLD address
+      punkMinterAddress: '0x1f8cf0bc042308677838fB50f264992A4e783610', // punk domain minter contract address
+      punkNumberOfPrices: 5, // number of different prices (based on domain length), usually 1 (price()) or 5 (price1char() - price5char())
+      punkTldAddress: '0x4087fb91A1fBdef05761C02714335D232a2Bf3a1', // punk domain TLD address
       radio: {
         apiBaseUrl: 'https://api.degenradio.lol',
         loadTrackLimit: 10, // number of tracks to load initially and later via the "Load more" button
         maxTracks: 20, // max number of tracks in a playlist
-        metadataAddress: '0x11940a7290331866d3eD0310DFb2C1ea6312A5d9',
-        playlistFactoryAddress: '0x7c9A024C5eeed9fE96f8512cd7348245326f4bD7',
-        playlistNftAddress: '0xbb6fca36B0d0107773a410103e9f1f459C3eb95e',
+        metadataAddress: '0x7aE45ae751278EBF5E452321ab3f50849492F6E6',
+        playlistFactoryAddress: '0xEbcA849484aEAd9458990772e475AD34A1eADA95',
+        playlistNftAddress: '0x4aC7FD98CF859cAc9Bd4b9c4E8b3974cA5933dE6',
       },
       randomPostsNumber: 1, // number of random post NFTs to show in the sidebar widget
       showFeatures: {
@@ -115,15 +115,15 @@ export default defineNuxtConfig({
       sidebarLeftSticky: true, // make the left sidebar sticky (always visible)
       stakingContractAddress: '', // this is also the stake/gov token address
       stakeTokenSymbol: 'TBD', // stake token symbol (governance token symbol)
-      supportedChainId: 11155111,
+      supportedChainId: 666666666,
       swapPriceImpactMaxBps: 1000, // max price impact in bips (1 bps = 0.01%, 1000bps = 10%) for the swap function
       swapRouterAddress: '', // iggy swap router contract address
       tenorApiKey: process.env.TENOR_KEY || '',
       thirdwebClientId: process.env.THIRDWEB_CLIENT_ID || '',
-      tldName: '.sepolia',
+      tldName: '.degen',
       tokenAddress: null, // leave null if it's a native token of the chain
       tokenDecimals: 18,
-      tokenSymbol: 'ETH',
+      tokenSymbol: 'DEGEN',
     },
   },
   vite: {
