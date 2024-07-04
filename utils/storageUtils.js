@@ -147,7 +147,7 @@ export async function fetchPlaylistData(window, addressOrNftId) {
 async function fetchPlaylistByNftIdFromApi(window, baseApiUrl, chainId, nftId, playlistNftAddress) {
   try {
     // fetch playlist data from API and store it in local storage
-    const apiUrl = baseApiUrl + '/endpoints/playlistNft/' + chainId + '/' + nftId + '/' + playlistNftAddress
+    const apiUrl = baseApiUrl + '/endpoints/playlist-nft/' + chainId + '/' + nftId + '/' + playlistNftAddress
 
     const response = await axios.get(apiUrl)
 

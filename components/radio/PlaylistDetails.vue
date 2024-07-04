@@ -129,6 +129,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import { ethers } from 'ethers'
 import { useToast } from 'vue-toastification/dist/index.mjs'
 import DegenRadioPlaylistAbi from '~/assets/abi/DegenRadioPlaylistAbi.json'
@@ -347,6 +348,20 @@ export default {
       } else {
         console.error(result.message)
         return this.toast.error(result.message)
+      }
+
+      // refresh in the API
+      try {
+        const apiUrl = `${this.$config.radio.apiBaseUrl}/endpoints/playlist-refresh/${this.$config.supportedChainId}/${this.playlistAddress}`
+        const response = await axios.get(apiUrl)
+
+        if (response.data?.success) {
+          console.log(response.data?.msg)
+        } else {
+          console.error('Failed to refresh playlist in the API:', response.data?.error)
+        }
+      } catch (error) {
+        console.error('Failed to refresh playlist in the API:', error)
       }
 
       this.waitingPlaylistData = false

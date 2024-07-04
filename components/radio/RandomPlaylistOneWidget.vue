@@ -95,6 +95,8 @@ export default {
 
   methods: {
     async loadPlaylistData() {
+      this.ownerDomain = null
+
       let provider = this.$getFallbackProvider(this.$config.supportedChainId)
 
       if (this.isActivated && this.chainId === this.$config.supportedChainId) {
@@ -104,7 +106,7 @@ export default {
 
       // fetch totalSupply from API
       if (!this.totalSupply) {
-        const apiUrl = `${this.$config.radio.apiBaseUrl}/endpoints/playlistNftSupply/${this.$config.supportedChainId}/${this.$config.radio.playlistNftAddress}`
+        const apiUrl = `${this.$config.radio.apiBaseUrl}/endpoints/playlist-nft-supply/${this.$config.supportedChainId}/${this.$config.radio.playlistNftAddress}`
         //console.log('fetching totalSupply from API:', apiUrl)
 
         try {
