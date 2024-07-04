@@ -15,7 +15,7 @@
               </button>
               <ul class="dropdown-menu">
                 <li><button class="dropdown-item" @click="disconnect">Disconnect wallet</button></li>
-                <li><button class="dropdown-item">Delete local storage</button></li>
+                <li><button class="dropdown-item" @click="deleteBrowserStorage">Delete browser storage</button></li>
               </ul>
             </div>
           </div>
@@ -97,6 +97,12 @@ export default {
         this.sidebarStore.setRightSidebar(false)
         this.sidebarStore.setMainContent(true)
       }
+    },
+
+    deleteBrowserStorage() {
+      window.localStorage.clear()
+      window.sessionStorage.clear()
+      window.location.reload()
     },
   },
 
