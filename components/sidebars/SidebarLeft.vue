@@ -28,6 +28,18 @@
               </NuxtLink>
             </li>
 
+            <li class="nav-item p-1" @click="closeLeftSidebar">
+              <NuxtLink class="nav-link" :class="$route.path === '/playlists/onchain-hip-hop' ? 'active' : ''" aria-current="page" to="/playlists/onchain-hip-hop">
+                <i class="bi bi-headphones me-1"></i> Onchain Hip Hop
+              </NuxtLink>
+            </li>
+
+            <li class="nav-item p-1" @click="closeLeftSidebar">
+              <NuxtLink class="nav-link" :class="$route.path === '/playlists/bear' ? 'active' : ''" aria-current="page" to="/playlists/bear">
+                <i class="bi bi-graph-down-arrow me-1"></i> Bear Market Songs
+              </NuxtLink>
+            </li>
+
             <hr />
 
             <!-- Create Playlist -->
