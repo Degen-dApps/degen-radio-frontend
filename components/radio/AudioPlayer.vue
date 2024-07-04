@@ -155,6 +155,7 @@ export default {
           this.nextTrack(); // skip to next song if current song fails to load
         },
         onplay: () => {
+          this.playing = true
           this.duration = this.sound.duration()
           this.startTimer()
         },
@@ -166,20 +167,18 @@ export default {
         },
       })
 
-      this.playing = true
       this.sound.load()
     },
 
     nextTrack() {
-      this.playing = false
-      this.stopTimer()
+      this.stop()
+      this.currentTime = 0
       this.audioStore.setCurrentTrackIndex(this.currentTrackIndex + 1)
 
       if (this.currentTrackIndex >= this.getAudioQueue.length) {
         this.audioStore.setCurrentTrackIndex(0)
       }
 
-      this.sound.stop()
       this.currentTrack = this.getAudioQueue[this.currentTrackIndex]
       this.loadTrack(this.currentTrack.audioUrl, this.currentTrack?.format)
     },
@@ -212,36 +211,21 @@ export default {
     },
 
     previousTrack() {
-      this.playing = false
-      this.stopTimer()
+      this.stop()
+      this.currentTime = 0
       this.audioStore.setCurrentTrackIndex(this.currentTrackIndex - 1)
 
       if (this.currentTrackIndex < 0) {
         this.audioStore.setCurrentTrackIndex(this.getAudioQueue.length - 1)
       }
-
-      this.sound.stop()
+      
       this.currentTrack = this.getAudioQueue[this.currentTrackIndex]
       this.loadTrack(this.currentTrack.audioUrl, this.currentTrack?.format)
     },
 
-    restart() {
-      this.playing = false
-      this.stopTimer()
-      this.sound.stop()
-      this.sound.play()
-      this.playing = true
-    },
-
     skipToSong(index) {
-      this.playing = false
-      this.stopTimer()
-
-      if (this.sound) {
-        this.sound.stop()
-      }
-
-      this.sound = null
+      this.stop()
+      this.currentTime = 0
       this.audioStore.setCurrentTrackIndex(index)
       this.playSongs()
     },
@@ -259,6 +243,7 @@ export default {
 
       if (this.sound) {
         this.sound.stop()
+        this.sound.unload()
       }
 
       this.sound = null
