@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import { ethers } from 'ethers'
 import { useToast } from 'vue-toastification/dist/index.mjs'
 import SwitchChainButton from '~/components/SwitchChainButton.vue'
@@ -113,6 +114,21 @@ export default {
       } catch (e) {
         console.error(e)
         this.toast('Failed to refresh track data.', { type: 'error' })
+      }
+
+      // refresh in the API
+      try {
+        const apiUrl = `${this.$config.radio.apiBaseUrl}/endpoints/track-refresh/${this.track.chainId}/${this.track.address}/${this.track.tokenId}`
+
+        const response = await axios.get(apiUrl)
+
+        if (response.data?.success) {
+          console.log(response.data?.msg)
+        } else {
+          console.error('Failed to refresh track in the API:', response.data?.error)
+        }
+      } catch (error) {
+        console.error('Failed to refresh track:', error)
       }
 
       this.waitingRefresh = false
