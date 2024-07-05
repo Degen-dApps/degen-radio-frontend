@@ -35,6 +35,12 @@
             </li>
 
             <li class="nav-item p-1" @click="closeLeftSidebar">
+              <NuxtLink class="nav-link" :class="$route.path === '/playlists/degen-playlist' ? 'active' : ''" aria-current="page" to="/playlists/degen-playlist">
+                <i class="bi bi-emoji-sunglasses me-1"></i> Degen Playlist
+              </NuxtLink>
+            </li>
+
+            <li class="nav-item p-1" @click="closeLeftSidebar">
               <NuxtLink class="nav-link" :class="$route.path === '/playlists/bear' ? 'active' : ''" aria-current="page" to="/playlists/bear">
                 <i class="bi bi-graph-down-arrow me-1"></i> Bear Market Songs
               </NuxtLink>

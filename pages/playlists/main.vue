@@ -15,7 +15,6 @@
 import PlaylistDetails from '~/components/radio/PlaylistDetails.vue'
 
 export default {
-  name: 'PlaylistMain',
   components: { PlaylistDetails },
 }
 </script>

@@ -238,7 +238,7 @@ export default {
 
           this.toast.dismiss(toastWait)
 
-          this.toast('You have successfully created an onchain playlist!', {
+          this.toast('You have successfully added a new track to your playlist!', {
             type: 'success',
             onClick: () => window.open(this.$config.blockExplorerBaseUrl + '/tx/' + tx.hash, '_blank').focus(),
           })
