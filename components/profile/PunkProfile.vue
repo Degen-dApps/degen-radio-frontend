@@ -182,7 +182,6 @@ import UserPlaylists from '~/components/radio/UserPlaylists.vue'
 import { getDomainName, getDomainHolder } from '~/utils/domainUtils'
 import { fetchUsername, storeData, storeUsername } from '~/utils/storageUtils'
 import { getTextWithoutBlankCharacters } from '~/utils/textUtils'
-import UserPlaylistsVue from '../radio/UserPlaylists.vue'
 
 export default {
   name: 'PunkProfile',

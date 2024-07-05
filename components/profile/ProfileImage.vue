@@ -42,7 +42,11 @@ export default {
   methods: {
     async fetchProfilePicture() {
       if (this.image) {
-        return this.imgPath = this.image
+        const prefetchRes = await getWorkingIpfsGatewayUrl(this.image)
+
+        if (prefetchRes.success) {
+          return this.imgPath = prefetchRes.validUrl
+        }
       }
       
       // Check if domain name is passed as a prop
@@ -117,11 +121,8 @@ export default {
 
     image(oldValue, newValue) {
       if (oldValue != newValue) {
-        this.imgPath = newValue
-
-        if (newValue) {
-          storeData(window, this.domainName, { image: newValue }, "img")
-        }
+        this.imgPath = "https://placeholder.pics/svg/300/32BBFF/ffffff/loading"
+        this.fetchProfilePicture()
       }
     },
   },

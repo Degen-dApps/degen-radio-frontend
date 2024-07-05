@@ -1,7 +1,7 @@
 import { ThirdwebStorage } from '@thirdweb-dev/storage'
 import axios from 'axios'
 
-const abortTimeout = 3000
+const abortTimeout = 5000
 
 export async function uploadFileToThirdWeb(file) {
   const config = useRuntimeConfig()
@@ -20,9 +20,16 @@ export async function getWorkingIpfsGatewayUrl(url) {
 
   if (!url.startsWith('ipfs://')) { // either an IPFS gateway link or a classic web2 server HTTP link
     const httpLink = url
-    const httpResponse = await axios.head(httpLink, { signal: AbortSignal.timeout(abortTimeout) })
 
-    if (httpResponse.status == 200) {
+    let httpResponse
+
+    try {
+      httpResponse = await axios.head(httpLink, { signal: AbortSignal.timeout(abortTimeout) })
+    } catch (error) {
+      console.log("HTTP error:", error)
+    }
+
+    if (httpResponse?.status == 200) {
       const contentType = httpResponse.headers['content-type'] // this is needed for song URLs to determine the format
       const format = parseAudioContentType(contentType) // get the format of the audio file
 
@@ -41,7 +48,7 @@ export async function getWorkingIpfsGatewayUrl(url) {
   if (!cid) {
     return { success: false, message: 'Invalid IPFS link' }
   }
-  
+
   const ipfsGateways = [
     'https://ipfs.io/ipfs/',
     'https://nftdegeniggy.myfilebase.com/ipfs/',
@@ -64,7 +71,8 @@ export async function getWorkingIpfsGatewayUrl(url) {
         return { success: true, validUrl: ipfsUrl, contentType: contentType, format: format }
       }
     } catch (error) {
-      console.log(error)
+      console.log("Gateway error:", error)
+      continue
     }
   }
 }
