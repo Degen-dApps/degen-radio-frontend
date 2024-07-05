@@ -180,7 +180,7 @@ import ChangePfpModal from '~/components/profile/ChangePfpModal.vue'
 import ProfileImage from '~/components/profile/ProfileImage.vue'
 import UserPlaylists from '~/components/radio/UserPlaylists.vue'
 import { getDomainName, getDomainHolder } from '~/utils/domainUtils'
-import { fetchUsername, storeUsername } from '~/utils/storageUtils'
+import { fetchUsername, storeData, storeUsername } from '~/utils/storageUtils'
 import { getTextWithoutBlankCharacters } from '~/utils/textUtils'
 import UserPlaylistsVue from '../radio/UserPlaylists.vue'
 
@@ -246,6 +246,14 @@ export default {
 
     isCurrentUser() {
       return String(this.uAddress).toLowerCase() === String(this.address).toLowerCase()
+    },
+
+    domainWithoutExtension() {
+      if (!this.domain) {
+        return null
+      }
+
+      return String(this.domain).replace(this.$config.tldName, "")
     },
   },
 
@@ -328,8 +336,11 @@ export default {
     },
 
     async insertImage(imageUrl) {
-      // get image from file upload modal component and call the changeImage function
       this.newImageLink = imageUrl
+
+      if (imageUrl) {
+        storeData(window, this.domainWithoutExtension, { image: imageUrl }, "img")
+      }
     },
   },
 

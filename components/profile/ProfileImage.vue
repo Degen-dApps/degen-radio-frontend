@@ -85,8 +85,10 @@ export default {
 
               if (domainDataJson?.image) {
                 this.imgPath = domainDataJson.image
-                storeData(window, this.domainName, { image: domainDataJson.image }, "img")
-                return
+                if (this.imgPath) {
+                  storeData(window, this.domainName, { image: domainDataJson.image }, "img")
+                  return
+                }
               }
             }
           } catch (error) {
@@ -120,7 +122,10 @@ export default {
     image(oldValue, newValue) {
       if (oldValue != newValue) {
         this.imgPath = newValue
-        storeData(window, this.domainName, { image: newValue }, "img")
+
+        if (newValue) {
+          storeData(window, this.domainName, { image: newValue }, "img")
+        }
       }
     },
   },

@@ -152,8 +152,8 @@ export default {
       // get domain data
       let domainData = await punkContract.getDomainData(String(this.domainNameWithoutTld).toLowerCase())
 
-      console.log('Domain name:', this.domainNameWithoutTld)
-      console.log('Domain data:', domainData)
+      //console.log('Domain name:', this.domainNameWithoutTld)
+      //console.log('Domain data:', domainData)
 
       try {
         domainData = JSON.parse(domainData)
