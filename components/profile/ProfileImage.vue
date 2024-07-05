@@ -1,11 +1,12 @@
 <template>
-  <img :src="parseImageLink" :alt="domainName" class="rounded-circle" />
+  <img :src="imgPath" :alt="domainName" class="rounded-circle" />
 </template>
 
 <script>
 import { ethers } from 'ethers'
 import Image from '~/components/Image.vue'
 import { useEthers } from '~/store/ethers'
+import { getWorkingIpfsGatewayUrl } from '~/utils/ipfsUtils'
 import { fetchData, storeData } from '~/utils/storageUtils'
 
 export default {
@@ -36,16 +37,6 @@ export default {
 
       return this.domain.replace(this.$config.tldName, '')
     },
-
-    parseImageLink() {
-      let parsedImage = this.imgPath
-
-      if (parsedImage && parsedImage.includes('ipfs://')) {
-        parsedImage = parsedImage.replace('ipfs://', this.$config.ipfsGateway)
-      }
-
-      return parsedImage
-    },
   },
 
   methods: {
@@ -61,7 +52,11 @@ export default {
         const dataObject = fetchData(window, this.domainName, "img", this.$config.expiryPfps)
 
         if (dataObject) {
-          return this.imgPath = dataObject.image
+          const prefetchRes = await getWorkingIpfsGatewayUrl(dataObject.image)
+
+          if (prefetchRes.success) {
+            return this.imgPath = prefetchRes.validUrl
+          }
         } else {
           // fetch image from blockchain
           let provider = this.$getFallbackProvider(this.$config.supportedChainId)
@@ -84,10 +79,11 @@ export default {
               const domainDataJson = JSON.parse(domainData)
 
               if (domainDataJson?.image) {
-                this.imgPath = domainDataJson.image
-                if (this.imgPath) {
-                  storeData(window, this.domainName, { image: domainDataJson.image }, "img")
-                  return
+                const res = await getWorkingIpfsGatewayUrl(domainDataJson.image)
+
+                if (res.success) {
+                  this.imgPath = res.validUrl
+                  return storeData(window, this.domainName, { image: domainDataJson.image }, "img")
                 }
               }
             }
