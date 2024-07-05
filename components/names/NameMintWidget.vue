@@ -286,7 +286,8 @@ export default {
 
         if (userDomain) {
           this.userStore.setDefaultDomain(userDomain + this.$config.tldName)
-          storeUsername(window, this.address, userDomain + this.$config.tldName)
+          userDomain = userDomain.replace(this.$config.tldName, '') + this.$config.tldName
+          storeUsername(window, this.address, userDomain)
         } else {
           this.userStore.setDefaultDomain(null)
         }

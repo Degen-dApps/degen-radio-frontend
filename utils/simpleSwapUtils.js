@@ -8,7 +8,7 @@ export async function getPriceImpactBps(signer, inputToken, outputToken, amountI
   let provider = signer
 
   if (!provider) {
-    provider = this.$getFallbackProvider(config.supportedChainId)
+    provider = new ethers.providers.JsonRpcProvider(config.supportedChainId)
   }
 
   // router interface
@@ -31,7 +31,7 @@ export async function getOutputTokenAmount(signer, inputToken, outputToken, amou
   let provider = signer
 
   if (!provider) {
-    provider = this.$getFallbackProvider(config.supportedChainId)
+    provider = new ethers.providers.JsonRpcProvider(config.supportedChainId)
   }
 
   const amountInWei = ethers.utils.parseUnits(amountIn, inputToken.decimals)

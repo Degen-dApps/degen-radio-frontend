@@ -22,7 +22,7 @@
         </div>
 
         <!-- Random playlist -->
-        <RandomPlaylistOneWidget />
+        <RandomPlaylistOneWidget :isMobile="isMobile" @closeRightSidebar="closeRightSidebar" />
 
         <!-- Featured playlists 
         <div class="card m-2 bg-light">

@@ -6,7 +6,7 @@ export async function getDomainName(userAddress, signer) {
   let provider = signer
 
   if (!provider) {
-    provider = this.$getFallbackProvider(config.supportedChainId)
+    provider = new ethers.providers.JsonRpcProvider(config.supportedChainId)
   }
 
   const tldInterface = new ethers.utils.Interface(['function defaultNames(address) view returns (string)'])
@@ -25,7 +25,7 @@ export async function getDomainHolder(domainName, signer) {
   let provider = signer
 
   if (!provider) {
-    provider = this.$getFallbackProvider(config.supportedChainId)
+    provider = new ethers.providers.JsonRpcProvider(config.supportedChainId)
   }
 
   if (domainName.includes(config.tldName)) {

@@ -274,7 +274,12 @@ export default {
       // fetch owner domain
       if (!this.ownerDomain && this.ownerAddress) {
         this.ownerDomain = await getDomainName(this.ownerAddress, provider)
-        storeUsername(window, this.ownerAddress, this.ownerDomain)
+        
+        if (this.ownerDomain) {
+          this.ownerDomain = String(this.ownerDomain).replace(this.$config.tldName, '') + this.$config.tldName
+          storeUsername(window, this.ownerAddress, this.ownerDomain)
+        }
+        
       }
 
     },

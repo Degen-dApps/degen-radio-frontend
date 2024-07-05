@@ -7,7 +7,7 @@ export async function getTokenAllowance(token, userAddress, beneficiary, signer)
   let provider = signer
 
   if (!provider) {
-    provider = this.$getFallbackProvider(config.supportedChainId)
+    provider = new ethers.providers.JsonRpcProvider(config.supportedChainId)
   }
 
   const contract = new ethers.Contract(token.address, Erc20Abi, provider)
@@ -22,7 +22,7 @@ export async function getTokenBalance(token, userAddress, signer) {
   let provider = signer
 
   if (!provider) {
-    provider = this.$getFallbackProvider(config.supportedChainId)
+    provider = new ethers.providers.JsonRpcProvider(config.supportedChainId)
   }
 
   let balanceWei

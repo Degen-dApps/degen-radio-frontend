@@ -2,9 +2,12 @@
   <div class="card track-card">
     <div class="row text-center">
       <div class="col-md-8 mt-3">
-        <p>
+        <p class="text-wrap ps-2 pe-2">
           <span v-if="waitingRefresh" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           {{ track?.name }}
+          <span v-if="author"> | 
+            <NuxtLink class="cursor-pointer link-without-color hover-color text-wrap" :to="'/profile?id='+author">{{ author }}</NuxtLink>
+          </span>
         </p>
       </div>
 
@@ -63,7 +66,9 @@ import SwitchChainButton from '~/components/SwitchChainButton.vue'
 import WaitingToast from '~/components/WaitingToast'
 import { useEthers } from '~/store/ethers'
 import { fetchFreshMusicNftData } from '~/utils/audioUtils'
+import { getDomainName } from '~/utils/domainUtils'
 import { getWorkingIpfsGatewayUrl } from '~/utils/ipfsUtils'
+import { fetchUsername, storeUsername } from '~/utils/storageUtils'
 
 export default {
   name: 'TracksListItem',
@@ -73,9 +78,14 @@ export default {
 
   data() {
     return {
+      author: null,
       waitingRefresh: false,
       waitingRemoveTrack: false
     }
+  },
+
+  mounted() {
+    this.fetchTrackAuthor()
   },
 
   computed: {
@@ -99,6 +109,22 @@ export default {
 
       this.audioStore.addToQueue(this.track)
       this.toast.info('Track added to the listening queue.', { timeout: 2000 })
+    },
+
+    async fetchTrackAuthor() {
+      if (this.track?.authorAddress) {
+        this.author = fetchUsername(window, this.track.authorAddress)
+
+        if (!this.author) {
+          const provider = this.$getProviderForChain(this.$config.supportedChainId)
+          const domainName = await getDomainName(this.track.authorAddress, provider)
+
+          if (domainName) {
+            this.author = String(domainName).replace(this.$config.tldName, '') + this.$config.tldName
+            storeUsername(window, this.track.authorAddress, this.author)
+          }
+        }
+      }
     },
 
     playSong() {

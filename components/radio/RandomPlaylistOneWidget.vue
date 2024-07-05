@@ -21,7 +21,7 @@
       <p class="card-text placeholder-glow"><span class="placeholder col-4"></span></p>
     </div>
 
-    <div v-if="playlistData" :key="playlistData">
+    <div v-if="playlistData" :key="playlistData" @click="closeSidebar">
       <NuxtLink :to="`/playlist?id=`+playlistData.playlistAddress">
         <Image :url="playlistData.image" :alt="playlistData.name" cls="card-img-top w-50 rounded-bottom-3" />
       </NuxtLink>
@@ -52,6 +52,8 @@ import { fetchPlaylistData, fetchUsername, storeUsername } from '~/utils/storage
 
 export default {
   name: 'RandomPlaylistOneWidget',
+  props: ['isMobile'],
+  emits: ['closeRightSidebar'],
   components: { Image },
 
   data() {
@@ -94,6 +96,12 @@ export default {
   },
 
   methods: {
+    closeSidebar() {
+      if (this.isMobile) {
+        this.$emit('closeRightSidebar')
+      }
+    },
+
     async loadPlaylistData() {
       this.ownerDomain = null
 
@@ -163,7 +171,11 @@ export default {
 
         if (!this.ownerDomain && this.ownerAddress) {
           this.ownerDomain = await getDomainName(this.ownerAddress, provider)
-          storeUsername(window, this.ownerAddress, this.ownerDomain)
+
+          if (this.ownerDomain) {
+            this.ownerDomain = String(this.ownerDomain).replace(this.$config.tldName, "") + this.$config.tldName
+            storeUsername(window, this.ownerAddress, this.ownerDomain)
+          }
         }
       }
     },

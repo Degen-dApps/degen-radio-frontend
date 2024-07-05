@@ -54,9 +54,18 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
   const nftInterface = new ethers.utils.Interface([
     'function tokenURI(uint256 tokenId) external view returns (string)',
     'function metadataAddress() external view returns (address)',
+    'function owner() external view returns (address)'
   ])
 
   const nftContract = new ethers.Contract(nftAddress, nftInterface, provider)
+
+  let ownerAddress;
+
+  try {
+    ownerAddress = await nftContract.owner()
+  } catch (e) {
+    console.error(`Error fetching owner address for Music NFT contract ${trackAddress}:`, e)
+  }
 
   let tokenUri
 
@@ -124,6 +133,10 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
       address: nftAddress,
       tokenId: nftId,
       chainId: chainId,
+    }
+
+    if (ownerAddress) {
+      nftData.authorAddress = ownerAddress
     }
 
     if (metadata?.image) {
