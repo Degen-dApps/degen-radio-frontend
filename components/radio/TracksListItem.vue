@@ -37,7 +37,6 @@
 
             <li v-if="isActivated">
               <button 
-                :disabled="true"
                 class="dropdown-item" 
                 type="button" 
                 data-bs-toggle="modal"

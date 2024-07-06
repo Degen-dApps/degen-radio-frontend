@@ -10,7 +10,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="addTrackToAnotherPlaylistModalLabel">Add track to another playlist</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button id="closeAddTrackToAnotherPlaylistModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -41,6 +41,7 @@
                 <li 
                   v-for="userPlaylist in userPlaylists"
                   :key="userPlaylist.playlistNftId"
+                  @click="selectPlaylist(userPlaylist)"
                 ><span class="dropdown-item cursor-pointer">{{ userPlaylist?.name }}</span></li>
               </ul>
 
@@ -85,6 +86,7 @@ export default {
 
   data() {
     return {
+      selectedPlaylist: null,
       selectedPlaylistName: "Choose playlist",
       userPlaylists: [],
       waitingSubmitTrack: false,
@@ -122,6 +124,11 @@ export default {
       }
     },
 
+    selectPlaylist(playlist) {
+      this.selectedPlaylistName = playlist.name
+      this.selectedPlaylist = playlist
+    },
+
     async submit() {
       // submit track data to playlist smart contract
       this.waitingSubmitTrack = true
@@ -130,10 +137,14 @@ export default {
         'function addTrack(address addr_, uint256 tokenId_, uint256 chainId_) external',
       ])
 
-      const playlistContract = new ethers.Contract(this.playlist.playlistAddress, playlistInterface, this.signer)
+      const playlistContract = new ethers.Contract(this.selectedPlaylist.playlistAddress, playlistInterface, this.signer)
 
       try {
-        const tx = await playlistContract.addTrack(this.tAddress, this.tNftId, this.tChainId)
+        const tx = await playlistContract.addTrack(
+          this.track.address, 
+          Number(this.track.tokenId), 
+          Number(this.track.chainId)
+        )
 
         const toastWait = this.toast(
           {
@@ -159,6 +170,8 @@ export default {
             type: 'success',
             onClick: () => window.open(this.$config.blockExplorerBaseUrl + '/tx/' + tx.hash, '_blank').focus(),
           })
+
+          document.getElementById('closeAddTrackToAnotherPlaylistModal').click()
         } else {
           this.waitingSubmitTrack = false
           this.toast.dismiss(toastWait)
