@@ -40,7 +40,7 @@
                 class="dropdown-item" 
                 type="button" 
                 data-bs-toggle="modal"
-                data-bs-target="#addTrackToAnotherPlaylistModal"
+                :data-bs-target="'#addTrackToAnotherPlaylistModal' + $.uid"
               >
                 Add to
                 <span v-if="isCurrentUserOwner">another</span>
@@ -73,7 +73,7 @@
       </div>
     </div>
 
-    <AddTrackToAnotherPlaylistModal :track="track" :toast="toast" />
+    <AddTrackToAnotherPlaylistModal :track="track" :toast="toast" :componentId="$.uid" />
   </div>
 </template>
 

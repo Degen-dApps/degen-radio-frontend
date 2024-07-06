@@ -92,7 +92,7 @@ export default defineNuxtPlugin(() => {
 const chains = [
   {
     chainId: 666666666,
-    name: 'Degen',
+    name: 'Degen Chain',
     currency: 'DEGEN',
     rpc1: 'https://rpc.degen.tips',
     rpc2: 'https://rpc.degen.tips',

@@ -1,16 +1,16 @@
 <template>
   <div
     class="modal fade"
-    id="addTrackToAnotherPlaylistModal"
+    :id="'addTrackToAnotherPlaylistModal'+componentId"
     tabindex="-1"
-    aria-labelledby="addTrackToAnotherPlaylistModalLabel"
+    :aria-labelledby="'addTrackToAnotherPlaylistModalLabel'+componentId"
     aria-hidden="true"
   >
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="addTrackToAnotherPlaylistModalLabel">Add track to another playlist</h5>
-          <button id="closeAddTrackToAnotherPlaylistModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title" :id="'addTrackToAnotherPlaylistModalLabel'+componentId">Add track to another playlist</h5>
+          <button :id="'closeAddTrackToAnotherPlaylistModal'+componentId" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -31,12 +31,15 @@
               </button>
 
               <ul class="dropdown-menu">
-                <li><span class="dropdown-item cursor-pointer">
-                  <i class="bi bi-plus-circle me-1"></i>
-                  Create a new playlist with this track
-                </span></li>
 
-                <li><hr class="dropdown-divider"></li>
+                <li @click="createNewPlaylist">
+                  <span class="dropdown-item cursor-pointer">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Create a new playlist with this track
+                  </span>
+                </li>
+
+                <li v-if="userPlaylists.length > 0"><hr class="dropdown-divider"></li>
 
                 <li 
                   v-for="userPlaylist in userPlaylists"
@@ -80,7 +83,7 @@ import { fetchData, fetchPlaylistData } from '~/utils/storageUtils'
 
 export default {
   name: 'AddTrackToAnotherPlaylistModal',
-  props: ['track', 'toast'],
+  props: ['componentId', 'toast', 'track'],
   emits: ['addSongToTracks'],
   components: { SwitchChainButton },
 
@@ -104,6 +107,20 @@ export default {
   },
 
   methods: {
+
+    createNewPlaylist() {
+      document.getElementById('closeAddTrackToAnotherPlaylistModal'+this.componentId).click()
+
+      // redirect to create playlist page with track address, chainId, and tokenId in the query
+      return this.$router.push({
+        path: '/playlists/create',
+        query: {
+          addr: this.track.address,
+          chain: this.track.chainId,
+          nftid: this.track.tokenId,
+        },
+      })
+    },
 
     async fetchUserPlaylists() {
       this.userPlaylists = []
@@ -171,7 +188,7 @@ export default {
             onClick: () => window.open(this.$config.blockExplorerBaseUrl + '/tx/' + tx.hash, '_blank').focus(),
           })
 
-          document.getElementById('closeAddTrackToAnotherPlaylistModal').click()
+          document.getElementById('closeAddTrackToAnotherPlaylistModal'+this.componentId).click()
         } else {
           this.waitingSubmitTrack = false
           this.toast.dismiss(toastWait)

@@ -217,6 +217,15 @@ export default {
   mounted() {
     this.isMounted = true
     this.fetchFactoryData()
+
+    // check if the query params are present
+    if (this.$route.query.addr && this.$route.query.chain && this.$route.query.nftid) {
+      this.tAddress = this.$route.query.addr
+      this.tChainId = this.$route.query.chain
+      this.tNftId = this.$route.query.nftid
+      this.tChainName = this.$getChainName(Number(this.tChainId))
+    }
+    
   },
 
   computed: {
