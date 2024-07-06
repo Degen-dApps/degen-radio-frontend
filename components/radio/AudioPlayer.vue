@@ -162,8 +162,6 @@ export default {
     },
 
     loadTrack(src, format) {
-      const self = this
-
       this.sound = new Howl({
         src: [src],
         html5: true, // To ensure playback on mobile devices
@@ -171,11 +169,7 @@ export default {
         onload: () => {
           this.sound.play();
 
-          console.log('Playing song:', this.currentTrack);
-
           if ('mediaSession' in navigator) {
-            console.log('Setting media session metadata...');
-
             navigator.mediaSession.metadata = new MediaMetadata({
               title: this.currentTrack?.name,
               artwork: [ this.currentTrackArtwork ],
@@ -190,10 +184,8 @@ export default {
             navigator.mediaSession.setActionHandler('seekforward', () => {
               this.sound.seek(this.sound.seek() + 10);
             });
-            navigator.mediaSession.setActionHandler('previoustrack', () => self.previousTrack());
-            navigator.mediaSession.setActionHandler('nexttrack', () => self.nextTrack());
-
-            console.log('Media session metadata set.');
+            navigator.mediaSession.setActionHandler('previoustrack', this.previousTrack);
+            navigator.mediaSession.setActionHandler('nexttrack', this.nextTrack);
           }
         },
         onloaderror: (id, error) => {

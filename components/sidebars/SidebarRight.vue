@@ -9,12 +9,12 @@
             <ConnectWalletButton v-if="!isActivated" class="btn btn-primary" btnText="Connect wallet" />
             <SwitchChainButton v-if="isActivated && !isSupportedChain" />
 
-            <div class="dropdown" v-if="isActivated && isSupportedChain">
+            <div class="dropdown mt-2">
               <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Actions
               </button>
               <ul class="dropdown-menu">
-                <li><button class="dropdown-item" @click="disconnect">Disconnect wallet</button></li>
+                <li><button class="dropdown-item"  v-if="isActivated" @click="disconnect">Disconnect wallet</button></li>
                 <li><button class="dropdown-item" @click="deleteBrowserStorage">Delete browser storage</button></li>
               </ul>
             </div>
