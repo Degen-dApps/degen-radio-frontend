@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ethers } from 'ethers'
-import { fetchPlaylistNftId, storePlaylistData, storePlaylistNftId } from './storageUtils'
+import { fetchPlaylistData, fetchPlaylistNftId, storeData, storePlaylistData, storePlaylistNftId } from './storageUtils'
 import { getWorkingIpfsGatewayUrl } from './ipfsUtils'
 
 export async function fetchPlaylistDataFromBlockchain(window, provider, playlistAddress, playlistNftId) {
@@ -52,7 +52,6 @@ export async function fetchPlaylistDataFromBlockchain(window, provider, playlist
     if (String(tokenUri).startsWith('data:application/json;base64')) {
       metadata = JSON.parse(atob(tokenUri.split(',')[1]))
     } else {
-      console.log('fetching metadata from server...')
       let mdServerUrl = tokenUri
 
       // check if token URI is an IPFS link (getWorkingIpfsGatewayUrl)
@@ -79,4 +78,39 @@ export async function fetchPlaylistDataFromBlockchain(window, provider, playlist
   } catch (error) {
     return { success: false, message: 'Error fetching playlist data' }
   }
+}
+
+export async function fetchUserPlaylists(window, provider, userAddress) {
+  const config = useRuntimeConfig()
+  const playlistNftAddress = config.radio.playlistNftAddress
+
+  const playlistNftInterface = new ethers.utils.Interface([
+    'function balanceOf(address owner) external view returns (uint256)',
+    'function tokenOfOwnerByIndex(address owner, uint256 index) external view returns (uint256)',
+  ])
+
+  const playlistNftContract = new ethers.Contract(
+    playlistNftAddress,
+    playlistNftInterface,
+    provider
+  )
+
+  const playlistNftBalance = await playlistNftContract.balanceOf(userAddress)
+
+  const playlistNftIds = []
+
+  for (let i = 0; i < playlistNftBalance; i++) {
+    const playlistNftId = await playlistNftContract.tokenOfOwnerByIndex(userAddress, i)
+    playlistNftIds.push(Number(playlistNftId))
+
+    const playlistData = fetchPlaylistData(window, playlistNftId)
+
+    if (!playlistData) {
+      fetchPlaylistDataFromBlockchain(window, provider, null, playlistNftId)
+    }
+  }
+
+  storeData(window, userAddress, { playlistNftIds }, 'playlistNftIds')
+
+  return playlistNftIds
 }

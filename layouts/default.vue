@@ -74,6 +74,7 @@ import { useSidebarStore } from '~/store/sidebars'
 import { useSiteStore } from '~/store/site'
 import { useUserStore } from '~/store/user'
 import { getDomainHolder, getDomainName } from '~/utils/domainUtils'
+import { fetchUserPlaylists } from '~/utils/playlistUtils'
 import { storeReferrer, storeUsername } from '~/utils/storageUtils'
 
 export default {
@@ -312,6 +313,13 @@ export default {
   },
 
   watch: {
+    address(newVal, oldVal) {
+      if (newVal && newVal !== oldVal) {
+        let provider = this.$getProviderForChain(this.$config.supportedChainId)
+        fetchUserPlaylists(window, provider, this.address)
+      }
+    },
+
     width(newVal, oldVal) {
       if (newVal > this.breakpoint) {
         this.lSidebar.show()

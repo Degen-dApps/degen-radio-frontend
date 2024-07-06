@@ -97,6 +97,24 @@ export default {
       return this.formatTime(this.currentTime)
     },
 
+    currentTrackArtwork() {
+      if (this.currentTrack) {
+        if (this.currentTrack?.imageHttp && this.currentTrack?.imageFormat) {
+          return { 
+            src: this.currentTrack?.imageHttp, 
+            sizes: '96x96', 
+            type: this.currentTrack?.imageFormat 
+          }
+        }
+      }
+
+      return { 
+        src: '/img/logo.png', 
+        sizes: '96x96', 
+        type: 'image/png' 
+      }
+    },
+
     currentTrackIndex() {
       return this.audioStore.currentTrackIndex
     },
@@ -144,11 +162,39 @@ export default {
     },
 
     loadTrack(src, format) {
+      const self = this
+
       this.sound = new Howl({
         src: [src],
+        html5: true, // To ensure playback on mobile devices
         format: [format || 'mp3'],
         onload: () => {
           this.sound.play();
+
+          console.log('Playing song:', this.currentTrack);
+
+          if ('mediaSession' in navigator) {
+            console.log('Setting media session metadata...');
+
+            navigator.mediaSession.metadata = new MediaMetadata({
+              title: this.currentTrack?.name,
+              artwork: [ this.currentTrackArtwork ],
+            });
+
+            navigator.mediaSession.setActionHandler('play', this.play);
+            navigator.mediaSession.setActionHandler('pause', this.pause);
+            navigator.mediaSession.setActionHandler('stop', this.pause);
+            navigator.mediaSession.setActionHandler('seekbackward', () => {
+              this.sound.seek(this.sound.seek() - 10);
+            });
+            navigator.mediaSession.setActionHandler('seekforward', () => {
+              this.sound.seek(this.sound.seek() + 10);
+            });
+            navigator.mediaSession.setActionHandler('previoustrack', () => self.previousTrack());
+            navigator.mediaSession.setActionHandler('nexttrack', () => self.nextTrack());
+
+            console.log('Media session metadata set.');
+          }
         },
         onloaderror: (id, error) => {
           console.log('Error loading song, skipping to the next one...');

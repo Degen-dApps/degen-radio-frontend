@@ -141,6 +141,12 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
 
     if (metadata?.image) {
       nftData.image = metadata.image
+      const imageHttpData = await getWorkingIpfsGatewayUrl(metadata.image)
+
+      if (imageHttpData.success) {
+        nftData.imageHttp = imageHttpData.validUrl
+        nftData.imageFormat = imageHttpData.contentType
+      }
     }
 
     if (metadata?.description) {

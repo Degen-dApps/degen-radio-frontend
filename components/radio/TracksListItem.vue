@@ -34,14 +34,32 @@
             <i class="bi bi-three-dots-vertical"></i>
           </span>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><button class="dropdown-item" type="button" :disabled="true">Add to another playlist</button></li>
+
+            <li v-if="isActivated">
+              <button 
+                :disabled="true"
+                class="dropdown-item" 
+                type="button" 
+                data-bs-toggle="modal"
+                data-bs-target="#addTrackToAnotherPlaylistModal"
+              >
+                Add to
+                <span v-if="isCurrentUserOwner">another</span>
+                <span v-if="!isCurrentUserOwner">your</span>
+                playlist
+              </button>
+            </li>
 
             <li @click="removeTrack" v-if="isCurrentUserOwner"><button class="dropdown-item" type="button" :disabled="waitingRemoveTrack">
               <span v-if="waitingRemoveTrack" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
               Remove track
             </button></li>
 
-            <li v-if="track.externalUrl"><a class="dropdown-item" target="_blank" :href="track.externalUrl">Go to track external URL</a></li>
+            <li v-if="track.externalUrl">
+              <a class="dropdown-item" target="_blank" :href="track.externalUrl">
+                Go to track external URL
+              </a>
+            </li>
             
             <li>
               <button 
@@ -55,6 +73,8 @@
 
       </div>
     </div>
+
+    <AddTrackToAnotherPlaylistModal :track="track" :toast="toast" />
   </div>
 </template>
 
@@ -64,6 +84,7 @@ import { ethers } from 'ethers'
 import { useToast } from 'vue-toastification/dist/index.mjs'
 import SwitchChainButton from '~/components/SwitchChainButton.vue'
 import WaitingToast from '~/components/WaitingToast'
+import AddTrackToAnotherPlaylistModal from '~/components/radio/AddTrackToAnotherPlaylistModal.vue'
 import { useEthers } from '~/store/ethers'
 import { fetchFreshMusicNftData } from '~/utils/audioUtils'
 import { getDomainName } from '~/utils/domainUtils'
@@ -74,7 +95,7 @@ export default {
   name: 'TracksListItem',
   props: ['audioStore', 'isCurrentUserOwner', 'playlistAddress', 'track', 'trackIndex'],
   emits: ['removeTrack'],
-  components: { SwitchChainButton },
+  components: { AddTrackToAnotherPlaylistModal, SwitchChainButton },
 
   data() {
     return {

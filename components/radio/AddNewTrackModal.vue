@@ -33,18 +33,18 @@
               </button>
               <ul class="dropdown-menu">
                 <li>
-                  <span class="dropdown-item cursor-points" @click="selectChain(42161, 'Arbitrum')">Arbitrum</span>
+                  <span class="dropdown-item cursor-pointer" @click="selectChain(42161, 'Arbitrum')">Arbitrum</span>
                 </li>
-                <li><span class="dropdown-item cursor-points" @click="selectChain(8453, 'Base')">Base</span></li>
+                <li><span class="dropdown-item cursor-pointer" @click="selectChain(8453, 'Base')">Base</span></li>
                 <li>
-                  <span class="dropdown-item cursor-points" @click="selectChain(666666666, 'Degen Chain')"
+                  <span class="dropdown-item cursor-pointer" @click="selectChain(666666666, 'Degen Chain')"
                     >Degen Chain</span
                   >
                 </li>
-                <li><span class="dropdown-item cursor-points" @click="selectChain(1, 'Ethereum')">Ethereum</span></li>
-                <li><span class="dropdown-item cursor-points" @click="selectChain(10, 'Optimism')">Optimism</span></li>
+                <li><span class="dropdown-item cursor-pointer" @click="selectChain(1, 'Ethereum')">Ethereum</span></li>
+                <li><span class="dropdown-item cursor-pointer" @click="selectChain(10, 'Optimism')">Optimism</span></li>
                 <li>
-                  <span class="dropdown-item cursor-points" @click="selectChain(137, 'Polygon PoS Chain')"
+                  <span class="dropdown-item cursor-pointer" @click="selectChain(137, 'Polygon PoS Chain')"
                     >Polygon PoS Chain</span
                   >
                 </li>
