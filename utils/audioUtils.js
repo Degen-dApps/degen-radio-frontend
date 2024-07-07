@@ -182,6 +182,21 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
       storeNftAudioData(nftData, window)
 
       return { success: true, nftData: nftData }
+    } else if (metadata?.losslessAudio) {
+      let audioUrl = metadata.losslessAudio
+
+      const audioUrlData = await getWorkingUrl(audioUrl)
+
+      if (audioUrlData.success) {
+        audioUrl = audioUrlData.validUrl
+        nftData.format = audioUrlData.format
+      }
+
+      nftData.audioUrl = audioUrl
+
+      storeNftAudioData(nftData, window)
+
+      return { success: true, nftData: nftData }
     } else if (metadata?.animation_url) {
       let audioUrl = metadata.animation_url
 
