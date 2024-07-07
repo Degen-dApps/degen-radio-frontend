@@ -150,7 +150,7 @@ import { useAudioStore } from '~/store/audio'
 import { shortenAddress, useEthers } from '~/store/ethers'
 import { fetchMusicNftData } from '~/utils/audioUtils'
 import { getDomainName } from '~/utils/domainUtils'
-import { getWorkingIpfsGatewayUrl } from '~/utils/ipfsUtils'
+import { getWorkingUrl } from '~/utils/ipfsUtils'
 import { fetchPlaylistDataFromBlockchain } from '~/utils/playlistUtils'
 import { fetchPlaylistData, fetchUsername, storeUsername } from '~/utils/storageUtils'
 
@@ -324,7 +324,7 @@ export default {
       this.waitingTracksData = false
 
       // prefetch audio URL for the first track
-      const firstTrackPrefetchResult = await getWorkingIpfsGatewayUrl(this.tracks[0].audioUrl)
+      const firstTrackPrefetchResult = await getWorkingUrl(this.tracks[0].audioUrl)
 
       if (firstTrackPrefetchResult.success && firstTrackPrefetchResult.format) {
         this.tracks[0].audioUrl = firstTrackPrefetchResult.validUrl
@@ -341,7 +341,7 @@ export default {
         const audioUrl = track.audioUrl
 
         if (audioUrl) {
-          getWorkingIpfsGatewayUrl(audioUrl).then((result) => {
+          getWorkingUrl(audioUrl).then((result) => {
             if (result.success && result.format) {
               this.tracks[i].audioUrl = result.validUrl
               this.tracks[i].format = result.format

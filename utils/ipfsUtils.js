@@ -15,8 +15,12 @@ export async function uploadFileToThirdWeb(file) {
   return fileUri
 }
 
-export async function getWorkingIpfsGatewayUrl(url) {
+export async function getWorkingUrl(url) {
   let cid
+
+  if (url.startsWith('ar://')) {
+    return getWorkingArweaveUrl(url)
+  }
 
   if (!url.startsWith('ipfs://')) { // either an IPFS gateway link or a classic web2 server HTTP link
     const httpLink = url
@@ -97,6 +101,33 @@ function checkIfIpfsGatewayUrl(url) {
   }
 
   return { success: false, message: 'Very likely not an IPFS gateway URL' }
+}
+
+async function getWorkingArweaveUrl(url) {
+  if (!url.startsWith('ar://')) {
+    return { success: false, message: 'Invalid Arweave link' }
+  }
+
+  const arweaveGateways = [
+    "https://arweave.net",
+  ]
+
+  const txid = url.replace('ar://', '')
+
+  for (const gateway of arweaveGateways) {
+    try {
+      const arweaveUrl = `${gateway}/${txid}`
+      const response = await axios.head(arweaveUrl)
+
+      if (response.status == 200) {
+        const contentType = response.headers['content-type']
+        const format = parseAudioContentType(contentType) // get the format of the audio file
+        return { success: true, validUrl: arweaveUrl, contentType: contentType, format: format }
+      }
+    } catch (error) {
+      console.log(`Arweave gateway (${gateway}) error:`, error)
+    }
+  }
 }
 
 function parseAudioContentType(contentType) {

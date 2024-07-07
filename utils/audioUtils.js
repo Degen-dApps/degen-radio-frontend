@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ethers } from 'ethers'
-import { getWorkingIpfsGatewayUrl } from './ipfsUtils'
+import { getWorkingUrl } from './ipfsUtils'
 
 export async function fetchMusicNftData(window, provider, nftAddress, nftId, chainId) {
   const config = useRuntimeConfig()
@@ -101,12 +101,12 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
 
     if (tokenUri.startsWith('data:application/json;base64')) {
       metadata = JSON.parse(atob(tokenUri.split(',')[1]))
-    } else if (tokenUri.startsWith('ipfs://')) {
-      const validIpfsUrlData = await getWorkingIpfsGatewayUrl(tokenUri)
+    } else if (tokenUri.startsWith('ipfs://') || tokenUri.startsWith('ar://')) {
+      const validIpfsUrlData = await getWorkingUrl(tokenUri)
       const mdResult = await axios.get(validIpfsUrlData.validUrl)
       metadata = mdResult.data
     } else if (tokenUri.startsWith('http')) {
-      const validIpfsUrlData = await getWorkingIpfsGatewayUrl(tokenUri)
+      const validIpfsUrlData = await getWorkingUrl(tokenUri)
 
       let nftUrl = tokenUri
 
@@ -117,7 +117,7 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
       const mdResult = await axios.get(nftUrl)
       metadata = mdResult.data
     } else {
-      // TODO: arweave, swarm, etc.
+      // TODO: swarm, etc.
       return { success: false, message: 'Invalid token URI' }
     }
 
@@ -141,7 +141,11 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
 
     if (metadata?.image) {
       nftData.image = metadata.image
-      const imageHttpData = await getWorkingIpfsGatewayUrl(metadata.image)
+      const imageHttpData = await getWorkingUrl(metadata.image)
+
+      if (metadata.image.startsWith('ar://')) {
+        nftData.image = imageHttpData.validUrl
+      }
 
       if (imageHttpData.success) {
         nftData.imageHttp = imageHttpData.validUrl
@@ -166,7 +170,7 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
     if (metadata?.audio_url) {
       let audioUrl = metadata.audio_url
 
-      const audioUrlData = await getWorkingIpfsGatewayUrl(audioUrl)
+      const audioUrlData = await getWorkingUrl(audioUrl)
 
       if (audioUrlData.success) {
         audioUrl = audioUrlData.validUrl
@@ -181,7 +185,7 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
     } else if (metadata?.animation_url) {
       let audioUrl = metadata.animation_url
 
-      const audioUrlData = await getWorkingIpfsGatewayUrl(audioUrl)
+      const audioUrlData = await getWorkingUrl(audioUrl)
 
       if (audioUrlData.success) {
         audioUrl = audioUrlData.validUrl

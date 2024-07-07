@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { ethers } from 'ethers'
 import { fetchPlaylistData, fetchPlaylistNftId, storeData, storePlaylistData, storePlaylistNftId } from './storageUtils'
-import { getWorkingIpfsGatewayUrl } from './ipfsUtils'
+import { getWorkingUrl } from './ipfsUtils'
 
 export async function fetchPlaylistDataFromBlockchain(window, provider, playlistAddress, playlistNftId) {
   let nftId = Number(playlistNftId)
@@ -54,8 +54,8 @@ export async function fetchPlaylistDataFromBlockchain(window, provider, playlist
     } else {
       let mdServerUrl = tokenUri
 
-      // check if token URI is an IPFS link (getWorkingIpfsGatewayUrl)
-      const res = await getWorkingIpfsGatewayUrl(tokenUri)
+      // check if token URI is an IPFS link (getWorkingUrl)
+      const res = await getWorkingUrl(tokenUri)
       if (res.success) {
         mdServerUrl = res.validUrl
       }

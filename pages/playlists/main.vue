@@ -5,6 +5,14 @@
     <Meta name="description" :content="$config.projectDescription" />
     <Meta property="og:image" :content="$config.projectUrl + $config.previewImage" />
     <Meta property="og:description" :content="$config.projectDescription" />
+
+    <!-- Frame 
+    <Meta property="fc:frame" content="vNext" />
+    <Meta property="fc:frame:image" :content="$config.projectUrl + $config.previewImage" />
+    <Meta name="fc:frame:button:1:target" :content="$config.projectUrl" />
+    <Meta name="fc:frame:button:1:action" content="link" />
+    <Meta name="fc:frame:button:1" :content="$config.projectMetadataTitle" />
+    -->
   </Head>
 
   <div class="card border scroll-500">

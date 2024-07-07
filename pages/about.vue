@@ -30,7 +30,8 @@
 
       <ul>
         <li><a href="https://nftdegen.lol" target="_blank">NFTdegen.lol - launch your music NFT</a></li>
-        <li><a href="https://github.com/degen-dapps" target="_blank">Degen dApps GitHub</a></li>
+        <li><a href="https://github.com/Degen-dApps/degen-radio-contracts" target="_blank">Degen Radio smart contracts (GitHub)</a></li>
+        <li><a href="https://github.com/Degen-dApps/degen-radio-frontend" target="_blank">Degen Radio frontend code (GitHub)</a></li>
       </ul>
 
       <hr />

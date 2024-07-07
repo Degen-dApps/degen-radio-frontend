@@ -87,7 +87,7 @@ import AddTrackToAnotherPlaylistModal from '~/components/radio/AddTrackToAnother
 import { useEthers } from '~/store/ethers'
 import { fetchFreshMusicNftData } from '~/utils/audioUtils'
 import { getDomainName } from '~/utils/domainUtils'
-import { getWorkingIpfsGatewayUrl } from '~/utils/ipfsUtils'
+import { getWorkingUrl } from '~/utils/ipfsUtils'
 import { fetchUsername, storeUsername } from '~/utils/storageUtils'
 
 export default {
@@ -120,7 +120,7 @@ export default {
 
   methods: {
     async addToQueue() {
-      const prefetchResult = await getWorkingIpfsGatewayUrl(this.track.audioUrl)
+      const prefetchResult = await getWorkingUrl(this.track.audioUrl)
 
       if (prefetchResult.success && prefetchResult.format) {
         this.track.audioUrl = prefetchResult.validUrl

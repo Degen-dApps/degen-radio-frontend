@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { getWorkingIpfsGatewayUrl } from '~/utils/ipfsUtils'
+import { getWorkingUrl } from '~/utils/ipfsUtils'
 
 export default {
   name: 'Image',
@@ -29,7 +29,7 @@ export default {
 
   methods: {
     async fetchImageData() {
-      const result = await getWorkingIpfsGatewayUrl(this.url)
+      const result = await getWorkingUrl(this.url)
 
       if (result.success) {
         this.imageUrl = result.validUrl

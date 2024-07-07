@@ -6,7 +6,7 @@
 import { ethers } from 'ethers'
 import Image from '~/components/Image.vue'
 import { useEthers } from '~/store/ethers'
-import { getWorkingIpfsGatewayUrl } from '~/utils/ipfsUtils'
+import { getWorkingUrl } from '~/utils/ipfsUtils'
 import { fetchData, storeData } from '~/utils/storageUtils'
 
 export default {
@@ -42,7 +42,7 @@ export default {
   methods: {
     async fetchProfilePicture() {
       if (this.image) {
-        const prefetchRes = await getWorkingIpfsGatewayUrl(this.image)
+        const prefetchRes = await getWorkingUrl(this.image)
 
         if (prefetchRes.success) {
           return this.imgPath = prefetchRes.validUrl
@@ -56,7 +56,7 @@ export default {
         const dataObject = fetchData(window, this.domainName, "img", this.$config.expiryPfps)
 
         if (dataObject) {
-          const prefetchRes = await getWorkingIpfsGatewayUrl(dataObject.image)
+          const prefetchRes = await getWorkingUrl(dataObject.image)
 
           if (prefetchRes.success) {
             return this.imgPath = prefetchRes.validUrl
@@ -83,7 +83,7 @@ export default {
               const domainDataJson = JSON.parse(domainData)
 
               if (domainDataJson?.image) {
-                const res = await getWorkingIpfsGatewayUrl(domainDataJson.image)
+                const res = await getWorkingUrl(domainDataJson.image)
 
                 if (res.success) {
                   this.imgPath = res.validUrl
