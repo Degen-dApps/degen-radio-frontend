@@ -1,7 +1,10 @@
 <template>
   <Head>
     <Title>Playlist | {{ $config.projectMetadataTitle }}</Title>
-    <Meta property="og:title" :content="'Playlist | ' + $config.projectMetadataTitle" />
+    <Meta property="og:title" :content="$config.projectMetadataTitle" />
+    <Meta name="description" :content="$config.projectDescription" />
+    <Meta property="og:image" :content="$config.projectUrl + $config.previewImage" />
+    <Meta property="og:description" :content="$config.projectDescription" />
   </Head>
 
   <div class="card border scroll-500">
