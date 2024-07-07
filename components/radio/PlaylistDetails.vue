@@ -83,6 +83,16 @@
                 Refresh playlist data
               </button>
             </li>
+
+            <li>
+              <button 
+                @click="copyFrameLink" 
+                class="dropdown-item" 
+                type="button" 
+              >
+                Copy playlist frame link
+              </button>
+            </li>
           </ul>
         </div>
 
@@ -231,6 +241,12 @@ export default {
       if (trackData.success) {
         this.tracks.push(trackData.nftData)
       }
+    },
+
+    copyFrameLink() {
+      const frameLink = `https://api.degenradio.lol/frame/playlist/degen/${this.playlistAddress}`
+      navigator.clipboard.writeText(frameLink)
+      this.toast.success('Playlist frame link copied to clipboard. Share it on Farcaster!')
     },
 
     async loadPlaylistData() {
