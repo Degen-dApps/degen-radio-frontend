@@ -75,6 +75,17 @@
 
             <li>
               <button 
+                class="dropdown-item" 
+                v-if="isCurrentUserOwner"
+                type="button"
+                @click="goToEditPlaylist"
+              >
+                Edit playlist
+              </button>
+            </li>
+
+            <li>
+              <button 
                 @click="refreshPlaylistData" 
                 class="dropdown-item" 
                 type="button" 
@@ -247,6 +258,10 @@ export default {
       const frameLink = `https://api.degenradio.lol/frame/playlist/degen/${this.playlistAddress}`
       navigator.clipboard.writeText(frameLink)
       this.toast.success('Playlist frame link copied to clipboard. Share it on Farcaster!')
+    },
+
+    goToEditPlaylist() {
+      return this.$router.push({ path: '/playlists/edit', query: { addr: this.playlistAddress, nftid: this.playlistNftId } })
     },
 
     async loadPlaylistData() {

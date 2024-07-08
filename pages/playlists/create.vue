@@ -29,6 +29,10 @@
         <input type="text" class="form-control" id="pName" placeholder="e.g. Dinner With Friends" v-model="pName" />
       </div>
 
+      <p v-if="nameTooLong">
+        <small class="text-danger">Name is too long. Maximum {{ nameMaxLength }} characters allowed.</small>
+      </p>
+
       <!-- Playlist Description -->
       <div class="mb-4">
         <label for="pDescription" class="form-label">Playlist Description (keep it short)</label>
@@ -40,6 +44,10 @@
           v-model="pDescription"
         />
       </div>
+
+      <p v-if="descriptionTooLong">
+        <small class="text-danger">Description is too long. Maximum {{ descriptionMaxLength }} characters allowed.</small>
+      </p>
 
       <!-- Playlist Image -->
       <div class="mb-2">
@@ -199,7 +207,9 @@ export default {
 
   data() {
     return {
+      descriptionMaxLength: 300,
       isMounted: false,
+      nameMaxLength: 30,
       pDescription: null,
       pImage: null,
       pName: null,
@@ -229,9 +239,13 @@ export default {
   },
 
   computed: {
+    descriptionTooLong() {
+      return this.pDescription && this.pDescription.length > this.descriptionMaxLength
+    },
+
     fieldsValid() {
       return (
-        this.pName && this.pDescription && this.pImage && ethers.utils.isAddress(this.tAddress) && !isNaN(this.tChainId)
+        this.pName && this.pDescription && this.pImage && ethers.utils.isAddress(this.tAddress) && !isNaN(this.tChainId) && !this.descriptionTooLong && !this.nameTooLong
       )
     },
 
@@ -241,6 +255,10 @@ export default {
       } else {
         return false
       }
+    },
+
+    nameTooLong() {
+      return this.pName && this.pName.length > this.nameMaxLength
     },
 
     price() {

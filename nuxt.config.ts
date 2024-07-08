@@ -100,6 +100,7 @@ export default defineNuxtConfig({
         metadataAddress: '0x7aE45ae751278EBF5E452321ab3f50849492F6E6',
         playlistFactoryAddress: '0xEbcA849484aEAd9458990772e475AD34A1eADA95',
         playlistNftAddress: '0x4aC7FD98CF859cAc9Bd4b9c4E8b3974cA5933dE6',
+        playlistNftMetadata: '0x7aE45ae751278EBF5E452321ab3f50849492F6E6',
       },
       randomPostsNumber: 1, // number of random post NFTs to show in the sidebar widget
       showFeatures: {
