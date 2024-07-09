@@ -35,10 +35,13 @@
               <NuxtLink to="/playlist?id=0x2c2d584832Fa3537b621FA93048252d3722147b3">Violetta Zironi's Songs</NuxtLink>
             </p>
             <p class="text-center">
+              <NuxtLink to="/playlist?id=0xB7E60a6F04F0C15cb8E703882314C430cbcc0dd3">Official poidh playlist</NuxtLink>
+            </p>
+            <p class="text-center">
               <NuxtLink to="/playlist?id=0x3891A59A41b5BF2acBdb8BC4123Ef5D1374b84DB">Grimes AI</NuxtLink>
             </p>
             <p class="text-center">
-              <NuxtLink to="/playlist?id=0xB7E60a6F04F0C15cb8E703882314C430cbcc0dd3">Official poidh playlist</NuxtLink>
+              <NuxtLink to="/playlist?id=0xF2b68fbB5c7dDCa39Bdf4A74B1C5592c90A87348">Tempe's playlist</NuxtLink>
             </p>
           </div>
         </div>
