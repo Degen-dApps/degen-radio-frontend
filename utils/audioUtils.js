@@ -9,7 +9,7 @@ export async function fetchMusicNftData(window, provider, nftAddress, nftId, cha
     return { success: false, message: 'No window object' }
   }
 
-  if (!nftAddress || !nftId || !chainId) {
+  if (!nftAddress || (!nftId && nftId !== 0) || !chainId) {
     return { success: false, message: 'Invalid input' }
   }
 
@@ -47,7 +47,7 @@ export async function fetchFreshMusicNftData(window, provider, nftAddress, nftId
     return { success: false, message: 'No window object' }
   }
 
-  if (!nftAddress || !nftId || !chainId) {
+  if (!nftAddress || (!nftId && nftId !== 0) || !chainId) {
     return { success: false, message: 'Invalid input' }
   }
 
