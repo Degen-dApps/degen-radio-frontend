@@ -315,6 +315,10 @@ export default {
 
       const factoryContract = new ethers.Contract(this.$config.radio.playlistFactoryAddress, factoryInterface, provider)
 
+      if (!this.tNftId) {
+        this.tNftId = 1
+      }
+
       try {
         const tx = await factoryContract.createPlaylist(
           this.pName,
@@ -417,6 +421,10 @@ export default {
     },
 
     async loadTrack() {
+      if (!this.tNftId) {
+        this.tNftId = 1
+      }
+      
       const provider = this.$getProviderForChain(Number(this.tChainId))
       const trackData = await fetchMusicNftData(window, provider, this.tAddress, this.tNftId, this.tChainId)
 

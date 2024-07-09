@@ -74,7 +74,7 @@
               type="button"
               class="btn btn-primary btn-sm"
               @click="playSong"
-              :disabled="!tChainId || !tAddress || !tNftId || waitingPlay"
+              :disabled="!tChainId || !tAddress || waitingPlay"
             >
               <span v-if="waitingPlay" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
               Play now
@@ -85,7 +85,6 @@
               type="button"
               class="btn btn-danger btn-sm"
               @click="stopPlaying"
-              :disabled="!tChainId || !tAddress || !tNftId"
             >
               Stop playing
             </button>
@@ -101,7 +100,7 @@
             type="button"
             class="btn btn-primary"
             @click="submit"
-            :disabled="!tChainId || !tAddress || !tNftId || waitingSubmitTrack || tooManyTracks"
+            :disabled="!tChainId || !tAddress || waitingSubmitTrack || tooManyTracks"
           >
             Add track to playlist
           </button>
@@ -157,6 +156,10 @@ export default {
 
     async loadTrack() {
       this.waitingLoadTrack = true
+
+      if (!this.tNftId) {
+        this.tNftId = 1
+      }
 
       const provider = this.$getProviderForChain(Number(this.tChainId))
       const trackData = await fetchMusicNftData(window, provider, this.tAddress, this.tNftId, this.tChainId)
@@ -216,6 +219,10 @@ export default {
       ])
 
       const playlistContract = new ethers.Contract(this.playlist.playlistAddress, playlistInterface, this.signer)
+
+      if (!this.tNftId) {
+        this.tNftId = 1
+      }
 
       try {
         const tx = await playlistContract.addTrack(this.tAddress, this.tNftId, this.tChainId)
