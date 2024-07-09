@@ -74,6 +74,10 @@ export const useAudioStore = defineStore({
       }
     },
 
+    removeLastTrack() {
+      this.queue.pop()
+    },
+
     setCurrentTrackIndex(index) {
       this.currentTrackIndex = index
     },

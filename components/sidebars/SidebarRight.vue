@@ -24,17 +24,21 @@
         <!-- Random playlist -->
         <RandomPlaylistOneWidget :isMobile="isMobile" @closeRightSidebar="closeRightSidebar" />
 
-        <!-- Featured playlists 
+        <!-- Featured playlists -->
         <div class="card m-2 bg-light">
           <div class="card-header bg-light text-center">Featured Playlists</div>
           <div class="card-body sidebar-card-body">
             <p class="text-center">
-              <NuxtLink to="/playlist?id=0x0Dd272d469fB118f26Db72563f501Bb522AC2A95">Happy Songs</NuxtLink> by 
-              <NuxtLink to="/profile?id=techie.sepolia">techie.sepolia</NuxtLink>
+              <NuxtLink to="/playlist?id=0x2c2d584832Fa3537b621FA93048252d3722147b3">Violetta Zironi's Songs</NuxtLink>
+            </p>
+            <p class="text-center">
+              <NuxtLink to="/playlist?id=0x3891A59A41b5BF2acBdb8BC4123Ef5D1374b84DB">Grimes AI</NuxtLink>
+            </p>
+            <p class="text-center">
+              <NuxtLink to="/playlist?id=0xB7E60a6F04F0C15cb8E703882314C430cbcc0dd3">Official poidh playlist</NuxtLink>
             </p>
           </div>
         </div>
-        -->
 
         <!-- Mint/register a domain name -->
         <NameMintWidget />

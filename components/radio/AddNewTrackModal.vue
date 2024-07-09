@@ -191,6 +191,8 @@ export default {
 
     stopPlaying() {
       this.audioStore.stopPlaying()
+      this.audioStore.removeLastTrack()
+      this.audioStore.setCurrentTrackIndex(Number(this.audioStore.currentTrackIndex) - 1)
       this.playingNow = false
       this.waitingPlay = false
     },
