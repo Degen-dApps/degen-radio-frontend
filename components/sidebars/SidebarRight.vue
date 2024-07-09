@@ -29,6 +29,9 @@
           <div class="card-header bg-light text-center">Featured Playlists</div>
           <div class="card-body sidebar-card-body">
             <p class="text-center">
+              <NuxtLink to="/playlist?id=0xb5dd0F6dC1d41a60f09d8435141d549E4F671d6B">Top LOUDER Tracks</NuxtLink>
+            </p>
+            <p class="text-center">
               <NuxtLink to="/playlist?id=0x2c2d584832Fa3537b621FA93048252d3722147b3">Violetta Zironi's Songs</NuxtLink>
             </p>
             <p class="text-center">
