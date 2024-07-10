@@ -110,7 +110,7 @@ export default defineNuxtConfig({
         randomMintedPosts: false,
         swap: true,
         stake: false,
-        sendTokens: false,
+        sendTokens: true,
       },
       showRepliesOnHomepage: true, // show replies on the homepage
       sidebarLeftSticky: true, // make the left sidebar sticky (always visible)

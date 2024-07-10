@@ -11,7 +11,7 @@
           class="form-control"
           id="basic-url"
           aria-describedby="basic-addon3 basic-addon4"
-          placeholder="Enter recipient's domain name or address"
+          :placeholder="'Enter ' + $config.tldName + ' name or address of the recipient'"
           @keyup="findBlankCharacter"
         />
       </div>

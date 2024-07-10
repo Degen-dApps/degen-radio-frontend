@@ -72,18 +72,6 @@
               </NuxtLink>
             </li>
 
-            <!-- Send tokens -->
-            <li class="nav-item p-1" @click="closeLeftSidebar" v-if="$config.showFeatures.sendTokens">
-              <NuxtLink
-                class="nav-link"
-                :class="$route.path.startsWith('/send-tokens') ? 'active' : ''"
-                aria-current="page"
-                to="/send-tokens"
-              >
-                <i class="bi bi-send me-1"></i> Send Tokens
-              </NuxtLink>
-            </li>
-
             <!-- Stake & Earn -->
             <li
               class="nav-item p-1"
@@ -149,6 +137,18 @@
                 to="/find-user"
               >
                 <i class="bi bi-binoculars me-1"></i> Find User
+              </NuxtLink>
+            </li>
+
+            <!-- Send tokens -->
+            <li class="nav-item p-1" @click="closeLeftSidebar" v-if="$config.showFeatures.sendTokens">
+              <NuxtLink
+                class="nav-link"
+                :class="$route.path.startsWith('/send-tokens') ? 'active' : ''"
+                aria-current="page"
+                to="/send-tokens"
+              >
+                <i class="bi bi-send me-1"></i> Send Tokens
               </NuxtLink>
             </li>
 
