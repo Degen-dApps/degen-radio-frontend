@@ -475,7 +475,7 @@ export default {
       const mdContract = new ethers.Contract(this.$config.radio.playlistNftMetadata, mdInterface, provider)
 
       try {
-        const tx = await mdContract.setImage(this.nftId, this.pImage)
+        const tx = await mdContract.setImage(this.nftId, String(this.pImage).trim())
 
         const toastWait = this.toast(
           {

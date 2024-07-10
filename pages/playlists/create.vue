@@ -323,7 +323,7 @@ export default {
         const tx = await factoryContract.createPlaylist(
           this.pName,
           this.pDescription,
-          this.pImage,
+          String(this.pImage).trim(),
           this.tAddress,
           this.tNftId,
           this.tChainId,
