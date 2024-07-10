@@ -25,9 +25,11 @@
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
-                @click="fetchUserPlaylists"
+                @click="getUserPlaylists"
               >
-                {{ selectedPlaylistName }}
+                <span v-if="waitingRefresh" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                <span v-if="waitingRefresh">Refreshing playlists...</span>
+                <span v-if="!waitingRefresh">{{ selectedPlaylistName }}</span>
               </button>
 
               <ul class="dropdown-menu">
@@ -39,11 +41,18 @@
                   </span>
                 </li>
 
+                <li @click="refreshPlaylists">
+                  <span class="dropdown-item cursor-pointer">
+                    <i class="bi bi-arrow-clockwise me-1"></i>
+                    Refresh playlists
+                  </span>
+                </li>
+
                 <li v-if="userPlaylists.length > 0"><hr class="dropdown-divider"></li>
 
                 <li 
                   v-for="userPlaylist in userPlaylists"
-                  :key="userPlaylist.playlistNftId"
+                  :key="userPlaylist?.playlistNftId"
                   @click="selectPlaylist(userPlaylist)"
                 ><span class="dropdown-item cursor-pointer">{{ userPlaylist?.name }}</span></li>
               </ul>
@@ -79,6 +88,7 @@ import { ethers } from 'ethers'
 import { useEthers } from '~/store/ethers'
 import SwitchChainButton from '~/components/SwitchChainButton.vue'
 import WaitingToast from '~/components/WaitingToast'
+import { fetchUserPlaylists } from '~/utils/playlistUtils'
 import { fetchData, fetchPlaylistData } from '~/utils/storageUtils'
 
 export default {
@@ -92,6 +102,7 @@ export default {
       selectedPlaylist: null,
       selectedPlaylistName: "Choose playlist",
       userPlaylists: [],
+      waitingRefresh: false,
       waitingSubmitTrack: false,
     }
   },
@@ -122,7 +133,7 @@ export default {
       })
     },
 
-    async fetchUserPlaylists() {
+    async getUserPlaylists() {
       this.userPlaylists = []
 
       const storageResult = fetchData(window, this.address, 'playlistNftIds', 0)
@@ -139,6 +150,22 @@ export default {
         const playlistData = await fetchPlaylistData(window, Number(playlistNftIds[i]))
         this.userPlaylists.push(playlistData)
       }
+    },
+
+    async refreshPlaylists() {
+      this.waitingRefresh = true
+
+      const playlistNftIds = await fetchUserPlaylists(window, this.signer, this.address)
+
+      if (playlistNftIds && playlistNftIds.length > 0) {
+        this.userPlaylists = []
+        for (let i = 0; i < playlistNftIds.length; i++) {
+          const playlistData = await fetchPlaylistData(window, Number(playlistNftIds[i]))
+          this.userPlaylists.push(playlistData)
+        }
+      }
+
+      this.waitingRefresh = false
     },
 
     selectPlaylist(playlist) {

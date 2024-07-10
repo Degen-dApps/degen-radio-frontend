@@ -158,9 +158,9 @@ async function fetchPlaylistByNftIdFromApi(window, baseApiUrl, chainId, nftId, p
         const playlistData = resData.playlist
 
         if (playlistData) {
-          storePlaylistData(window, playlistAddress, playlistData.playlistNftId, playlistData)
+          storePlaylistData(window, playlistData.playlistAddress, playlistData.playlistNftId, playlistData)
 
-          storePlaylistNftId(window, playlistAddress, playlistData.playlistNftId)
+          storePlaylistNftId(window, playlistData.playlistAddress, playlistData.playlistNftId)
 
           return playlistData
         }
