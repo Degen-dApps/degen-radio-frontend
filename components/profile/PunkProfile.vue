@@ -137,7 +137,7 @@
       <!-- END Change Image Modal -->
     </div>
 
-    <div class="card border mt-3 mb-3">
+    <div class="card border mt-3 scroll-500">
       <div class="card-body">
         <!-- Tabs Navigation -->
         <ul class="nav nav-tabs nav-fill">
