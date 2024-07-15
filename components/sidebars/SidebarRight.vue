@@ -28,19 +28,19 @@
         <div class="card m-2 bg-light">
           <div class="card-header bg-light text-center">Featured Playlists</div>
           <div class="card-body sidebar-card-body">
-            <p class="text-center">
+            <p class="text-center" @click="closeRightSidebar">
               <NuxtLink to="/playlist?id=0xb5dd0F6dC1d41a60f09d8435141d549E4F671d6B">Top LOUDER Tracks</NuxtLink>
             </p>
-            <p class="text-center">
+            <p class="text-center" @click="closeRightSidebar">
               <NuxtLink to="/playlist?id=0x2c2d584832Fa3537b621FA93048252d3722147b3">Violetta Zironi's Songs</NuxtLink>
             </p>
-            <p class="text-center">
+            <p class="text-center" @click="closeRightSidebar">
               <NuxtLink to="/playlist?id=0xB7E60a6F04F0C15cb8E703882314C430cbcc0dd3">Official poidh playlist</NuxtLink>
             </p>
-            <p class="text-center">
+            <p class="text-center" @click="closeRightSidebar">
               <NuxtLink to="/playlist?id=0x3891A59A41b5BF2acBdb8BC4123Ef5D1374b84DB">Grimes AI</NuxtLink>
             </p>
-            <p class="text-center">
+            <p class="text-center" @click="closeRightSidebar">
               <NuxtLink to="/playlist?id=0xF2b68fbB5c7dDCa39Bdf4A74B1C5592c90A87348">Tempe's playlist</NuxtLink>
             </p>
           </div>
