@@ -117,7 +117,7 @@
               :to="'/send-tokens/?to=' + domain"
             >
               <i class="bi bi-send"></i>
-              Send tokens to {{ domain }}
+              Send a tip
             </NuxtLink>
             <!-- END Send tokens to user -->
           </div>
