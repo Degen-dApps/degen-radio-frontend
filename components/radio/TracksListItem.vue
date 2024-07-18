@@ -56,7 +56,7 @@
 
             <li v-if="track.externalUrl">
               <a class="dropdown-item" target="_blank" :href="track.externalUrl">
-                Go to track external URL
+                {{ externalUrlLabel }}
               </a>
             </li>
             
@@ -109,13 +109,27 @@ export default {
   },
 
   computed: {
+
+    externalUrlLabel() {
+      if (this.track?.externalUrl) {
+        if (String(this.track?.externalUrl).startsWith('https://www.sound.xyz/')) {
+          return 'Go to track page on Sound.xyz'
+        } else if (String(this.track?.externalUrl).startsWith('https://nftdegen.lol/')) {
+          return 'Go to track page on NFTdegen.lol'
+        }
+      }
+
+      return 'Go to track external URL'
+    },
+
     isAlreadyInQueue() {
       return this.audioStore.queue.some((q) => q.id === this.track.id)
     },
 
     isCurrentPlaylist() {
       return String(this.audioStore.currentPlaylistAddress).toLowerCase() === String(this.playlistAddress).toLowerCase()
-    }
+    },
+
   },
 
   methods: {
