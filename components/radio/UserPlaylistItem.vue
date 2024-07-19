@@ -41,6 +41,7 @@ export default {
 
   data() {
     return {
+      descriptionMaxLength: 80,
       playlistData: null,
       waiting: false,
     }
@@ -74,6 +75,11 @@ export default {
           console.error(result.message)
           this.toast.error(result.message)
         }
+      }
+
+      // shorten description if it's too long
+      if (this.playlistData?.description && this.playlistData.description.length > this.descriptionMaxLength) {
+        this.playlistData.description = this.playlistData.description.substring(0, this.descriptionMaxLength) + '...'
       }
 
       this.waiting = false
