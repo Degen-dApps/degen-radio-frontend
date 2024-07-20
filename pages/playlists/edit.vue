@@ -220,7 +220,7 @@
     @processFileUrl="insertImage"
     title="Upload your playlist image"
     infoText="Upload the playlist image."
-    storageType="ipfs"
+    storageType="imagekit"
     :componentId="$.uid"
     :maxFileSize="$config.fileUploadSizeLimit"
   />

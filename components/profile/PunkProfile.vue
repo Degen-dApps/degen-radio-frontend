@@ -131,7 +131,7 @@
         :key="domain"
         :domainName="domain"
         :componentId="$.uid"
-        storageType="ipfs" 
+        storageType="imagekit" 
         @processFileUrl="insertImage"
       />
       <!-- END Change Image Modal -->
