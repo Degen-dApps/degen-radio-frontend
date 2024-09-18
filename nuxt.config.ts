@@ -70,7 +70,7 @@ export default defineNuxtConfig({
       imagekitEndpoint: process.env.IMAGEKIT_ENDPOINT,
       imagekitPublicKey: process.env.IMAGEKIT_PUBLIC_KEY,
       ipfsGateway: 'https://ipfs.io/ipfs/',
-      ipfsGateway2: 'https://nftdegeniggy.myfilebase.com/ipfs/',
+      ipfsGateway2: 'https://ipfs.filebase.io/ipfs/',
       ipfsGateway3: 'https://cloudflare-ipfs.com/ipfs/',
       linkPreviews: process.env.LINK_PREVIEW_SERVICE || 'netlify', // "netlify", "vercel", or "microlink" (or leave empty for no link previews)
       lpTokenAddress: '', // liquidity pool token (token to stake in the staking contract)

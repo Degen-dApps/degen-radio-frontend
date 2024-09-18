@@ -55,7 +55,6 @@ export async function getWorkingUrl(url) {
 
   const ipfsGateways = [
     'https://ipfs.io/ipfs/',
-    'https://nftdegeniggy.myfilebase.com/ipfs/',
     'https://ipfs.filebase.io/ipfs/',
     //'https://cloudflare-ipfs.com/ipfs/',
     'https://gateway.pinata.cloud/ipfs/',
@@ -85,7 +84,6 @@ function checkIfIpfsGatewayUrl(url) {
   const ipfsGateways = [
     'https://cloudflare-ipfs.com/ipfs/',
     'https://ipfs.io/ipfs/',
-    'https://nftdegeniggy.myfilebase.com/ipfs/',
     'https://ipfs.filebase.io/ipfs/',
     'https://gateway.pinata.cloud/ipfs/',
     'https://ipfs.itslit.org/ipfs/',
