@@ -1,19 +1,6 @@
-import { ThirdwebStorage } from '@thirdweb-dev/storage'
 import axios from 'axios'
 
-const abortTimeout = 5000
-
-export async function uploadFileToThirdWeb(file) {
-  const config = useRuntimeConfig()
-
-  const storage = new ThirdwebStorage({
-    clientId: config.thirdwebClientId,
-  })
-
-  const fileUri = await storage.upload(file)
-
-  return fileUri
-}
+const abortTimeout = 5000 // 5 seconds
 
 export async function getWorkingUrl(url) {
   let cid
@@ -25,25 +12,27 @@ export async function getWorkingUrl(url) {
   if (!url.startsWith('ipfs://')) { // either an IPFS gateway link or a classic web2 server HTTP link
     const httpLink = url
 
-    let httpResponse
-
     try {
-      httpResponse = await axios.head(httpLink, { signal: AbortSignal.timeout(abortTimeout) })
-    } catch (error) {
-      console.log("HTTP error:", error)
-    }
-
-    if (httpResponse?.status == 200) {
-      const contentType = httpResponse.headers['content-type'] // this is needed for song URLs to determine the format
+      const httpResponse = await axios.head(httpLink, { 
+        timeout: abortTimeout,
+        validateStatus: function (status) {
+          return status >= 200 && status < 300; // Consider all 2xx statuses as success
+        }
+      })
+      
+      const contentType = httpResponse.headers['content-type']
       const format = parseAudioContentType(contentType) // get the format of the audio file
 
       return { success: true, validUrl: httpLink, contentType: contentType, format: format }
-    } else {
-      const res = checkIfIpfsGatewayUrl(url)
+    } catch (error) {
+      console.log("HTTP error:", error.message)
+      // Continue to IPFS gateway check if HTTP request fails
+    }
 
-      if (res.success) {
-        cid = res.cid
-      }
+    const res = checkIfIpfsGatewayUrl(url)
+
+    if (res.success) {
+      cid = res.cid
     }
   } else { // IPFS link
     cid = url.replace('ipfs://', '')

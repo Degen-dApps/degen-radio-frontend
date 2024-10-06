@@ -14,17 +14,27 @@
       </p>
 
       <PlaylistDetails :playlistAddress="playlistAddress" :key="playlistAddress" />
+
+      <!-- Comments section -->
+      <h4 class="mt-4">Comments</h4>
+      <ChatFeed
+        :hideCommentBox="false"
+        class="mt-3"
+        :chatContext="$config.chat.contexts.playlistComments"
+        :mainItemId="playlistAddress"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import { ethers } from 'ethers'
+import ChatFeed from '~/components/chat/ChatFeed.vue'
 import PlaylistDetails from '~/components/radio/PlaylistDetails.vue'
 
 export default {
   name: 'Playlist',
-  components: { PlaylistDetails },
+  components: { ChatFeed, PlaylistDetails },
 
   computed: {
     playlistAddress() {

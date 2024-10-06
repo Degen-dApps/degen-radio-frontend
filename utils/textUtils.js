@@ -1,3 +1,38 @@
+export function findFirstCollectionUrl(text) {
+  // if there is an NFT collection url (from our website) in the text, return it as address string
+  // example:
+  //   - input: https://sgb.chat/nft/collection?id=0x5923c15079AF3E14FBF96bd2fC1127633d42Ff28
+  //   - output: 0x5923c15079AF3E14FBF96bd2fC1127633d42Ff28
+
+  const config = useRuntimeConfig()
+
+  let urlRegex
+
+  try {
+    urlRegex = new RegExp(
+      '(https?:\\/\\/|ipfs:\\/\\/|ar:\\/\\/)(?!.*\\.(jpg|png|jpeg|img|gif|webp|pdf|docx))[^\\s]+',
+      'g',
+    )
+  } catch (error) {
+    // fallback to simplified regex (without lookbehinds) in case of an old browser or Safari
+    urlRegex = /(https?:\/\/|ipfs:\/\/|ar:\/\/)(?!.*\.(jpg|png|jpeg|img|gif|webp|pdf|docx))[^\s]+/g
+  }
+
+  const match = text.match(urlRegex)
+
+  if (match) {
+    const url = match[0]
+
+    if (url.startsWith(config.projectUrl + '/nft/collection')) {
+      return url.split('?id=')[1] // return address string
+    }
+
+    return null
+  }
+
+  return null
+}
+
 export function findFirstUrl(text) {
   const config = useRuntimeConfig()
 
@@ -5,12 +40,12 @@ export function findFirstUrl(text) {
 
   try {
     urlRegex = new RegExp(
-      '(https?:\\/\\/(?!.*\\.(jpg|png|jpeg|img|gif|webp|pdf|docx))[^\\s]+)(?<![,.:;?!\\-\\"\')])',
+      '(https?:\\/\\/|ipfs:\\/\\/|ar:\\/\\/)(?!.*\\.(jpg|png|jpeg|img|gif|webp|pdf|docx))[^\\s]+',
       'g',
     )
   } catch (error) {
     // fallback to simplified regex (without lookbehinds) in case of an old browser or Safari
-    urlRegex = /(https?:\/\/(?!.*\.(jpg|png|jpeg|img|gif|webp|pdf|docx))[^\s]+)/g
+    urlRegex = /(https?:\/\/|ipfs:\/\/|ar:\/\/)(?!.*\.(jpg|png|jpeg|img|gif|webp|pdf|docx))[^\s]+/g
   }
 
   const match = text.match(urlRegex)
@@ -26,6 +61,9 @@ export function findFirstUrl(text) {
     ) {
       // ignore youtube embeds
       return null
+    } else if (url.startsWith(config.projectUrl + '/nft/collection')) {
+      // ignore collection links from our website
+      return null
     }
 
     return url
@@ -35,41 +73,79 @@ export function findFirstUrl(text) {
 }
 
 export function getAllImagesFromText(text) {
+  const config = useRuntimeConfig()
+
   if (!text) {
     return []
   }
 
   // find multiple image links in the text and return them as an array
-  let imageRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/gi
-  let imageLinks = text.match(imageRegex)
+  let imageRegex = /(?:http|https|ipfs|ar):\/\/.*\.(?:png|jpg|jpeg|gif|webp)/i;
+  let imageLinks = text.match(imageRegex) || []
 
-  if (!imageLinks) {
-    imageRegex = /(http|https|ipfs):\/\/\S+\?.img/g
-    imageLinks = text.match(imageRegex)
+  const imageRegex2 = /(http|https|ipfs|ar):\/\/\S+\?.img/g
+  const imageLinks2 = text.match(imageRegex2)
+
+  if (imageLinks2) {
+    imageLinks = imageLinks.concat(imageLinks2)
+  }
+
+  const imageRegex3 = /(http|https|ipfs|ar):\/\/\S+\?img/g
+  const imageLinks3 = text.match(imageRegex3)
+
+  if (imageLinks3) {
+    imageLinks = imageLinks.concat(imageLinks3)
   }
 
   if (!imageLinks) {
     return []
+  } else {
+    for (let i = 0; i < imageLinks.length; i++) {
+      if (imageLinks[i].startsWith('ar://')) {
+        imageLinks[i] = imageLinks[i].replace('ar://', config.arweaveGateway)
+      } else if (imageLinks[i].startsWith('ipfs://')) {
+        imageLinks[i] = imageLinks[i].replace('ipfs://', 'https://ipfs.io/ipfs/')
+      }
+    }
   }
 
   return imageLinks
 }
 
 export function getImageFromText(text) {
+  const config = useRuntimeConfig()
+
   if (!text) {
     return null
   }
 
-  let imageRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/i
-  let imageLinks = text.match(imageRegex)
+  let imageRegex = /(http|https|ipfs|ar):\/\/.*\.(?:png|jpg|jpeg|gif|webp)/i
+  let imageLinks = text.match(imageRegex) || []
 
-  if (!imageLinks) {
-    imageRegex = /(http|https|ipfs):\/\/\S+\?.img/
-    imageLinks = text.match(imageRegex)
+  const imageRegex2 = /(http|https|ipfs|ar):\/\/\S+\?.img/g
+  const imageLinks2 = text.match(imageRegex2)
+
+  if (imageLinks2) {
+    imageLinks = imageLinks.concat(imageLinks2)
+  }
+
+  const imageRegex3 = /(http|https|ipfs|ar):\/\/\S+\?img/g
+  const imageLinks3 = text.match(imageRegex3)
+
+  if (imageLinks3) {
+    imageLinks = imageLinks.concat(imageLinks3)
   }
 
   if (!imageLinks) {
     return ''
+  } else {
+    for (let i = 0; i < imageLinks.length; i++) {
+      if (imageLinks[i].startsWith('ar://')) {
+        imageLinks[i] = imageLinks[i].replace('ar://', config.arweaveGateway)
+      } else if (imageLinks[i].startsWith('ipfs://')) {
+        imageLinks[i] = imageLinks[i].replace('ipfs://', 'https://ipfs.io/ipfs/')
+      }
+    }
   }
 
   return imageLinks[0]
@@ -333,36 +409,47 @@ export function hasTextBlankCharacters(text) {
 export function imgParsing(text) {
   const config = useRuntimeConfig()
 
-  const imageRegex = /(?:https?:\/\/(?:www\.)?)?(?:[-\w]+\.)+[^\s]+\.(?:jpe?g|gif|webp|png|img)/gi
-  //const imageRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/i;
+  const imageRegex = /(?:https?:\/\/|ipfs:\/\/|ar:\/\/)(?:[^\/\s]+\/)+[^\s]+\.(?:jpe?g|gif|webp|png|img)/gi
 
   if (!imageRegex.test(text)) {
     return text
   }
 
   return text.replace(imageRegex, function (url) {
-    if (url.includes('.ipfs.sphn.link/')) {
-      // replace a link to Spheron IPFS Gateway with an IPFS Gateway set in config
-      const linkParts = url.split('.ipfs.sphn.link/')
-      const ipfsHash = linkParts[0].replace('https://', '')
-      const ipfsLink = config.ipfsGateway + ipfsHash + '/' + linkParts[1]
-      return '<div></div><img class="img-fluid rounded" style="max-height: 500px;" src="' + ipfsLink + '" />'
+    let newUrl = url
+    if (url.startsWith('ar://')) {
+      newUrl = url.replace('ar://', config.arweaveGateway)
+    } else if (url.startsWith('ipfs://')) {
+      newUrl = url.replace('ipfs://', 'https://ipfs.io/ipfs/')
     }
-    return '<div></div><img class="img-fluid rounded" style="max-height: 500px;" src="' + url + '" />'
+
+    return '<div></div><img class="img-fluid rounded" style="max-height: 500px;" src="' + newUrl + '" />'
   })
 }
 
 export function imgWithoutExtensionParsing(text) {
+  const config = useRuntimeConfig()
+
   // if image doesn't have an extension, it won't be parsed by imgParsing
   // so we need to parse it here
-  // but image link needs to end with "?img" to be parsed (otherwise frontend will think it's a link)
-  const imageRegex = /(http|https|ipfs):\/\/\S+\?img/
+  // but image link needs to end with "?.img" to be parsed (otherwise frontend will think it's a link)
+  let imageRegex = /(http|https|ipfs|ar):\/\/\S+\?.img/
 
   if (!imageRegex.test(text)) {
-    return text
+    imageRegex = /(http|https|ipfs|ar):\/\/\S+\?img/
+
+    if (!imageRegex.test(text)) {
+      return text
+    }
   }
 
   return text.replace(imageRegex, function (url) {
+    if (url.startsWith('ar://')) {
+      url = url.replace('ar://', config.arweaveGateway)
+    } else if (url.startsWith('ipfs://')) {
+      url = url.replace('ipfs://', 'https://ipfs.io/ipfs/')
+    }
+
     return '<img class="img-fluid rounded" style="max-height: 500px;" src="' + url + '" />'
   })
 }
@@ -381,12 +468,12 @@ export function urlParsing(text) {
 
   try {
     urlRegex = new RegExp(
-      '(https?:\\/\\/(?!.*\\.(jpg|png|jpeg|img|gif|webp|pdf|docx))[^\\s]+)(?<![,.:;?!\\-\\"\')])',
+      '(https?:\\/\\/|ipfs:\\/\\/|ar:\\/\\/)(?!.*\\.(jpg|png|jpeg|img|gif|webp|pdf|docx))[^\\s]+',
       'g',
     )
   } catch (error) {
     // fallback to simplified regex (without lookbehinds) in case of an old browser or Safari
-    urlRegex = /(https?:\/\/(?!.*\.(jpg|png|jpeg|img|gif|webp|pdf|docx))[^\s]+)/g
+    urlRegex = /(https?:\/\/|ipfs:\/\/|ar:\/\/)(?!.*\.(jpg|png|jpeg|img|gif|webp|pdf|docx))[^\s]+/g
   }
 
   if (!urlRegex.test(text)) {
@@ -394,6 +481,11 @@ export function urlParsing(text) {
   }
 
   return text.replace(urlRegex, function (url) {
+    if (url.endsWith('?.img') || url.endsWith('?img') || url.endsWith('?.img"') || url.endsWith('?img"')) {
+      // ignore urls ending with "?.img" beause they represent images (even though they don't have an image extension)
+      return url
+    }
+
     // remove this website referrals from the chat
     if (
       url.startsWith(window.location.origin) ||
@@ -408,8 +500,11 @@ export function urlParsing(text) {
     if (url.startsWith('https://www.youtube.com/embed/')) {
       // ignore youtube embeds
       return url
-    } else if (url.endsWith('?.img') || url.endsWith('?img')) {
+    } else if (url.endsWith('?.img') || url.endsWith('?img') || url.endsWith('?.img"') || url.endsWith('?img"')) {
       // ignore urls ending with "?.img" beause they represent images (even though they don't have an image extension)
+      return url
+    } else if (url.startsWith(config.projectUrl + '/nft/collection')) {
+      // ignore collection links from our website
       return url
     }
 
@@ -431,7 +526,7 @@ export function youtubeParsing(text) {
     )[1]
 
     return (
-      "<iframe class='rounded' width='100%' height='315' src='https://www.youtube.com/embed/" +
+      "<iframe class='rounded youtube-embed' width='100%' height='315' src='https://www.youtube.com/embed/" +
       videoId +
       "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share' allowfullscreen></iframe>"
     )

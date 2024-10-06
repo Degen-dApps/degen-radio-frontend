@@ -131,7 +131,7 @@
         :key="domain"
         :domainName="domain"
         :componentId="$.uid"
-        storageType="imagekit" 
+        storageType="arweave" 
         @processFileUrl="insertImage"
       />
       <!-- END Change Image Modal -->

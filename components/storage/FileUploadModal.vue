@@ -47,12 +47,30 @@
             <div v-if="currentTab === 'upload'">
               <p v-if="infoText">{{ infoText }}</p>
 
+              <div v-if="arweaveBalanceTooLow">
+                <p class="text-danger">
+                  Error: Arweave is used as file storage. Current balance in the Arweave wallet is insufficient to do the upload. 
+                </p>
+                <p>
+                  <span class="text-danger">Please send AR tokens to this wallet (min. {{ $config.arweaveMinBalance }} AR) to enable uploads: </span> 
+                  <a :href="'https://arscan.io/address/' + this.$config.arweaveAddress" target="_blank">{{ this.$config.arweaveAddress }}</a>.
+                </p>
+              </div>
+
               <FileUploadInput
                 btnCls="btn btn-primary"
+                :disable="arweaveBalanceTooLow"
                 :maxFileSize="maxFileSize"
                 :storageType="storageType"
                 @processUploadedFileUrl="processUploadedFileUrl"
               />
+
+              <!--
+              <div v-if="!arweaveBalanceTooLow">
+                <hr />
+                <p><small>The file will be uploaded to Arweave. Current balance in the wallet: {{ arweaveBalance }} AR.</small></p>
+              </div>
+              -->
             </div>
 
             <!-- Paste Link Tab -->
@@ -96,6 +114,25 @@ export default {
   },
 
   computed: {
+    arweaveBalance() {
+      const arBalance = this.siteStore.arweaveBalance
+
+      if (arBalance) {
+        const balancePrecision = Number(arBalance).toFixed(6);
+        return Number.parseFloat(balancePrecision);
+      }
+      
+      return 0
+    },
+
+    arweaveBalanceTooLow() {
+      if (this.storageType !== 'arweave') {
+        return false
+      }
+      
+      return this.arweaveBalance < this.$config.arweaveMinBalance
+    },
+
     fileUploadEnabled() {
       return this.siteStore.getFileUploadEnabled
     },

@@ -161,7 +161,7 @@ export default {
         this.tNftId = 1
       }
 
-      const provider = this.$getProviderForChain(Number(this.tChainId))
+      const provider = this.$getFallbackProvider(Number(this.tChainId))
       const trackData = await fetchMusicNftData(window, provider, this.tAddress, this.tNftId, this.tChainId)
 
       if (trackData.success) {

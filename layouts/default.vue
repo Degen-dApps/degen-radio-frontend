@@ -73,6 +73,7 @@ import { useEthers } from '~/store/ethers'
 import { useSidebarStore } from '~/store/sidebars'
 import { useSiteStore } from '~/store/site'
 import { useUserStore } from '~/store/user'
+import { getArweaveBalance } from '~/utils/balanceUtils'
 import { getDomainHolder, getDomainName } from '~/utils/domainUtils'
 import { fetchUserPlaylists } from '~/utils/playlistUtils'
 import { storeReferrer, storeUsername } from '~/utils/storageUtils'
@@ -143,6 +144,9 @@ export default {
       selector: "[data-bs-toggle='popover']",
     })
 
+    // fetch Arweave balance
+    this.fetchArweaveBalance()
+
     // check if file upload is enabled
     this.siteStore.setFileUploadEnabled(this.$config.fileUploadEnabled)
 
@@ -183,6 +187,15 @@ export default {
       document.getElementById('closeConnectModal').click()
     },
 
+    async fetchArweaveBalance() {
+      if (this.$config.arweaveAddress) {
+        const balance = await getArweaveBalance(this.$config.arweaveAddress)
+        //console.log('Arweave balance:', balance)
+
+        this.siteStore.setArweaveBalance(balance)
+      }
+    },
+
     onWidthChange() {
       this.width = window.innerWidth
     },
@@ -198,7 +211,8 @@ export default {
         }
 
         // fetch the domain holder address
-        this.referrer = await this.getDomainHolder(domainName)
+        const provider = this.$getFallbackProvider(this.$config.supportedChainId)
+        this.referrer = await this.getDomainHolder(domainName, provider)
       }
 
       if (this.address) {
@@ -315,7 +329,7 @@ export default {
   watch: {
     address(newVal, oldVal) {
       if (newVal && newVal !== oldVal) {
-        let provider = this.$getProviderForChain(this.$config.supportedChainId)
+        let provider = this.$getFallbackProvider(this.$config.supportedChainId)
         fetchUserPlaylists(window, provider, this.address)
       }
     },

@@ -6,15 +6,19 @@ export const useSiteStore = defineStore({
 
   state: () => {
     return {
+      arweaveBalance: 0,
       colorMode: 'dark',
       fileUploadEnabled: true,
-      showOnlyMasterPosts: useLocalStorage('showOnlyMasterPosts', 'false'),
       slippage: '0.5', // percentage (%)
       swapDeadline: '20', // minutes
     }
   },
 
   getters: {
+    getArweaveBalance(state) {
+      return state.arweaveBalance
+    },
+
     getColorMode(state) {
       const pStorage = useLocalStorage('colorMode', null)
 
@@ -27,16 +31,6 @@ export const useSiteStore = defineStore({
 
     getFileUploadEnabled(state) {
       return state.fileUploadEnabled
-    },
-
-    getShowOnlyMasterPosts(state) {
-      const pStorage = useLocalStorage('showOnlyMasterPosts', null)
-
-      if (pStorage.value) {
-        state.showOnlyMasterPosts = pStorage.value
-      }
-
-      return state.showOnlyMasterPosts
     },
 
     getSlippage(state) {
@@ -61,6 +55,10 @@ export const useSiteStore = defineStore({
   },
 
   actions: {
+    setArweaveBalance(balance) {
+      this.arweaveBalance = balance
+    },
+
     setColorMode(cm) {
       this.colorMode = cm
       localStorage.setItem('colorMode', cm)
@@ -68,11 +66,6 @@ export const useSiteStore = defineStore({
 
     setFileUploadEnabled(enabled) {
       this.fileUploadEnabled = enabled
-    },
-
-    setShowOnlyMasterPosts(somp) {
-      this.showOnlyMasterPosts = somp
-      localStorage.setItem('showOnlyMasterPosts', somp)
     },
 
     setSlippage(slippage) {

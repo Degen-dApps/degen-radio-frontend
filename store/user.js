@@ -9,6 +9,7 @@ export const useUserStore = defineStore({
       address: null,
       chatTokenBalanceWei: BigInt(0),
       defaultDomain: null,
+      image: null,
       lpTokenBalanceWei: BigInt(0),
       stakeTokenBalanceWei: BigInt(0), // receipt token from the staking contract (aka governance token)
     }
@@ -33,6 +34,10 @@ export const useUserStore = defineStore({
 
     getDefaultDomain(state) {
       return state.defaultDomain
+    },
+
+    getImage(state) {
+      return state.image
     },
 
     getLpTokenBalanceWei(state) {
@@ -67,6 +72,10 @@ export const useUserStore = defineStore({
 
     setDefaultDomain(domain) {
       this.defaultDomain = domain
+    },
+
+    setImage(image) {
+      this.image = image
     },
 
     setLpTokenBalanceWei(balance) {

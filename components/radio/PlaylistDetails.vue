@@ -246,7 +246,7 @@ export default {
 
   methods: {
     async addSongToTracks(musicNft) {
-      const provider = this.$getProviderForChain(Number(this.chainId))
+      const provider = this.$getFallbackProvider(Number(this.chainId))
       const trackData = await fetchMusicNftData(window, provider, musicNft.address, musicNft.tokenId, musicNft.chainId)
 
       if (trackData.success) {
@@ -326,7 +326,7 @@ export default {
 
       for (let i = 0; i < musicNfts.length; i++) {
         const musicNft = musicNfts[i]
-        const trackProvider = this.$getProviderForChain(Number(musicNft.chainId))
+        const trackProvider = this.$getFallbackProvider(Number(musicNft.chainId))
         const trackData = await fetchMusicNftData(
           window, trackProvider, musicNft.nftAddress, Number(musicNft.tokenId), Number(musicNft.chainId)
         )

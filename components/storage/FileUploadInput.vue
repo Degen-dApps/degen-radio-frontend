@@ -4,9 +4,10 @@
     type="file"
     class="form-control form-control-lg mb-3"
     :id="'file-input-' + componentId"
+    :disabled="waitingUpload || disable"
   />
 
-  <button type="button" :class="btnCls" @click="uploadFile" :disabled="waitingUpload || !file || fileTooBig">
+  <button type="button" :class="btnCls" @click="uploadFile" :disabled="waitingUpload || !file || fileTooBig || disable">
     <span v-if="waitingUpload" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
     Upload
   </button>
@@ -17,12 +18,12 @@
 </template>
 
 <script>
+import axios from 'axios'
 import ImageKit from 'imagekit-javascript'
-import { uploadFileToThirdWeb } from '~/utils/ipfsUtils'
 
 export default {
   name: 'FileUploadInput',
-  props: ['btnCls', 'maxFileSize', 'storageType'],
+  props: ['btnCls', 'disable', 'maxFileSize', 'storageType'],
   emits: ['processUploadedFileUrl'],
 
   data() {
@@ -49,14 +50,51 @@ export default {
   },
 
   methods: {
-    async fallbackUpload() {
+    async arweaveUpload() {
       const thisAppUrl = window.location.origin
 
       let fetcherService
       if (this.$config.fileUploadTokenService === 'netlify') {
-        fetcherService = thisAppUrl + '/.netlify/functions/imageUploaderFallback'
+        fetcherService = thisAppUrl + '/.netlify/functions/arweaveUploader'
       } else if (this.$config.fileUploadTokenService === 'vercel') {
-        fetcherService = thisAppUrl + '/api/imageUploaderFallback'
+        fetcherService = thisAppUrl + '/api/arweaveUploader'
+      }
+
+      // Convert file to base64
+      const fileData = await this.fileToBase64(this.file)
+
+      const fileType = this.file.type
+
+      const resp = await axios.post(fetcherService, {
+        fileData,
+        fileName: this.file.name,
+        fileType: this.file.type
+      })
+
+      const transactionId = resp.data.transactionId
+      let fileUri = `ar://${transactionId}`
+
+      // add file type to file uri so we can use it in the frontend
+      if (fileType.startsWith('image/')) {
+        fileUri += `?img`
+      } else if (fileType.startsWith('video/') || fileType.startsWith('audio/')) {
+        fileUri += `?${fileType}`
+      } else if (fileType.startsWith('text/plain')) {
+        fileUri += `?txt`
+      }
+
+      // emit file url
+      this.$emit('processUploadedFileUrl', fileUri)
+    },
+
+    async imageKitUpload() {
+      const thisAppUrl = window.location.origin
+
+      let fetcherService
+      if (this.$config.fileUploadTokenService === 'netlify') {
+        fetcherService = thisAppUrl + '/.netlify/functions/imageKitUploader'
+      } else if (this.$config.fileUploadTokenService === 'vercel') {
+        fetcherService = thisAppUrl + '/api/imageKitUploader'
       }
 
       const resp = await $fetch(fetcherService).catch(error => error.data)
@@ -115,24 +153,36 @@ export default {
     async uploadFile() {
       this.waitingUpload = true
 
-      if (this.storageType === 'ipfs') {
+      if (this.storageType === 'arweave') {
         try {
-          // upload to IPFS
-          const fileUri = await uploadFileToThirdWeb(this.file)
-
-          // emit file url
-          this.$emit('processUploadedFileUrl', fileUri)
+          await this.arweaveUpload()
         } catch (error) {
-          console.error('Error uploading file to IPFS', error)
+          console.error('Error uploading file to decentralized storage service', error)
           console.log('Falling back to centralized storage service')
-          await this.fallbackUpload()
+          await this.imageKitUpload()
         }
       } else {
-        // upload to a centralized storage service (imagekit)
-        await this.fallbackUpload()
+        // use centralized storage service ImageKit
+        try {
+          await this.imageKitUpload()
+        } catch (error) {
+          console.error('Error uploading file to centralized storage service', error)
+          console.log('Falling back to decentralized storage service')
+          await this.arweaveUpload()
+        }
       }
 
       this.waitingUpload = false
+    },
+
+    // Add this new method to convert file to base64
+    fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result.split(',')[1])
+        reader.onerror = error => reject(error)
+      })
     },
   },
 }

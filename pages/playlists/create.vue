@@ -77,7 +77,7 @@
       </div>
 
       <div v-if="pImage" class="mb-4">
-        <Image :url="pImage" cls="img-thumbnail img-fluid" style="max-width: 100px" />
+        <Image :url="formattedImage" cls="img-thumbnail img-fluid" style="max-width: 100px" />
         <br />
         <small
           >If image didn't appear above, then something is wrong with the link you added (wait until the loading
@@ -182,7 +182,7 @@
     @processFileUrl="insertImage"
     title="Upload your playlist image"
     infoText="Upload the playlist image."
-    storageType="imagekit"
+    storageType="arweave"
     :componentId="$.uid"
     :maxFileSize="$config.fileUploadSizeLimit"
   />
@@ -247,6 +247,20 @@ export default {
       return (
         this.pName && this.pDescription && this.pImage && ethers.utils.isAddress(this.tAddress) && !isNaN(this.tChainId) && !this.descriptionTooLong && !this.nameTooLong
       )
+    },
+
+    formattedImage() {
+      if (!this.pImage) {
+        return null
+      }
+
+      let imageUrl = String(this.pImage).trim().replace('?.img', '')
+
+      if (imageUrl.startsWith('ar://')) {
+        imageUrl = imageUrl.replace('ar://', this.$config.arweaveGateway)
+      }
+
+      return imageUrl
     },
 
     isSupportedChain() {
@@ -323,7 +337,7 @@ export default {
         const tx = await factoryContract.createPlaylist(
           this.pName,
           this.pDescription,
-          String(this.pImage).trim(),
+          this.formattedImage,
           this.tAddress,
           this.tNftId,
           this.tChainId,
@@ -425,7 +439,7 @@ export default {
         this.tNftId = 1
       }
       
-      const provider = this.$getProviderForChain(Number(this.tChainId))
+      const provider = this.$getFallbackProvider(Number(this.tChainId))
       const trackData = await fetchMusicNftData(window, provider, this.tAddress, this.tNftId, this.tChainId)
 
       if (trackData.success) {

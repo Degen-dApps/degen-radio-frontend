@@ -1,14 +1,45 @@
+import Arweave from 'arweave'
 import { ethers } from 'ethers'
 import Erc20Abi from '~/assets/abi/Erc20Abi.json'
 
-export async function getTokenAllowance(token, userAddress, beneficiary, signer) {
+// Initialize Arweave
+const arweave = Arweave.init({
+  host: 'arweave.net',
+  port: 443,
+  protocol: 'https'
+})
+
+export async function getActivityPoints(userAddress, signer) {
   const config = useRuntimeConfig()
 
   let provider = signer
 
-  if (!provider) {
-    provider = new ethers.providers.JsonRpcProvider(config.supportedChainId)
+  const activityPointsInterface = new ethers.utils.Interface([
+    'function getPoints(address user_) external view returns (uint256)',
+  ])
+
+  const activityPointsContract = new ethers.Contract(config.activityPointsAddress, activityPointsInterface, provider)
+
+  const pointsWei = await activityPointsContract.getPoints(userAddress)
+
+  let activityPoints = Number(ethers.utils.formatEther(pointsWei))
+
+  if (activityPoints < 1) {
+    activityPoints = activityPoints.toFixed(2)
+  } else {
+    activityPoints = Number.parseFloat(activityPoints)
   }
+
+  return activityPoints
+}
+
+export async function getArweaveBalance(arweaveAddress) {
+  const balance = await arweave.wallets.getBalance(arweaveAddress)
+  return arweave.ar.winstonToAr(balance)
+}
+
+export async function getTokenAllowance(token, userAddress, beneficiary, signer) {
+  let provider = signer
 
   const contract = new ethers.Contract(token.address, Erc20Abi, provider)
   const allowanceWei = await contract.allowance(userAddress, beneficiary)
@@ -17,13 +48,7 @@ export async function getTokenAllowance(token, userAddress, beneficiary, signer)
 }
 
 export async function getTokenBalance(token, userAddress, signer) {
-  const config = useRuntimeConfig()
-
   let provider = signer
-
-  if (!provider) {
-    provider = new ethers.providers.JsonRpcProvider(config.supportedChainId)
-  }
 
   let balanceWei
 

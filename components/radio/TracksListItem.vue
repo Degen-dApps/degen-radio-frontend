@@ -150,7 +150,7 @@ export default {
         this.author = fetchUsername(window, this.track.authorAddress)
 
         if (!this.author) {
-          const provider = this.$getProviderForChain(this.$config.supportedChainId)
+          const provider = this.$getFallbackProvider(this.$config.supportedChainId)
           const domainName = await getDomainName(this.track.authorAddress, provider)
 
           if (domainName) {
@@ -169,7 +169,7 @@ export default {
       this.waitingRefresh = true
 
       try {
-        const provider = this.$getProviderForChain(Number(this.track.chainId))
+        const provider = this.$getFallbackProvider(Number(this.track.chainId))
         await fetchFreshMusicNftData(window, provider, this.track.address, this.track.tokenId, this.track.chainId)
       } catch (e) {
         console.error(e)

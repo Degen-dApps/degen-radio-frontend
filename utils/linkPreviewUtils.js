@@ -58,17 +58,16 @@ async function fetchNftMetadata(url, addr, tokenId, rpcUrl, marketplace) {
   if (
     !nftMetadataUri.startsWith('https://') &&
     !nftMetadataUri.startsWith('http://') &&
-    !nftMetadataUri.startsWith('ipfs://')
+    !nftMetadataUri.startsWith('ipfs://') &&
+    !nftMetadataUri.startsWith('ar://')
   ) {
     const result = atob(nftMetadataUri.substring(29))
     json = JSON.parse(result)
   } else {
     if (nftMetadataUri.startsWith('ipfs://')) {
-      // ipfs://QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq/2614
-      // https://dweb.link/ipfs/QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq/2614
-      // https://cloudflare-ipfs.com/ipfs/QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq/2614
-
-      nftMetadataUri = nftMetadataUri.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/')
+      nftMetadataUri = nftMetadataUri.replace('ipfs://', 'https://ipfs.io/ipfs/')
+    } else if (nftMetadataUri.startsWith('ar://')) {
+      nftMetadataUri = nftMetadataUri.replace('ar://', 'https://arweave.net/')
     }
 
     try {
@@ -84,7 +83,9 @@ async function fetchNftMetadata(url, addr, tokenId, rpcUrl, marketplace) {
   }
 
   if (json['image'].startsWith('ipfs://')) {
-    json['image'] = json['image'].replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/')
+    json['image'] = json['image'].replace('ipfs://', 'https://ipfs.io/ipfs/')
+  } else if (json['image'].startsWith('ar://')) {
+    json['image'] = json['image'].replace('ar://', 'https://arweave.net/')
   }
 
   if (!json['description']) {
@@ -234,23 +235,6 @@ function getTwitterPreview(url) {
     image: {
       url: 'https://www.newswire.lk/wp-content/uploads/2022/12/elon-musk-twitter.jpg',
     },
-  }
-}
-
-function marketplaceFallback(marketplace) {
-  if (marketplace === 'opensea') {
-    return {
-      name: 'Check this NFT on OpenSea',
-      description:
-        "OpenSea is the world's first and largest web3 marketplace for NFTs and crypto collectibles. Browse, create, buy, sell, and auction NFTs using OpenSea today.",
-      image: 'https://static.opensea.io/og-images/Metadata-Image.png',
-    }
-  } else if (marketplace === 'sparkles') {
-    return {
-      name: 'Check this NFT on Sparkles',
-      description: 'Sparkles NFT Marketplace',
-      image: 'https://i.postimg.cc/QMCd8ynT/sparkles.png',
-    }
   }
 }
 

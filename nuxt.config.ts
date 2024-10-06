@@ -50,18 +50,33 @@ export default defineNuxtConfig({
     public: {
       airdropApAddress: '', // chat token claim for APs
       airdropClaimDomainsAddress: '', // chat token claim for domain holders
+      arweaveAddress: process.env.ARWEAVE_ADDRESS,
+      arweaveGateway: 'https://arweave.net/',
+      arweaveMinBalance: 0.02, // minimum AR balance to upload files
       blockExplorerBaseUrl: 'https://explorer.degen.tips',
+      chat: {
+        contexts: {
+          general: '0x2FbE49507442d8d4B7d2d3010bCac2e76b01a248', // general discussion channel
+          memesImages: '0x2FbE49507442d8d4B7d2d3010bCac2e76b01a248',
+          shill: '0x2FbE49507442d8d4B7d2d3010bCac2e76b01a248',
+          nftLaunchpad: '0x7f8fAc07e9F55f7016113E44A49D4d15Eb895928', // comments context
+          playlistComments: '0x7f8fAc07e9F55f7016113E44A49D4d15Eb895928', // comments context
+        },
+        storage: 'arweave', // storage type: 'arweave' or 'ipfs'
+      },
       chatTokenAddress: '', // chat token address
       chatTokenImage: '', // chat token image
       chatTokenSymbol: '', // chat token symbol or name
       domainRequiredToPost: true,
       expiryCollections: 1000 * 60 * 60 * 24 * 10, // must be in milliseconds (0 means no expiration)
+      expiryMods: 1000 * 60 * 60 * 24 * 7, // must be in milliseconds (0 means no expiration)
       expiryPfps: 1000 * 60 * 60 * 24 * 10, // must be in milliseconds (0 means no expiration)
       expiryPlaylists: 1000 * 60 * 60 * 24 * 10, // must be in milliseconds (0 means no expiration)
       expiryUsernames: 1000 * 60 * 60 * 24 * 10, // must be in milliseconds (0 means no expiration)
       favicon: '/img/logo.svg',
-      fileUploadEnabled: true, // enable/disable file uploads (enable only if external file storage is used, e.g. IPFS via ThirdWeb)
+      fileUploadEnabled: true, // enable/disable file uploads (enable only if external file storage is used, e.g. Arweave)
       fileUploadSizeLimit: 1 * 1024 * 1024, // max file upload size in bytes (1 * 1024 * 1024 = 1 MB)
+      fileUploadStorageType: "arweave", // "arweave" or "imagekit"
       fileUploadTokenService: process.env.FILE_UPLOAD_SERVICE || 'netlify', // "netlify" or "vercel" (or leave empty for no file uploads)
       governanceUrl: 'https://warpcast.com/~/channel/degen', // governance url (snapshot, Tally, etc.)
       iggyPostAddress: '0x0BF6333Fc85159663A30Ac89FD02c5031B97c5ee',
@@ -120,7 +135,6 @@ export default defineNuxtConfig({
       swapPriceImpactMaxBps: 1000, // max price impact in bips (1 bps = 0.01%, 1000bps = 10%) for the swap function
       swapRouterAddress: '', // iggy swap router contract address
       tenorApiKey: process.env.TENOR_KEY || '',
-      thirdwebClientId: process.env.THIRDWEB_CLIENT_ID || '',
       tldName: '.degen',
       tokenAddress: null, // leave null if it's a native token of the chain
       tokenDecimals: 18,

@@ -1,7 +1,7 @@
 <template>
   <div class="col col-lg-auto px-0 mt-1">
     <div id="sidebar1" class="collapse collapse-horizontal" :class="$config.sidebarLeftSticky ? 'sticky-lg-top' : ''">
-      <div class="sidebar-nav list-group border-0 rounded-0 text-sm-start min-vh-100">
+      <div class="sidebar-nav list-group border-0 rounded-0 text-sm-start min-vh-100 scroll-500">
         <div class="card m-2 p-2 bg-light">
           <div v-if="isActivated" class="text-center">
             <!-- Profile 
