@@ -63,7 +63,7 @@ export default defineNuxtPlugin(() => {
                 symbol: chain.currency,
                 decimals: 18,
               },
-              rpcUrls: [randomRpc],
+              rpcUrls: ["https://rpc.degen.tips"],
               blockExplorerUrls: [chain.blockExplorer],
             },
           ],
@@ -87,7 +87,7 @@ const chains = [
     chainId: 666666666, 
     name: "Degen Chain", 
     currency: "DEGEN", 
-    rpcs: ["https://rpc.degen.tips"], 
+    rpcs: ["https://degen-mainnet.g.alchemy.com/v2/Vn3jRzC23Ej4LYpz_TVNs20T9r-LigaO"], 
     blockExplorer: "https://explorer.degen.tips" 
   },
   {
