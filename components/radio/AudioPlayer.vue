@@ -216,9 +216,10 @@ export default {
           // Only update state if we're not already playing
           if (!this.playing) {
             this.playing = true;
-            this.duration = this.sound.duration();
-            this.startTimer();
           }
+
+          this.duration = this.sound.duration();
+          this.startTimer();
         },
         onend: () => {
           this.nextTrack();
