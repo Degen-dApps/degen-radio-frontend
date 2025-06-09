@@ -58,12 +58,20 @@
           <i class="bi bi-rewind-fill"></i>
         </button>
 
+        <button class="col btn btn-outline-primary me-2" @click="seekBackward">
+          -15s
+        </button>
+
         <button v-if="!playing" class="col btn btn-primary me-2" @click="play">
           <i class="bi bi-play-fill"></i>
         </button>
 
         <button v-if="playing" class="col btn btn-primary me-2" @click="pause">
           <i class="bi bi-pause-fill"></i>
+        </button>
+
+        <button class="col btn btn-outline-primary me-2" @click="seekForward">
+          +15s
         </button>
 
         <button class="col btn btn-outline-primary" @click="nextTrack">
@@ -269,6 +277,34 @@ export default {
       this.loadTrack(this.currentTrack.audioUrl, this.currentTrack?.format)
     },
 
+    seekForward() {
+      if (this.sound) {
+        const wasPlaying = this.playing
+        const currentPosition = this.sound.seek();
+        const newPosition = Math.min(currentPosition + 15, this.duration);
+        this.pause()
+        this.sound.seek(newPosition);
+        this.currentTime = newPosition;
+        if (wasPlaying) {
+          this.sound.play()
+        }
+      }
+    },
+
+    seekBackward() {
+      if (this.sound) {
+        const wasPlaying = this.playing
+        const currentPosition = this.sound.seek();
+        const newPosition = Math.max(currentPosition - 15, 0);
+        this.pause()
+        this.sound.seek(newPosition);
+        this.currentTime = newPosition;
+        if (wasPlaying) {
+          this.sound.play()
+        }
+      }
+    },
+
     skipToSong(index) {
       this.stop()
       this.currentTime = 0
@@ -299,34 +335,6 @@ export default {
       clearInterval(this.timer)
       this.timer = null
     },
-
-    /*
-    handleSeek(event) {
-      const seekTime = parseFloat(event.target.value)
-      this.currentTime = seekTime
-      if (this.sound) {
-        const wasPlaying = this.playing
-        this.pause()
-        this.sound.seek(seekTime)
-        if (wasPlaying) {
-          this.sound.play()
-        }
-      }
-    },
-
-    handleSeekEnd(event) {
-      const seekTime = parseFloat(event.target.value)
-      this.currentTime = seekTime
-      if (this.sound) {
-        const wasPlaying = this.playing
-        this.pause()
-        this.sound.seek(seekTime)
-        if (wasPlaying) {
-          this.sound.play()
-        }
-      }
-    },
-    */
   },
 
   setup() {
