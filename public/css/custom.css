@@ -263,7 +263,7 @@ a:hover {
 
 .audio-player-card {
   border-radius: 0;
-  border-top: 1px solid #38B6FF;
+  /*border-top: 1px solid #38B6FF;*/
 }
 
 .force-circle {
@@ -459,6 +459,14 @@ a:hover {
 
 .scroll-500 {
   margin-bottom: 200px;
+}
+
+.seekbar {
+  height: 1px;
+}
+
+.seek-bar {
+  background-color: var(--bs-primary);
 }
 
 .sidebar-card-body {

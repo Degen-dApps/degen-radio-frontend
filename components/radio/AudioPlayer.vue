@@ -1,5 +1,13 @@
 <template>
   <div class="card audio-player-card">
+
+    <!-- Seek Bar -->
+    <div class="col-12">
+      <div class="progress seekbar" role="progressbar" :aria-valuenow="(currentTime / duration) * 100" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar seek-bar" :style="{ width: `${(currentTime / duration) * 100}%` }"></div>
+      </div>
+    </div>
+
     <div class="card-body row d-flex justify-content-evenly">
       <div class="col-md-6 text-center mb-2 mt-2">
         
@@ -291,6 +299,34 @@ export default {
       clearInterval(this.timer)
       this.timer = null
     },
+
+    /*
+    handleSeek(event) {
+      const seekTime = parseFloat(event.target.value)
+      this.currentTime = seekTime
+      if (this.sound) {
+        const wasPlaying = this.playing
+        this.pause()
+        this.sound.seek(seekTime)
+        if (wasPlaying) {
+          this.sound.play()
+        }
+      }
+    },
+
+    handleSeekEnd(event) {
+      const seekTime = parseFloat(event.target.value)
+      this.currentTime = seekTime
+      if (this.sound) {
+        const wasPlaying = this.playing
+        this.pause()
+        this.sound.seek(seekTime)
+        if (wasPlaying) {
+          this.sound.play()
+        }
+      }
+    },
+    */
   },
 
   setup() {
