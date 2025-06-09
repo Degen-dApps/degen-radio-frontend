@@ -203,12 +203,8 @@ export default {
             navigator.mediaSession.setActionHandler('play', this.play);
             navigator.mediaSession.setActionHandler('pause', this.pause);
             navigator.mediaSession.setActionHandler('stop', this.pause);
-            navigator.mediaSession.setActionHandler('seekbackward', () => {
-              this.sound.seek(this.sound.seek() - 10);
-            });
-            navigator.mediaSession.setActionHandler('seekforward', () => {
-              this.sound.seek(this.sound.seek() + 10);
-            });
+            navigator.mediaSession.setActionHandler('seekbackward', this.seekBackward);
+            navigator.mediaSession.setActionHandler('seekforward', this.seekForward);
             navigator.mediaSession.setActionHandler('previoustrack', this.previousTrack);
             navigator.mediaSession.setActionHandler('nexttrack', this.nextTrack);
           }
@@ -257,8 +253,17 @@ export default {
 
     play() {
       // user initiated play
-      this.userStartedListening = true
-      this.playSongs()
+      this.userStartedListening = true;
+      
+      // If we have a sound and it's already loaded, just play it
+      if (this.sound && this.sound.state() === 'loaded') {
+        this.sound.play();
+        this.playing = true;
+        this.startTimer();
+        return;
+      }
+      
+      this.playSongs();
     },
 
     playSongs() {
