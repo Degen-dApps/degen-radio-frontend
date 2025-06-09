@@ -178,12 +178,21 @@ export default {
     },
 
     loadTrack(src, format) {
+      // Clean up existing sound
+      if (this.sound) {
+        console.log('Unloading existing sound');
+        this.sound.unload();
+      }
+
       this.sound = new Howl({
         src: [src],
         html5: true, // To ensure playback on mobile devices
         format: [format || 'mp3'],
         onload: () => {
-          this.sound.play();
+          // Only play if we're not already playing
+          if (!this.sound.playing()) {
+            this.sound.play();
+          }
 
           if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
@@ -205,23 +214,25 @@ export default {
           }
         },
         onloaderror: (id, error) => {
-          console.log('Error loading song, skipping to the next one...');
           this.nextTrack(); // skip to next song if current song fails to load
         },
         onplay: () => {
-          this.playing = true
-          this.duration = this.sound.duration()
-          this.startTimer()
+          // Only update state if we're not already playing
+          if (!this.playing) {
+            this.playing = true;
+            this.duration = this.sound.duration();
+            this.startTimer();
+          }
         },
         onend: () => {
-          this.nextTrack()
+          this.nextTrack();
         },
         onpause: () => {
-          this.stopTimer()
+          this.stopTimer();
         },
-      })
+      });
 
-      this.sound.load()
+      this.sound.load();
     },
 
     nextTrack() {
